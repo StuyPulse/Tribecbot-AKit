@@ -1,4 +1,25 @@
+package com.stuypulse.robot.constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.stuypulse.robot.Robot;
+import com.stuypulse.robot.subsystems.swerve.CommandSwerveDrivetrain;
+import com.stuypulse.robot.util.vision.AprilTag;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
+
+/**
+ * This interface stores information about the field elements.
+ */
 
 public interface Field {
 
