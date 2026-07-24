@@ -8,6 +8,7 @@ import com.stuypulse.robot.util.DualDebouncer;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -97,7 +98,7 @@ public class Intake extends SubsystemBase {
 
           if (isPivotBelowPushdownThreshold()) {
             Current pushdownCurrent =
-                Settings.currentMode == Settings.Mode.REAL
+                DriverStation.isTeleop()
                     ? Settings.Intake.PUSHDOWN_CURRENT_TELEOP
                     : Settings.Intake.PUSHDOWN_CURRENT_AUTON;
 
