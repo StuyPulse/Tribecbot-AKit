@@ -65,6 +65,17 @@ public interface Motors {
             .withRampRate(0.50);
   }
 
+  public interface Spindexer {
+    TalonFXConfig SPINDEXER_CONFIG =
+        new TalonFXConfig()
+            .withInvertedValue(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake)
+            .withSupplyCurrentLimitAmps(45)
+            .withStatorCurrentLimitEnabled(false)
+            .withRampRate(0.25)
+            .withSensorToMechanismRatio(Settings.Spindexer.GEAR_RATIO);
+  }
+
   public static class CANCoderConfig {
     private final CANcoderConfiguration configuration = new CANcoderConfiguration();
     private final MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();

@@ -5,54 +5,51 @@
 
 package com.stuypulse.robot;
 
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 import com.stuypulse.robot.constants.Ports;
-
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
 
-    // Gamepads
-    public final CommandXboxController driver = new CommandXboxController(Ports.Gamepad.DRIVER);
-    
-    // Subsystem
+  // Gamepads
+  public final CommandXboxController driver = new CommandXboxController(Ports.Gamepad.DRIVER);
 
-    // Autons
-    private static LoggedDashboardChooser<Command> autonChooser = new LoggedDashboardChooser<>("Autonomous");
+  // Subsystem
 
-    // Robot container
+  // Autons
+  private static LoggedDashboardChooser<Command> autonChooser =
+      new LoggedDashboardChooser<>("Autonomous");
 
-    public RobotContainer() {
-        configureDefaultCommands();
-        configureButtonBindings();
-        configureAutons();
-    }
+  // Robot container
 
-    /****************/
-    /*** DEFAULTS ***/
-    /****************/
+  public RobotContainer() {
+    configureDefaultCommands();
+    configureButtonBindings();
+    configureAutons();
+  }
 
-    private void configureDefaultCommands() {}
+  /****************/
+  /*** DEFAULTS ***/
+  /****************/
 
-    /***************/
-    /*** BUTTONS ***/
-    /***************/
+  private void configureDefaultCommands() {}
 
-    private void configureButtonBindings() {}
+  /***************/
+  /*** BUTTONS ***/
+  /***************/
 
-    /**************/
-    /*** AUTONS ***/
-    /**************/
+  private void configureButtonBindings() {}
 
-    public void configureAutons() {
-        // autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
-    }
+  /**************/
+  /*** AUTONS ***/
+  /**************/
 
-    public Command getAutonomousCommand() {
-        return autonChooser.get();
-    }
+  public void configureAutons() {
+    // autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
+  }
+
+  public Command getAutonomousCommand() {
+    return autonChooser.get();
+  }
 }
