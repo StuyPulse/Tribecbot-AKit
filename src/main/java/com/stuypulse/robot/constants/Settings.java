@@ -2,29 +2,12 @@ package com.stuypulse.robot.constants;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.stuypulse.robot.constants.Field;
-import com.ctre.phoenix6.CANBus;
-import com.ctre.phoenix6.controls.RainbowAnimation;
-import com.ctre.phoenix6.controls.SolidColor;
-import com.ctre.phoenix6.signals.RGBWColor;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.Vector;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.util.Color;
-import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
-import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class Settings {
 
@@ -47,31 +30,32 @@ public class Settings {
   // end of A kit stuff
 
   public interface Intake {
-      Angle PIVOT_STOW_ANGLE = Degrees.of(71.0); 
-      Angle PIVOT_DEPLOY_ANGLE = Degrees.of(-10.0);
-      Angle PIVOT_DIGEST_ANGLE = Degrees.of(30);
+    Angle PIVOT_STOW_ANGLE = Degrees.of(71.0);
+    Angle PIVOT_DEPLOY_ANGLE = Degrees.of(-10.0);
+    Angle PIVOT_DIGEST_ANGLE = Degrees.of(30);
 
-      Angle PIVOT_ANGLE_TOLERANCE = Degrees.of(5.0); 
+    Angle PIVOT_ANGLE_TOLERANCE = Degrees.of(5.0);
 
-      Angle PIVOT_MAX_ANGLE = Degrees.of(76.4);
-      Angle PIVOT_MIN_ANGLE = Degrees.of(-10.0);
+    Angle PIVOT_MAX_ANGLE = Degrees.of(76.4);
+    Angle PIVOT_MIN_ANGLE = Degrees.of(-10.0);
 
-      Angle THRESHOLD_TO_START_ROLLERS = Degrees.of(10.0);
+    Angle THRESHOLD_TO_START_ROLLERS = Degrees.of(10.0);
 
-      Angle ANGLE_THRESHOLD_FOR_HOLDING_VOLTAGE = Degrees.of(15.0);
-      Voltage HOMING_VOLTAGE = Volts.of(3.0);
-      
-      Voltage PUSHDOWN_VOLTAGE = Volts.of(-3.0);
-      Current PUSHDOWN_CURRENT_TELEOP = Amps.of(-75.0);//new SmartNumber("Intake/Pushdown Current", -65.0); //TODO: GET ACTUAL TYTY
-      Current PUSHDOWN_CURRENT_AUTON = Amps.of(-80.0);
+    Angle ANGLE_THRESHOLD_FOR_HOLDING_VOLTAGE = Degrees.of(15.0);
+    Voltage HOMING_VOLTAGE = Volts.of(3.0);
 
-      double PIVOT_GEAR_RATIO = 32.0/20.0 * 64.0/18.0 * 60.0/8.0;
-      
-      Current PIVOT_STALL_CURRENT = Amps.of(0); //TODO: set value
-      double PIVOT_STALL_DEBOUNCE = 1.0; //TODO: VERIFY
+    Voltage PUSHDOWN_VOLTAGE = Volts.of(-3.0);
+    Current PUSHDOWN_CURRENT_TELEOP =
+        Amps.of(
+            -75.0); // new SmartNumber("Intake/Pushdown Current", -65.0); //TODO: GET ACTUAL TYTY
+    Current PUSHDOWN_CURRENT_AUTON = Amps.of(-80.0);
 
-      double ROLLER_STALL_DEBOUNCE = 0.05; //TODO: VERIFY
-      Current ROLLER_STALL_CURRENT = Amps.of(50.0);
+    double PIVOT_GEAR_RATIO = 32.0 / 20.0 * 64.0 / 18.0 * 60.0 / 8.0;
+
+    Current PIVOT_STALL_CURRENT = Amps.of(0); // TODO: set value
+    double PIVOT_STALL_DEBOUNCE = 1.0; // TODO: VERIFY
+
+    double ROLLER_STALL_DEBOUNCE = 0.05; // TODO: VERIFY
+    Current ROLLER_STALL_CURRENT = Amps.of(50.0);
   }
-
 }
