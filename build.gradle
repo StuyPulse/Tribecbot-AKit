@@ -10,7 +10,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
-def ROBOT_MAIN_CLASS = "frc.robot.Main"
+def ROBOT_MAIN_CLASS = "com.stuypulse.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project DeployUtils.
@@ -132,15 +132,15 @@ tasks.withType(JavaCompile) {
 }
 
 // Create version file
-project.compileJava.dependsOn(createVersionFile)
-gversion {
-    srcDir       = "src/main/java/"
-    classPackage = "frc.robot"
-    className    = "BuildConstants"
-    dateFormat   = "yyyy-MM-dd HH:mm:ss z"
-    timeZone     = "America/New_York"
-    indent       = "  "
-}
+// project.compileJava.dependsOn(createVersionFile)
+// gversion {
+//     srcDir       = "src/main/java/"
+//     classPackage = "com.stuypulse.robot"
+//     className    = "BuildConstants"
+//     dateFormat   = "yyyy-MM-dd HH:mm:ss z"
+//     timeZone     = "America/New_York"
+//     indent       = "  "
+// }
 
 // Create commit with working changes on event branches
 task(eventDeploy) {
