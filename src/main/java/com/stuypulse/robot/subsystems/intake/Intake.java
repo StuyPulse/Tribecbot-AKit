@@ -131,6 +131,7 @@ public class Intake extends SubsystemBase {
           runPivotVoltage(Settings.Intake.HOMING_VOLTAGE);
         })
         .until(() -> inputs.pivotMotorStatorCurrent.gte(Settings.Intake.PIVOT_STALL_CURRENT))
-        .andThen(() -> io.seedPivotPosition(Settings.Intake.PIVOT_MIN_ANGLE));
+        .andThen(() -> io.seedPivotPosition(Settings.Intake.PIVOT_MIN_ANGLE))
+        .andThen(() -> runPivotPosition(Settings.Intake.PIVOT_MIN_ANGLE));
   }
 }
