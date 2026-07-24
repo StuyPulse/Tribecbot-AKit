@@ -43,6 +43,9 @@ public class SpindexerIOSim implements SpindexerIO {
     // TODO:Enabled Subsystems Check
     // TODO:Possibly battery sim?
     spindexerLeaderSim.setInputVoltage(12 * outputs.spindexerLeaderDutyCycle);
+    spindexerLeaderSim.update(0.02);
+
     spindexerFollowerSim.setInputVoltage(12 * outputs.spindexerLeaderDutyCycle);
+    spindexerLeaderSim.update(0.02);
   }
 }
