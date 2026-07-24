@@ -54,7 +54,7 @@ public interface Motors {
                 0)
             .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign, 0)
             .withGravityType(GravityTypeValue.Arm_Cosine)
-            .withSensorToMechanismRatio(Settings.Intake.GEAR_RATIO);
+            .withSensorToMechanismRatio(Settings.Intake.PIVOT_GEAR_RATIO);
 
     TalonFXConfig ROLLER_CONFIG =
         new Motors.TalonFXConfig()

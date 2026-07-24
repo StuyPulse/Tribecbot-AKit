@@ -14,10 +14,6 @@ public class Ports {
     int LED_PORT = 1;
   }
 
-  public interface ClimberHopper {
-    int CLIMBER_HOPPER = 60;
-  }
-
   public interface Handoff {
     int MOTOR_LEAD = 43;
     int MOTOR_FOLLOW = 48;
