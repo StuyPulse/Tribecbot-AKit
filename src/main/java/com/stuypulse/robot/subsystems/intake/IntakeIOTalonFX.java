@@ -5,10 +5,13 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
+import com.stuypulse.robot.constants.Settings;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -23,6 +26,8 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final DutyCycleOut rollerLeaderController;
   private final Follower rollerFollowerController;
   private final PositionTorqueCurrentFOC pivotController;
+  private final TorqueCurrentFOC pivotPushdownController;
+  private final VoltageOut pivotVoltageController;
 
   private final StatusSignal<Angle> pivotPosition;
   private final StatusSignal<Current> pivotSupplyCurrent;
@@ -56,10 +61,13 @@ public class IntakeIOTalonFX implements IntakeIO {
 
     rollerLeaderController = new DutyCycleOut(0);
     rollerFollowerController =
-        new Follower(Ports.Intake.ROLLER_LEADER, MotorAlignmentValue.Opposed);
+        new Follower(rollerLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed);
     pivotController = new PositionTorqueCurrentFOC(0);
+    pivotPushdownController = new TorqueCurrentFOC(0);
+    pivotVoltageController = new VoltageOut(0);
 
     rollerFollowerMotor.setControl(rollerFollowerController);
+    pivotMotor.setPosition(Settings.Intake.PIVOT_MAX_ANGLE);
 
     pivotPosition = pivotMotor.getPosition();
     pivotSupplyCurrent = pivotMotor.getSupplyCurrent();
@@ -128,12 +136,24 @@ public class IntakeIOTalonFX implements IntakeIO {
   }
 
   @Override
-  public void setRollerDutyCycle(double dutyCycle) {
-    rollerLeaderMotor.setControl(rollerLeaderController.withOutput(dutyCycle));
+  public void applyOutputs(IntakeIOOutputs outputs) {
+    switch (outputs.pivotOutputMode) {
+      case POSITION:
+        pivotMotor.setControl(pivotController.withPosition(outputs.pivotPosition));
+        break;
+      case TORQUE_CURRENT:
+        pivotMotor.setControl(pivotPushdownController.withOutput(outputs.pivotTorqueCurrent));
+        break;
+      case VOLTAGE:
+        pivotMotor.setControl(pivotVoltageController.withOutput(outputs.pivotVoltage));
+        break;
+    }
+
+    rollerLeaderMotor.setControl(rollerLeaderController.withOutput(outputs.rollerDutyCycle));
   }
 
   @Override
-  public void setPivotPosition(Angle position) {
-    pivotMotor.setControl(pivotController.withPosition(position));
+  public void seedPivotPosition(Angle position) {
+    pivotMotor.setPosition(position);
   }
 }
