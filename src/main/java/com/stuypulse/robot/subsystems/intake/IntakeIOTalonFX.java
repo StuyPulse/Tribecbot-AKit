@@ -137,6 +137,14 @@ public class IntakeIOTalonFX implements IntakeIO {
 
   @Override
   public void applyOutputs(IntakeIOOutputs outputs) {
+    if (!Settings.EnabledSubsystems.INTAKE.get()) {
+      pivotMotor.stopMotor();
+      rollerLeaderMotor.stopMotor();
+      rollerFollowerMotor.stopMotor();
+
+      rollerFollowerMotor.setControl(rollerFollowerController);
+    }
+
     switch (outputs.pivotOutputMode) {
       case POSITION:
         pivotMotor.setControl(pivotController.withPosition(outputs.pivotPosition));

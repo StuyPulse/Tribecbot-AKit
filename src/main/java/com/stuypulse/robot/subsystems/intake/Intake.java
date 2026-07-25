@@ -84,10 +84,6 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIntake() {
-    if (!Settings.EnabledSubsystems.INTAKE.get()) {
-      return run(this::stopMotors);
-    }
-
     return run(
         () -> {
           if (inputs.pivotMotorPosition.lte(Settings.Intake.THRESHOLD_TO_START_ROLLERS)) {
@@ -110,10 +106,6 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runStow() {
-    if (!Settings.EnabledSubsystems.INTAKE.get()) {
-      return run(this::stopMotors);
-    }
-
     return run(
         () -> {
           runRollersDutyCycle(0.0);
@@ -122,10 +114,6 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runHoming() {
-    if (!Settings.EnabledSubsystems.INTAKE.get()) {
-      return run(this::stopMotors);
-    }
-
     return run(() -> {
           runRollersDutyCycle(0.0);
           runPivotVoltage(Settings.Intake.HOMING_VOLTAGE);
