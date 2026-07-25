@@ -11,10 +11,12 @@ public class Spindexer extends SubsystemBase {
   private static final Spindexer instance;
 
   static {
-    if (Settings.currentMode == Mode.SIM) {
-      instance = new Spindexer(new SpindexerIOSim());
-    } else {
-      instance = new Spindexer(new SpindexerIOTalonFX());
+    switch (Settings.currentMode) {
+      case REAL -> instance = new Spindexer(new SpindexerIOTalonFX());
+
+      case SIM -> instance = new Spindexer(new SpindexerIOSim());
+
+      default -> instance = new Spindexer(new SpindexerIO() {});
     }
   }
 
