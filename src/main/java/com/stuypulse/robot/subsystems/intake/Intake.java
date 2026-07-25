@@ -19,10 +19,12 @@ public class Intake extends SubsystemBase {
   private static final Intake instance;
 
   static {
-    if (Settings.currentMode == Settings.Mode.SIM) {
-      instance = new Intake(new IntakeIOSim());
-    } else {
-      instance = new Intake(new IntakeIOTalonFX());
+    switch (Settings.currentMode) {
+      case REAL -> instance = new Intake(new IntakeIOTalonFX());
+
+      case SIM -> instance = new Intake(new IntakeIOSim());
+
+      default -> instance = new Intake(new IntakeIO() {});
     }
   }
 
