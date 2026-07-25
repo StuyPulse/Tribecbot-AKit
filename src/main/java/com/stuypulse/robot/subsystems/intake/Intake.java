@@ -1,10 +1,12 @@
 package com.stuypulse.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.Amps;
 
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.intake.IntakeIO.IntakeIOOutputs;
 import com.stuypulse.robot.util.DualDebouncer;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
@@ -28,7 +30,8 @@ public class Intake extends SubsystemBase {
     return instance;
   }
 
-  private final DualDebouncer pivotDebouncer;
+  private final DualDebouncer pivotPositionDebouncer;
+  private final Debouncer pivotStallingDebouncer;
 
   private final IntakeIO io;
   private final IntakeIOInputsAutoLogged inputs;
@@ -39,7 +42,9 @@ public class Intake extends SubsystemBase {
     this.inputs = new IntakeIOInputsAutoLogged();
     this.outputs = new IntakeIOOutputs();
 
-    this.pivotDebouncer = new DualDebouncer(0.5, 0.1);
+    this.pivotPositionDebouncer = new DualDebouncer(0.5, 0.1);
+    this.pivotStallingDebouncer =
+        new Debouncer(Settings.Intake.PIVOT_STALL_DEBOUNCE, DebounceType.kBoth);
   }
 
   @Override
@@ -54,14 +59,8 @@ public class Intake extends SubsystemBase {
   }
 
   private boolean isPivotBelowPushdownThreshold() {
-    return pivotDebouncer.calculate(
+    return pivotPositionDebouncer.calculate(
         inputs.pivotMotorPosition.lte(Settings.Intake.ANGLE_THRESHOLD_FOR_HOLDING_VOLTAGE));
-  }
-
-  private void stopMotors() {
-    outputs.pivotOutputMode = IntakeIO.PivotIOOutputMode.VOLTAGE;
-    outputs.pivotVoltage = Volts.of(0);
-    outputs.rollerDutyCycle = 0.0;
   }
 
   private void runPivotPosition(Angle position) {
@@ -83,11 +82,38 @@ public class Intake extends SubsystemBase {
     outputs.rollerDutyCycle = dutyCycle;
   }
 
+  private boolean pivotStalling() {
+    return pivotStallingDebouncer.calculate(
+        inputs.pivotMotorStatorCurrent.abs(Amps) > Settings.Intake.PIVOT_STALL_CURRENT.in(Amps));
+  }
+
   public Command runIntake() {
     return run(
         () -> {
           if (inputs.pivotMotorPosition.lte(Settings.Intake.THRESHOLD_TO_START_ROLLERS)) {
             runRollersDutyCycle(1.0);
+          } else {
+            runRollersDutyCycle(0.0);
+          }
+
+          if (isPivotBelowPushdownThreshold()) {
+            Current pushdownCurrent =
+                DriverStation.isTeleop()
+                    ? Settings.Intake.PUSHDOWN_CURRENT_TELEOP
+                    : Settings.Intake.PUSHDOWN_CURRENT_AUTON;
+
+            runPivotTorqueCurrent(pushdownCurrent);
+          } else {
+            runPivotPosition(Settings.Intake.PIVOT_DEPLOY_ANGLE);
+          }
+        });
+  }
+
+  public Command runOuttake() {
+    return run(
+        () -> {
+          if (inputs.pivotMotorPosition.lte(Settings.Intake.THRESHOLD_TO_START_ROLLERS)) {
+            runRollersDutyCycle(-1.0);
           } else {
             runRollersDutyCycle(0.0);
           }
@@ -118,7 +144,7 @@ public class Intake extends SubsystemBase {
           runRollersDutyCycle(0.0);
           runPivotVoltage(Settings.Intake.HOMING_VOLTAGE);
         })
-        .until(() -> inputs.pivotMotorStatorCurrent.gte(Settings.Intake.PIVOT_STALL_CURRENT))
+        .until(this::pivotStalling)
         .andThen(() -> io.seedPivotPosition(Settings.Intake.PIVOT_MIN_ANGLE))
         .andThen(() -> runPivotPosition(Settings.Intake.PIVOT_MIN_ANGLE));
   }
