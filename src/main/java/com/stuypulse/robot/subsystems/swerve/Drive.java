@@ -54,13 +54,67 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import org.ironmaple.simulation.SimulatedArena;
 import org.ironmaple.simulation.drivesims.COTS;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.ironmaple.simulation.drivesims.configs.DriveTrainSimulationConfig;
 import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase implements Vision.VisionConsumer {
+  private static final Drive instance;
+  private static SwerveDriveSimulation driveSimulation = null;
+
+  static {
+    switch (Settings.currentMode) {
+      case REAL -> {
+        instance =
+            new Drive(
+                new GyroIOPigeon2(),
+                new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                new ModuleIOTalonFX(TunerConstants.FrontRight),
+                new ModuleIOTalonFX(TunerConstants.BackLeft),
+                new ModuleIOTalonFX(TunerConstants.BackRight),
+                (robotPose) -> {});
+      }
+
+      case SIM -> {
+        driveSimulation =
+            new SwerveDriveSimulation(
+                Drive.getMapleSimConfig(), new Pose2d(3, 3, new Rotation2d()));
+        SimulatedArena.getInstance().addDriveTrainSimulation(driveSimulation);
+        instance =
+            new Drive(
+                new GyroIOSim(driveSimulation.getGyroSimulation()),
+                new ModuleIOSim(driveSimulation.getModules()[0]),
+                new ModuleIOSim(driveSimulation.getModules()[1]),
+                new ModuleIOSim(driveSimulation.getModules()[2]),
+                new ModuleIOSim(driveSimulation.getModules()[3]),
+                driveSimulation::setSimulationWorldPose);
+      }
+
+      default -> {
+        instance =
+            new Drive(
+                new GyroIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                new ModuleIO() {},
+                (robotPose) -> {});
+      }
+    }
+  }
+
+  public static Drive getInstance() {
+    return instance;
+  }
+
+  public static SwerveDriveSimulation getDriveSimulation() {
+    return driveSimulation;
+  }
+
   // TunerConstants doesn't include these constants, so they are declared locally
   static final double ODOMETRY_FREQUENCY =
       new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
