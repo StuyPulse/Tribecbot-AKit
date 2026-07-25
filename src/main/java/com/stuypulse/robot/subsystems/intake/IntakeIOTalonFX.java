@@ -143,6 +143,8 @@ public class IntakeIOTalonFX implements IntakeIO {
       rollerFollowerMotor.stopMotor();
 
       rollerFollowerMotor.setControl(rollerFollowerController);
+
+      return;
     }
 
     switch (outputs.pivotOutputMode) {
