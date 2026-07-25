@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -38,9 +39,14 @@ public class ShooterIOTalonFX implements ShooterIO {
     shooterLeader = new TalonFX(Ports.Superstructure.Shooter.MOTOR_LEAD);
     shooterFollower = new TalonFX(Ports.Superstructure.Shooter.MOTOR_FOLLOW);
 
+    Motors.Superstructure.Shooter.SHOOTER_CONFIG.configure(shooterLeader);
+    Motors.Superstructure.Shooter.SHOOTER_CONFIG.configure(shooterFollower);
+
     shooterLeaderController = new VelocityTorqueCurrentFOC(0);
     shooterFollowerController =
         new Follower(shooterLeader.getDeviceID(), MotorAlignmentValue.Opposed);
+
+    shooterFollower.setControl(shooterFollowerController);
 
     shooterLeaderPosition = shooterLeader.getPosition();
     shooterLeaderSupplyCurrent = shooterLeader.getSupplyCurrent();

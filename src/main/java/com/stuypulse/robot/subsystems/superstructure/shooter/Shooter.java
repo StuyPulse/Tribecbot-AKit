@@ -3,7 +3,6 @@ package com.stuypulse.robot.subsystems.superstructure.shooter;
 import static edu.wpi.first.units.Units.RPM;
 
 import com.stuypulse.robot.constants.Settings;
-import com.stuypulse.robot.constants.Settings.Mode;
 import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterIO.ShooterIOOutputs;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;

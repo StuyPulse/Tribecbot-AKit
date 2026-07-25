@@ -65,6 +65,33 @@ public interface Motors {
             .withRampRate(0.50);
   }
 
+  public interface Superstructure {
+    public interface Shooter {
+      TalonFXConfig SHOOTER_CONFIG =
+          new TalonFXConfig()
+              .withInvertedValue(InvertedValue.CounterClockwise_Positive)
+              .withNeutralMode(NeutralModeValue.Coast)
+              .withSupplyCurrentLimitEnabled(false)
+              .withStatorCurrentLimitEnabled(false)
+              .withPIDConstants(
+                  Gains.Superstructure.Shooter.kP.get(),
+                  Gains.Superstructure.Shooter.kI.get(),
+                  Gains.Superstructure.Shooter.kD.get(),
+                  0)
+              .withFFConstants(
+                  Gains.Superstructure.Shooter.kS.get(),
+                  Gains.Superstructure.Shooter.kV.get(),
+                  Gains.Superstructure.Shooter.kA.get(),
+                  0)
+              .withSensorToMechanismRatio(Settings.Superstructure.Shooter.GEAR_RATIO)
+              .withStatorCurrentLimitAmps(140)
+              .withStatorCurrentLimitEnabled(false)
+              .withSupplyCurrentLimitAmps(100)
+              .withSupplyCurrentLimitEnabled(true)
+              .withLowerLimitSupplyCurrent(60, 1);
+    }
+  }
+
   public static class CANCoderConfig {
     private final CANcoderConfiguration configuration = new CANcoderConfiguration();
     private final MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();
