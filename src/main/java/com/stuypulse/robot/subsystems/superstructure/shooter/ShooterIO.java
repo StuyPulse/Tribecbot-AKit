@@ -34,7 +34,7 @@ public interface ShooterIO {
   }
 
   class ShooterIOOutputs {
-    @AutoLogOutput(key = "Shooter/Velocity Setpoint") 
+    @AutoLogOutput(key = "Shooter/Velocity Setpoint")
     public AngularVelocity shooterVelocity = RPM.zero();
   }
 

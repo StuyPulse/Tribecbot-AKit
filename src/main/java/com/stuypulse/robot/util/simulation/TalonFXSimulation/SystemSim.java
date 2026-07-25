@@ -1,137 +1,141 @@
 package com.stuypulse.robot.util.simulation.TalonFXSimulation;
 
+import static edu.wpi.first.units.Units.*;
+
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
-import edu.wpi.first.units.measure.*;
-import static edu.wpi.first.units.Units.*;
-
 public interface SystemSim<T> {
-    void setInputVoltage(Voltage voltage);
-    void update(Time dt);
-    Angle getMechanismPosition();
-    AngularVelocity getMechanismVelocity();
-    T getLinearSystemSim();
+  void setInputVoltage(Voltage voltage);
 
+  void update(Time dt);
 
-    static SystemSim<DCMotorSim> of(DCMotorSim dcMotorSim) {
-        return new SystemSim<DCMotorSim>() {
-            @Override
-            public void setInputVoltage(Voltage voltage) {
-                dcMotorSim.setInputVoltage(voltage.in(Volts));
-            }
+  Angle getMechanismPosition();
 
-            @Override
-            public void update(Time dt) {
-                dcMotorSim.update(dt.in(Seconds));
-            }
+  AngularVelocity getMechanismVelocity();
 
-            @Override
-            public Angle getMechanismPosition() {
-                return dcMotorSim.getAngularPosition();
-            }
+  T getLinearSystemSim();
 
-            @Override
-            public AngularVelocity getMechanismVelocity() {
-                return dcMotorSim.getAngularVelocity();
-            }
+  static SystemSim<DCMotorSim> of(DCMotorSim dcMotorSim) {
+    return new SystemSim<DCMotorSim>() {
+      @Override
+      public void setInputVoltage(Voltage voltage) {
+        dcMotorSim.setInputVoltage(voltage.in(Volts));
+      }
 
-            @Override
-            public DCMotorSim getLinearSystemSim() {
-                return dcMotorSim;
-            }
-        };
-    }
+      @Override
+      public void update(Time dt) {
+        dcMotorSim.update(dt.in(Seconds));
+      }
 
-    static SystemSim<FlywheelSim> of(FlywheelSim flywheelSim) {
-        return new SystemSim<FlywheelSim>() {
-            private Angle position = Rotations.of(0);
+      @Override
+      public Angle getMechanismPosition() {
+        return dcMotorSim.getAngularPosition();
+      }
 
-            @Override
-            public void setInputVoltage(Voltage voltage) {
-                flywheelSim.setInputVoltage(voltage.in(Volts));
-            }
+      @Override
+      public AngularVelocity getMechanismVelocity() {
+        return dcMotorSim.getAngularVelocity();
+      }
 
-            @Override
-            public void update(Time dt) {
-                flywheelSim.update(dt.in(Seconds));
-                position = position.plus(flywheelSim.getAngularVelocity().times(dt));
-            }
+      @Override
+      public DCMotorSim getLinearSystemSim() {
+        return dcMotorSim;
+      }
+    };
+  }
 
-            @Override
-            public Angle getMechanismPosition() {
-                return position; 
-            }
+  static SystemSim<FlywheelSim> of(FlywheelSim flywheelSim) {
+    return new SystemSim<FlywheelSim>() {
+      private Angle position = Rotations.of(0);
 
-            @Override
-            public AngularVelocity getMechanismVelocity() {
-                return flywheelSim.getAngularVelocity();
-            }
+      @Override
+      public void setInputVoltage(Voltage voltage) {
+        flywheelSim.setInputVoltage(voltage.in(Volts));
+      }
 
-            @Override
-            public FlywheelSim getLinearSystemSim() {
-                return flywheelSim;
-            }
-        };
-    }
+      @Override
+      public void update(Time dt) {
+        flywheelSim.update(dt.in(Seconds));
+        position = position.plus(flywheelSim.getAngularVelocity().times(dt));
+      }
 
-    static SystemSim<SingleJointedArmSim> of(SingleJointedArmSim armSim) {
-        return new SystemSim<SingleJointedArmSim>() {
-            @Override
-            public void setInputVoltage(Voltage voltage) {
-                armSim.setInputVoltage(voltage.in(Volts));
-            }
+      @Override
+      public Angle getMechanismPosition() {
+        return position;
+      }
 
-            @Override
-            public void update(Time dt) {
-                armSim.update(dt.in(Seconds));
-            }
+      @Override
+      public AngularVelocity getMechanismVelocity() {
+        return flywheelSim.getAngularVelocity();
+      }
 
-            @Override
-            public Angle getMechanismPosition() {
-                return Radians.of(armSim.getAngleRads());
-            }
+      @Override
+      public FlywheelSim getLinearSystemSim() {
+        return flywheelSim;
+      }
+    };
+  }
 
-            @Override
-            public AngularVelocity getMechanismVelocity() {
-                return RadiansPerSecond.of(armSim.getVelocityRadPerSec());
-            }
+  static SystemSim<SingleJointedArmSim> of(SingleJointedArmSim armSim) {
+    return new SystemSim<SingleJointedArmSim>() {
+      @Override
+      public void setInputVoltage(Voltage voltage) {
+        armSim.setInputVoltage(voltage.in(Volts));
+      }
 
-            @Override
-            public SingleJointedArmSim getLinearSystemSim() {
-                return armSim;
-            }
-        };
-    }
+      @Override
+      public void update(Time dt) {
+        armSim.update(dt.in(Seconds));
+      }
 
-    static SystemSim<ElevatorSim> of(ElevatorSim elevatorSim, Distance drumRadius) {
-        return new SystemSim<ElevatorSim>() {
-            @Override
-            public void setInputVoltage(Voltage voltage) {
-                elevatorSim.setInputVoltage(voltage.in(Volts));
-            }
+      @Override
+      public Angle getMechanismPosition() {
+        return Radians.of(armSim.getAngleRads());
+      }
 
-            @Override
-            public void update(Time dt) {
-                elevatorSim.update(dt.in(Seconds));
-            }
+      @Override
+      public AngularVelocity getMechanismVelocity() {
+        return RadiansPerSecond.of(armSim.getVelocityRadPerSec());
+      }
 
-            @Override
-            public Angle getMechanismPosition() {
-                return Radians.of(elevatorSim.getPositionMeters() / drumRadius.in(Meters));
-            }
+      @Override
+      public SingleJointedArmSim getLinearSystemSim() {
+        return armSim;
+      }
+    };
+  }
 
-            @Override
-            public AngularVelocity getMechanismVelocity() {
-                return RadiansPerSecond.of(elevatorSim.getVelocityMetersPerSecond() / drumRadius.in(Meters));
-            }
+  static SystemSim<ElevatorSim> of(ElevatorSim elevatorSim, Distance drumRadius) {
+    return new SystemSim<ElevatorSim>() {
+      @Override
+      public void setInputVoltage(Voltage voltage) {
+        elevatorSim.setInputVoltage(voltage.in(Volts));
+      }
 
-            @Override
-            public ElevatorSim getLinearSystemSim() {
-                return elevatorSim;
-            }
-        };
-    }
+      @Override
+      public void update(Time dt) {
+        elevatorSim.update(dt.in(Seconds));
+      }
+
+      @Override
+      public Angle getMechanismPosition() {
+        return Radians.of(elevatorSim.getPositionMeters() / drumRadius.in(Meters));
+      }
+
+      @Override
+      public AngularVelocity getMechanismVelocity() {
+        return RadiansPerSecond.of(
+            elevatorSim.getVelocityMetersPerSecond() / drumRadius.in(Meters));
+      }
+
+      @Override
+      public ElevatorSim getLinearSystemSim() {
+        return elevatorSim;
+      }
+    };
+  }
 }
