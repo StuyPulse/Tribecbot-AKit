@@ -17,6 +17,7 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.util.Units;
 
 public class VisionConstants {
   // AprilTag layout
@@ -24,15 +25,39 @@ public class VisionConstants {
       AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
   // Camera names, must match names configured on coprocessor
-  public static String camera0Name = "camera_0";
-  public static String camera1Name = "camera_1";
+  public static String camera0Name = "limelight-right";
+  public static String camera1Name = "limelight-left";
+  public static String camera2Name = "limelight-back";
 
   // Robot to camera transforms
   // (Not used by Limelight, configure in web UI instead)
   public static Transform3d robotToCamera0 =
-      new Transform3d(0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, 0.0));
+      new Transform3d(
+          Units.inchesToMeters(-9.149),
+          Units.inchesToMeters(15.080),
+          Units.inchesToMeters(8.088),
+          new Rotation3d(
+              Units.degreesToRadians(180),
+              Units.degreesToRadians(28.0),
+              Units.degreesToRadians(-80.203885)));
   public static Transform3d robotToCamera1 =
-      new Transform3d(-0.2, 0.0, 0.2, new Rotation3d(0.0, -0.4, Math.PI));
+      new Transform3d(
+          Units.inchesToMeters(-2.490),
+          Units.inchesToMeters(-14.8620),
+          Units.inchesToMeters(5.676),
+          new Rotation3d(
+              Units.degreesToRadians(0),
+              Units.degreesToRadians(14.955812),
+              Units.degreesToRadians(71.5)));
+  public static Transform3d robotToCamera2 =
+      new Transform3d(
+          Units.inchesToMeters(-10.676),
+          Units.inchesToMeters(-12.969),
+          Units.inchesToMeters(8.753),
+          new Rotation3d(
+              Units.degreesToRadians(0),
+              Units.degreesToRadians(27.875),
+              Units.degreesToRadians(185.155825)));
 
   // Basic filtering thresholds
   public static double maxAmbiguity = 0.3;

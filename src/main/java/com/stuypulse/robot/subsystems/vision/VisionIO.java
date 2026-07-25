@@ -45,5 +45,16 @@ public interface VisionIO {
     PHOTONVISION
   }
 
-  default void updateInputs(VisionIOInputs inputs) {}
+  enum MegaTagMode {
+    MEGATAG_1,
+    MEGATAG_2
+  }
+
+  class VisionIOOutputs {
+    public MegaTagMode megaTagMode = MegaTagMode.MEGATAG_1;
+  }
+
+  public default void updateInputs(VisionIOInputs inputs) {}
+
+  public default void applyOutputs(VisionIOOutputs outputs) {}
 }

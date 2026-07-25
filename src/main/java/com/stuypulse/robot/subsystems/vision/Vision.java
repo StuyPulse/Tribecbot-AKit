@@ -15,7 +15,13 @@ package com.stuypulse.robot.subsystems.vision;
 
 import static com.stuypulse.robot.subsystems.vision.VisionConstants.*;
 
+import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.Settings.VisionMode;
+import com.stuypulse.robot.subsystems.swerve.Drive;
+import com.stuypulse.robot.subsystems.vision.VisionIO.MegaTagMode;
 import com.stuypulse.robot.subsystems.vision.VisionIO.PoseObservationType;
+import com.stuypulse.robot.subsystems.vision.VisionIO.VisionIOOutputs;
+
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -25,15 +31,64 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.LinkedList;
 import java.util.List;
+import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
+  private static final Vision instance;
+
+  static {
+    Drive drive = Drive.getInstance();
+
+    switch (Settings.currentMode) {
+      case REAL -> {
+        instance =
+            Settings.currentVisionMode == VisionMode.LIMELIGHT
+                ? new Vision(
+                    drive,
+                    new VisionIOLimelight(VisionConstants.camera0Name, drive::getRotation),
+                    new VisionIOLimelight(VisionConstants.camera1Name, drive::getRotation),
+                    new VisionIOLimelight(VisionConstants.camera2Name, drive::getRotation))
+                : new Vision(
+                    drive,
+                    new VisionIOPhotonVision(camera0Name, robotToCamera0),
+                    new VisionIOPhotonVision(camera1Name, robotToCamera1),
+                    new VisionIOPhotonVision(camera2Name, robotToCamera2));
+      }
+
+      case SIM -> {
+        SwerveDriveSimulation driveSimulation = Drive.getDriveSimulation();
+
+        instance =
+            new Vision(
+                drive,
+                new VisionIOPhotonVisionSim(
+                    camera0Name, robotToCamera0, driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    camera1Name, robotToCamera1, driveSimulation::getSimulatedDriveTrainPose),
+                new VisionIOPhotonVisionSim(
+                    camera2Name, robotToCamera2, driveSimulation::getSimulatedDriveTrainPose));
+      }
+
+      // For replay mode
+      default -> {
+        instance = new Vision(drive, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
+      }
+    }
+  }
+
+  public static Vision getInstance() {
+    return instance;
+  }
+
   private final VisionConsumer consumer;
   private final VisionIO[] io;
   private final VisionIOInputsAutoLogged[] inputs;
+  private final VisionIOOutputs[] outputs;
   private final Alert[] disconnectedAlerts;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
@@ -42,8 +97,10 @@ public class Vision extends SubsystemBase {
 
     // Initialize inputs
     this.inputs = new VisionIOInputsAutoLogged[io.length];
+    this.outputs = new VisionIOOutputs[io.length];
     for (int i = 0; i < inputs.length; i++) {
       inputs[i] = new VisionIOInputsAutoLogged();
+      outputs[i] = new VisionIOOutputs();
     }
 
     // Initialize disconnected alerts
@@ -184,5 +241,13 @@ public class Vision extends SubsystemBase {
         Pose2d visionRobotPoseMeters,
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs);
+  }
+
+  public Command setMegaTagMode(MegaTagMode mode) {
+    return runOnce(() -> {
+        for (VisionIOOutputs output : outputs) {
+            output.megaTagMode = mode;
+        }
+    });
   }
 }
