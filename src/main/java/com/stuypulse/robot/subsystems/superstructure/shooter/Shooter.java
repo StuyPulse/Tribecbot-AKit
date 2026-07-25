@@ -66,4 +66,8 @@ public class Shooter extends SubsystemBase {
   public Command runRightCorner() {
     return run(() -> runVelocity(Settings.Superstructure.Shooter.RPM.RIGHT_CORNER));
   }
+
+  public Command runReverse() {
+    return run(() -> runVelocity(Settings.Superstructure.Shooter.RPM.REVERSE));
+  }
 }
