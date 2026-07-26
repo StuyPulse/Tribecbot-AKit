@@ -13,6 +13,7 @@
 
 package com.stuypulse.robot.subsystems.vision;
 
+import com.stuypulse.robot.constants.Field;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.AutoLog;
@@ -54,6 +55,8 @@ public interface VisionIO {
     public MegaTagMode megaTagMode = MegaTagMode.MEGATAG_1;
 
     public int pipeline = 0;
+
+    public double[] aprilTagIDWhitelist = Field.ALL_TAGS;
   }
 
   public default void updateInputs(VisionIOInputs inputs) {}

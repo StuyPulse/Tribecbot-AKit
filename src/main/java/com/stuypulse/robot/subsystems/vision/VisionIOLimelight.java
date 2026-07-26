@@ -34,6 +34,7 @@ public class VisionIOLimelight implements VisionIO {
   private final Supplier<Rotation2d> rotationSupplier;
   private final DoubleArrayPublisher orientationPublisher;
   private final IntegerPublisher pipelinePublisher;
+  private final DoubleArrayPublisher aprilTagWhitelistPublisher;
 
   private final DoubleSubscriber latencySubscriber;
   private final DoubleSubscriber txSubscriber;
@@ -56,6 +57,7 @@ public class VisionIOLimelight implements VisionIO {
     this.rotationSupplier = rotationSupplier;
     pipelinePublisher = table.getIntegerTopic("pipeline").publish();
     orientationPublisher = table.getDoubleArrayTopic("robot_orientation_set").publish();
+    aprilTagWhitelistPublisher = table.getDoubleArrayTopic("fiducial_id_filters_set").publish();
     latencySubscriber = table.getDoubleTopic("tl").subscribe(0.0);
     txSubscriber = table.getDoubleTopic("tx").subscribe(0.0);
     tySubscriber = table.getDoubleTopic("ty").subscribe(0.0);
@@ -160,6 +162,8 @@ public class VisionIOLimelight implements VisionIO {
     this.megaTagMode = outputs.megaTagMode;
 
     pipelinePublisher.accept(outputs.pipeline);
+
+    aprilTagWhitelistPublisher.accept(outputs.aprilTagIDWhitelist);
   }
 
   /** Parses the 3D pose from a Limelight botpose array. */

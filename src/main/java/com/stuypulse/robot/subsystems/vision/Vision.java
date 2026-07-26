@@ -107,7 +107,7 @@ public class Vision extends SubsystemBase {
     for (int i = 0; i < inputs.length; i++) {
       disconnectedAlerts[i] =
           new Alert(
-              "Vision camera " + Integer.toString(i) + " is disconnected.", AlertType.kWarning);
+              "Vision camera " + cameraNames[i] + " is disconnected.", AlertType.kWarning);
     }
   }
 
@@ -124,7 +124,7 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
-      Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
+      Logger.processInputs("Vision/" + cameraNames[i], inputs[i]);
     }
 
     // Initialize logging values
@@ -204,16 +204,16 @@ public class Vision extends SubsystemBase {
 
       // Log camera datadata
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/TagPoses",
+          "Vision/Camera" + cameraNames[cameraIndex] + "/TagPoses",
           tagPoses.toArray(new Pose3d[tagPoses.size()]));
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPoses",
+          "Vision/Camera" + cameraNames[cameraIndex] + "/RobotPoses",
           robotPoses.toArray(new Pose3d[robotPoses.size()]));
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesAccepted",
+          "Vision/Camera" + cameraNames[cameraIndex] + "/RobotPosesAccepted",
           robotPosesAccepted.toArray(new Pose3d[robotPosesAccepted.size()]));
       Logger.recordOutput(
-          "Vision/Camera" + Integer.toString(cameraIndex) + "/RobotPosesRejected",
+          "Vision/Camera" + cameraNames[cameraIndex] + "/RobotPosesRejected",
           robotPosesRejected.toArray(new Pose3d[robotPosesRejected.size()]));
       allTagPoses.addAll(tagPoses);
       allRobotPoses.addAll(robotPoses);
@@ -236,8 +236,8 @@ public class Vision extends SubsystemBase {
 
   public void periodicAfterScheduler() {
     for (int i = 0; i < io.length; i++) {
-      Logger.recordOutput("Vision/Camera" + Integer.toString(i), outputs[i].megaTagMode);
-      Logger.recordOutput("Vision/Camera" + Integer.toString(i), outputs[i].pipeline);
+      Logger.recordOutput("Vision/" + cameraNames[i], outputs[i].megaTagMode);
+      Logger.recordOutput("Vision/" + cameraNames[i], outputs[i].pipeline);
 
       io[i].applyOutputs(outputs[i]);
     }
@@ -253,19 +253,31 @@ public class Vision extends SubsystemBase {
 
   public Command setMegaTagMode(MegaTagMode mode) {
     return runOnce(
-        () -> {
-          for (VisionIOOutputs output : outputs) {
-            output.megaTagMode = mode;
-          }
-        }).ignoringDisable(true);
+            () -> {
+              for (VisionIOOutputs output : outputs) {
+                output.megaTagMode = mode;
+              }
+            })
+        .ignoringDisable(true);
   }
 
   public Command setPipeline(int pipeline) {
     return runOnce(
-        () -> {
-          for (VisionIOOutputs output : outputs) {
-            output.pipeline = pipeline;
-          }
-        }).ignoringDisable(true);
+            () -> {
+              for (VisionIOOutputs output : outputs) {
+                output.pipeline = pipeline;
+              }
+            })
+        .ignoringDisable(true);
+  }
+
+  public Command setAprilTagWhitelist(double[] whitelist) {
+    return runOnce(
+            () -> {
+              for (VisionIOOutputs output : outputs) {
+                output.aprilTagIDWhitelist = whitelist;
+              }
+            })
+        .ignoringDisable(true);
   }
 }
