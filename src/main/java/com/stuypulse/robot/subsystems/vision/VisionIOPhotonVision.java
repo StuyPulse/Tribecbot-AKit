@@ -128,4 +128,9 @@ public class VisionIOPhotonVision implements VisionIO {
       inputs.tagIds[i++] = id;
     }
   }
+
+  @Override
+  public void applyOutputs(VisionIOOutputs outputs) {
+    camera.setPipelineIndex(outputs.pipeline);
+  }
 }

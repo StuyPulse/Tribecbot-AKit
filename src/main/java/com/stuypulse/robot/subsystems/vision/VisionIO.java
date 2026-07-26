@@ -52,6 +52,8 @@ public interface VisionIO {
 
   class VisionIOOutputs {
     public MegaTagMode megaTagMode = MegaTagMode.MEGATAG_1;
+
+    public int pipeline = 0;
   }
 
   public default void updateInputs(VisionIOInputs inputs) {}

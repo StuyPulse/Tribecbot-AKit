@@ -21,7 +21,6 @@ import com.stuypulse.robot.subsystems.swerve.Drive;
 import com.stuypulse.robot.subsystems.vision.VisionIO.MegaTagMode;
 import com.stuypulse.robot.subsystems.vision.VisionIO.PoseObservationType;
 import com.stuypulse.robot.subsystems.vision.VisionIO.VisionIOOutputs;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -74,7 +73,7 @@ public class Vision extends SubsystemBase {
                     camera2Name, robotToCamera2, driveSimulation::getSimulatedDriveTrainPose));
       }
 
-      // For replay mode
+        // For replay mode
       default -> {
         instance = new Vision(drive, new VisionIO() {}, new VisionIO() {}, new VisionIO() {});
       }
@@ -235,6 +234,15 @@ public class Vision extends SubsystemBase {
         allRobotPosesRejected.toArray(new Pose3d[allRobotPosesRejected.size()]));
   }
 
+  public void periodicAfterScheduler() {
+    for (int i = 0; i < io.length; i++) {
+      Logger.recordOutput("Vision/Camera" + Integer.toString(i), outputs[i].megaTagMode);
+      Logger.recordOutput("Vision/Camera" + Integer.toString(i), outputs[i].pipeline);
+
+      io[i].applyOutputs(outputs[i]);
+    }
+  }
+
   @FunctionalInterface
   public interface VisionConsumer {
     void accept(
@@ -244,10 +252,20 @@ public class Vision extends SubsystemBase {
   }
 
   public Command setMegaTagMode(MegaTagMode mode) {
-    return runOnce(() -> {
-        for (VisionIOOutputs output : outputs) {
+    return runOnce(
+        () -> {
+          for (VisionIOOutputs output : outputs) {
             output.megaTagMode = mode;
-        }
-    });
+          }
+        });
+  }
+
+  public Command setPipeline(int pipeline) {
+    return runOnce(
+        () -> {
+          for (VisionIOOutputs output : outputs) {
+            output.pipeline = pipeline;
+          }
+        });
   }
 }
