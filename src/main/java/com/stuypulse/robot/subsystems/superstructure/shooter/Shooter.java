@@ -4,9 +4,12 @@ import static edu.wpi.first.units.Units.RPM;
 
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterIO.ShooterIOOutputs;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import java.util.function.DoubleSupplier;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -30,10 +33,16 @@ public class Shooter extends SubsystemBase {
   private final ShooterIOInputsAutoLogged inputs;
   private final ShooterIOOutputs outputs;
 
+  private final Debouncer readyToShootDebouncer;
+  private boolean atTolerance;
+
   private Shooter(ShooterIO io) {
     this.io = io;
     this.inputs = new ShooterIOInputsAutoLogged();
     this.outputs = new ShooterIOOutputs();
+
+    readyToShootDebouncer = new Debouncer(0.5, DebounceType.kBoth);
+    atTolerance = false;
   }
 
   @Override
@@ -43,6 +52,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
+    Logger.recordOutput("Shooter/Velocity Setpoint", outputs.shooterVelocity);
     io.applyOutputs(outputs);
   }
 
@@ -50,24 +60,42 @@ public class Shooter extends SubsystemBase {
     outputs.shooterVelocity = velocity;
   }
 
+  public boolean readyToShoot() {
+    return readyToShootDebouncer.calculate(atTolerance);
+  }
+
   public Command stopShooter() {
     return run(() -> runVelocity(RPM.zero()));
   }
 
-  public Command runManualOverride() {
+  // Anything that isn't SOTM or FOTM
+  private Command runManual(DoubleSupplier rpmSupplier) {
     return run(
-        () -> runVelocity(RPM.of(Settings.Superstructure.Shooter.RPM.MANUAL_OVERRIDE.get())));
+        () -> {
+          double targetRPM = rpmSupplier.getAsDouble();
+
+          runVelocity(RPM.of(targetRPM));
+          double error = inputs.shooterLeaderMotorVelocity.in(RPM) - targetRPM;
+
+          atTolerance =
+              error > -Settings.Superstructure.SHOOTER_TOLERANCE_RPM_LOW
+                  && error < Settings.Superstructure.SHOOTER_TOLERANCE_RPM_HIGH;
+        });
+  }
+
+  public Command runManualOverride() {
+    return runManual(Settings.Superstructure.Shooter.RPM.MANUAL_OVERRIDE::get);
   }
 
   public Command runLeftCorner() {
-    return run(() -> runVelocity(Settings.Superstructure.Shooter.RPM.LEFT_CORNER));
+    return runManual(() -> Settings.Superstructure.Shooter.RPM.LEFT_CORNER.in(RPM));
   }
 
   public Command runRightCorner() {
-    return run(() -> runVelocity(Settings.Superstructure.Shooter.RPM.RIGHT_CORNER));
+    return runManual(() -> Settings.Superstructure.Shooter.RPM.RIGHT_CORNER.in(RPM));
   }
 
   public Command runReverse() {
-    return run(() -> runVelocity(Settings.Superstructure.Shooter.RPM.REVERSE));
+    return runManual(() -> Settings.Superstructure.Shooter.RPM.REVERSE.in(RPM));
   }
 }
