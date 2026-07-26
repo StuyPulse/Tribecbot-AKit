@@ -257,7 +257,7 @@ public class Vision extends SubsystemBase {
           for (VisionIOOutputs output : outputs) {
             output.megaTagMode = mode;
           }
-        });
+        }).ignoringDisable(true);
   }
 
   public Command setPipeline(int pipeline) {
@@ -266,6 +266,6 @@ public class Vision extends SubsystemBase {
           for (VisionIOOutputs output : outputs) {
             output.pipeline = pipeline;
           }
-        });
+        }).ignoringDisable(true);
   }
 }
