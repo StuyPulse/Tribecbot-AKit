@@ -5,6 +5,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
@@ -60,6 +61,9 @@ public class ShooterIOSim implements ShooterIO {
             Ports.Superstructure.Shooter.MOTOR_FOLLOW,
             Settings.Superstructure.Shooter.GEAR_RATIO,
             flywheelSim);
+    
+    shooterLeaderSim.configure(Motors.Superstructure.Shooter.SHOOTER_CONFIG);
+    shooterFollowerSim.configure(Motors.Superstructure.Shooter.SHOOTER_CONFIG);
 
     shooterLeaderController = new VelocityTorqueCurrentFOC(0);
     shooterFollowerController =
