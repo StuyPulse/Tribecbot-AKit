@@ -3,6 +3,7 @@ package com.stuypulse.robot.constants;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -77,8 +78,8 @@ public class Settings {
     public final double IS_EMPTY_RPM_TOLERANCE = 150; // TODO: update IS EMPTY VALUE
     public final double IS_EMPTY_DEBOUNCE_TIME = 0.4; // TODO: update IS EMPTY VALUE
 
-    public final Rotation2d HOOD_TOLERANCE = Rotation2d.fromDegrees(0.5);
-    public final Rotation2d HOOD_SOTM_TOLERANCE = Rotation2d.fromDegrees(2);
+    public final Angle HOOD_TOLERANCE = Degrees.of(0.5);
+    public final Angle HOOD_SOTM_TOLERANCE = Degrees.of(2);
 
     public interface AngleInterpolation {
       double[][] distanceAngleInterpolationValues = {
@@ -181,37 +182,37 @@ public class Settings {
       public final double GEAR_RATIO = 125.4;
 
       public final double ENCODER_TO_MECH = 11.0;
-      public final double HOOD_HOMING_VOLTAGE = 0.5;
+      public final Voltage HOOD_HOMING_VOLTAGE = Volts.of(0.5);
 
-      public final Rotation2d ENCODER_OFFSET = Rotation2d.fromRotations(0.795);
+      public final Angle ENCODER_OFFSET = Rotations.of(0.795);
 
-      public final Rotation2d MAX_FROM_HORIZON = Rotation2d.fromDegrees(45.0);
-      public final Rotation2d MIN_FROM_HORIZON = Rotation2d.fromDegrees(15.0);
-      public final Rotation2d SOFT_LIMIT = Rotation2d.fromDegrees(.25);
-      public final Rotation2d FORWARD_SOFT_LIMIT = MAX_FROM_HORIZON.minus(SOFT_LIMIT);
-      public final Rotation2d REVERSE_SOFT_LIMIT = MIN_FROM_HORIZON.plus(SOFT_LIMIT);
+      public final Angle MAX_FROM_HORIZON = Degrees.of(45.0);
+      public final Angle MIN_FROM_HORIZON = Degrees.of(15.0);
+      public final Angle SOFT_LIMIT = Degrees.of(.25);
+      public final Angle FORWARD_SOFT_LIMIT = MAX_FROM_HORIZON.minus(SOFT_LIMIT);
+      public final Angle REVERSE_SOFT_LIMIT = MIN_FROM_HORIZON.plus(SOFT_LIMIT);
 
-      public final double STALL_CURRENT_LIMIT = 0.55;
+      public final Current STALL_CURRENT_LIMIT = Amps.of(0.55);
       public final double STALL_DEBOUNCE = 0.5;
 
       public interface Angles {
         public final LoggedNetworkNumber MANUAL_OVERRIDE =
             new LoggedNetworkNumber("InterpolationTesting/Shoot State Target Angle (deg)", 44.0);
-        public final Rotation2d MAX = FORWARD_SOFT_LIMIT;
-        public final Rotation2d MIN = REVERSE_SOFT_LIMIT;
-        public final Rotation2d FERRY_ANGLE = MAX; // Rotation2d.fromDegrees(44.0);
+        public final Angle MAX = FORWARD_SOFT_LIMIT;
+        public final Angle MIN = REVERSE_SOFT_LIMIT;
+        public final Angle FERRY_ANGLE = MAX; // Degrees.of(44.0);
 
-        public final Rotation2d STOW = Rotation2d.fromDegrees(21.0);
-        public final Rotation2d KB = Rotation2d.fromDegrees(20.0);
-        public final Rotation2d LEFT_CORNER = Rotation2d.fromDegrees(39.0);
-        public final Rotation2d RIGHT_CORNER = Rotation2d.fromDegrees(39.0);
+        public final Angle STOW = Degrees.of(21.0);
+        public final Angle KB = Degrees.of(20.0);
+        public final Angle LEFT_CORNER = Degrees.of(39.0);
+        public final Angle RIGHT_CORNER = Degrees.of(39.0);
       }
     }
 
     public interface Turret {
-      public final Rotation2d MAX_VEL = new Rotation2d(Units.degreesToRadians(600.0));
-      public final Rotation2d MAX_ACCEL = new Rotation2d(Units.degreesToRadians(600.0));
-      public final Rotation2d TOLERANCE = Rotation2d.fromDegrees(2.0);
+      // public final AngularVelocity MAX_VEL = new Angle(Units.degreesToRadians(600.0));
+      // public final Angle MAX_ACCEL = new Angle(Units.degreesToRadians(600.0));
+      public final Angle TOLERANCE = Degrees.of(2.0);
       public final LoggedNetworkNumber SOTM_TOLERANCE_THRESHOLD_METERS =
           new LoggedNetworkNumber(
               "Superstructure/Turret/SOTM Tolerance Dist Threshold (Meters)", 1.75);
@@ -219,26 +220,26 @@ public class Settings {
           new LoggedNetworkNumber("Superstructure/Turret/SOTM Tolerance (Close)", 10.0);
       public final LoggedNetworkNumber SOTM_TOLERANCE_FAR =
           new LoggedNetworkNumber(
-              "Superstructure/Turret/SOTM Tolerance (Far)", 6.0); // Rotation2d.fromDegrees(10.0);
-      public final Rotation2d FOTM_TOLERANCE = Rotation2d.fromDegrees(10.0);
+              "Superstructure/Turret/SOTM Tolerance (Far)", 6.0); // Degrees.of(10.0);
+      public final Angle FOTM_TOLERANCE = Degrees.of(10.0);
 
-      public final Rotation2d KB = Rotation2d.fromDegrees(0.0);
-      public final Rotation2d LEFT_CORNER = Rotation2d.fromDegrees(-233.0);
-      public final Rotation2d RIGHT_CORNER = Rotation2d.fromDegrees(53.0);
+      public final Angle KB = Degrees.of(0.0);
+      public final Angle LEFT_CORNER = Degrees.of(-233.0);
+      public final Angle RIGHT_CORNER = Degrees.of(53.0);
 
       double RESOLUTION_OF_ABSOLUTE_ENCODER = 0.1;
       double WRAP_DEBOUNCE = 0.5;
       double SETPOINT_FILTER_THRESHOLD_DEG = 0.5;
 
-      Rotation2d MAX_THEORETICAL_ROTATION = Rotation2d.fromDegrees(612);
-      Rotation2d MIN_THEORETICAL_ROTATION = Rotation2d.fromDegrees(-612);
+      Angle MAX_THEORETICAL_ROTATION = Degrees.of(612);
+      Angle MIN_THEORETICAL_ROTATION = Degrees.of(-612);
 
       /* CONSTANTS */
       public final double RANGE_CW = 90.0; // -360.0;
       public final double RANGE_CCW = -360.0; // 85.0; // -397.0 is further
 
-      public final Rotation2d GAIN_SWITCHING_THRESHOLD_START = Rotation2d.fromDegrees(30);
-      public final Rotation2d GAIN_SWITCHING_THRESHOLD_END = Rotation2d.fromDegrees(3);
+      public final Angle GAIN_SWITCHING_THRESHOLD_START = Degrees.of(30);
+      public final Angle GAIN_SWITCHING_THRESHOLD_END = Degrees.of(3);
 
       public final Transform2d TURRET_OFFSET =
           new Transform2d(Units.inchesToMeters(-4.0), Units.inchesToMeters(8.0), Rotation2d.kZero);
@@ -255,12 +256,12 @@ public class Settings {
 
       public interface Encoder17t {
         public final int TEETH = 17;
-        public final Rotation2d OFFSET = Rotation2d.fromRotations(-0.185);
+        public final Angle OFFSET = Rotations.of(-0.185);
       }
 
       public interface Encoder18t {
         public final int TEETH = 18;
-        public final Rotation2d OFFSET = Rotation2d.fromRotations(-0.814);
+        public final Angle OFFSET = Rotations.of(-0.814);
       }
 
       public interface SoftwareLimit {

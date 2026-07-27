@@ -3,8 +3,8 @@ package com.stuypulse.robot.constants;
 import com.ctre.phoenix6.CANBus;
 
 public class Ports {
-  public CANBus RIO = new CANBus("rio");
-  public CANBus CANIVORE = new CANBus("CANIVORE");
+  public static final CANBus RIO = new CANBus("rio");
+  public static final CANBus CANIVORE = new CANBus("CANIVORE");
 
   public interface Gamepad {
     int DRIVER = 0;

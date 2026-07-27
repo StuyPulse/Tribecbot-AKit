@@ -5,6 +5,8 @@
 /***************************************************************/
 package com.stuypulse.robot.constants;
 
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
@@ -89,6 +91,33 @@ public interface Motors {
               .withSupplyCurrentLimitAmps(100)
               .withSupplyCurrentLimitEnabled(true)
               .withLowerLimitSupplyCurrent(60, 1);
+    }
+
+    public interface Hood {
+      TalonFXConfig HOOD_CONFIG =
+          new TalonFXConfig()
+              .withInvertedValue(InvertedValue.Clockwise_Positive)
+              .withNeutralMode(NeutralModeValue.Brake)
+              .withSupplyCurrentLimitAmps(80.0)
+              .withStatorCurrentLimitEnabled(false)
+              .withRampRate(0.25)
+              .withPIDConstants(
+                  Gains.Superstructure.Hood.kP,
+                  Gains.Superstructure.Hood.kI,
+                  Gains.Superstructure.Hood.kD,
+                  0)
+              .withFFConstants(
+                  Gains.Superstructure.Hood.kS,
+                  Gains.Superstructure.Hood.kV,
+                  Gains.Superstructure.Hood.kA,
+                  0)
+              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign, 0)
+              .withSensorToMechanismRatio(Settings.Superstructure.Hood.GEAR_RATIO)
+              .withSoftLimits(
+                  true,
+                  true,
+                  Settings.Superstructure.Hood.FORWARD_SOFT_LIMIT.in(Rotations),
+                  Settings.Superstructure.Hood.REVERSE_SOFT_LIMIT.in(Rotations));
     }
   }
 
