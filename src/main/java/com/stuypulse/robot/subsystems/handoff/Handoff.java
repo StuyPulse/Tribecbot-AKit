@@ -33,8 +33,8 @@ public class Handoff extends SubsystemBase{
 
     private Handoff(HandoffIO io) {
         this.io = io;
-        this.inputs = new HandoffIOInputsAutoLogged;
-        this.outputs = new HandoffIOOutputs;
+        this.inputs = new HandoffIOInputsAutoLogged();
+        this.outputs = new HandoffIOOutputs();
     }
 
     @Override
