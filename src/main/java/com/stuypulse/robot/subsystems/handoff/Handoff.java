@@ -4,11 +4,11 @@ import org.littletonrobotics.junction.Logger;
 
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputs;
-import com.stuypulse.robot.subsystems.intake.Intake;
-import com.stuypulse.robot.subsystems.intake.IntakeIO;
-import com.stuypulse.robot.subsystems.intake.IntakeIO.IntakeIOOutputs;
-import com.stuypulse.robot.subsystems.intake.IntakeIOSim;
-import com.stuypulse.robot.subsystems.intake.IntakeIOTalonFX;
+import com.stuypulse.robot.subsystems.handoff.Handoff;
+import com.stuypulse.robot.subsystems.handoff.HandoffIO;
+import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputs;
+import com.stuypulse.robot.subsystems.handoff.HandoffIOSim;
+import com.stuypulse.robot.subsystems.handoff.HandoffIOTalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
