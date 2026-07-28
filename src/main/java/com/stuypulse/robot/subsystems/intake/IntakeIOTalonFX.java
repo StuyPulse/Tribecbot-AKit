@@ -5,7 +5,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -60,15 +59,15 @@ public class IntakeIOTalonFX implements IntakeIO {
     Motors.Intake.ROLLER_CONFIG.configure(rollerLeaderMotor);
     Motors.Intake.ROLLER_CONFIG.configure(rollerFollowerMotor);
 
-    rollerLeaderController = new DutyCycleOut(0);
+    rollerLeaderController = new DutyCycleOut(0).withEnableFOC(true);
     rollerFollowerController =
         new Follower(rollerLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed);
-    pivotPositionController = new PositionVoltage(0);
+    pivotPositionController = new PositionVoltage(0).withEnableFOC(true);
     pivotPushdownController = new TorqueCurrentFOC(0);
-    pivotVoltageController = new VoltageOut(0);
+    pivotVoltageController = new VoltageOut(0).withEnableFOC(true);
 
     rollerFollowerMotor.setControl(rollerFollowerController);
-    pivotMotor.setPosition(Settings.Intake.PIVOT_MAX_ANGLE);
+    pivotMotor.setPosition(Settings.Intake.PIVOT_STOW_ANGLE);
 
     pivotPosition = pivotMotor.getPosition();
     pivotSupplyCurrent = pivotMotor.getSupplyCurrent();
@@ -149,11 +148,14 @@ public class IntakeIOTalonFX implements IntakeIO {
     }
 
     switch (outputs.pivotOutputMode) {
-      case POSITION -> pivotMotor.setControl(pivotPositionController.withPosition(outputs.pivotPosition));
+      case POSITION -> pivotMotor.setControl(
+          pivotPositionController.withPosition(outputs.pivotPosition));
 
-      case TORQUE_CURRENT -> pivotMotor.setControl(pivotPushdownController.withOutput(outputs.pivotTorqueCurrent));
+      case TORQUE_CURRENT -> pivotMotor.setControl(
+          pivotPushdownController.withOutput(outputs.pivotTorqueCurrent));
 
-      case VOLTAGE -> pivotMotor.setControl(pivotVoltageController.withOutput(outputs.pivotVoltage));
+      case VOLTAGE -> pivotMotor.setControl(
+          pivotVoltageController.withOutput(outputs.pivotVoltage));
     }
 
     rollerLeaderMotor.setControl(rollerLeaderController.withOutput(outputs.rollerDutyCycle));
