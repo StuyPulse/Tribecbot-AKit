@@ -16,7 +16,7 @@ import edu.wpi.first.units.measure.Voltage;
 
 public interface TurretIO {
     @AutoLog
-    class TurretIOInputs{
+    public static class TurretIOInputs{
         public Current turretMotorSupplyCurrent = Amps.zero();
         public Current turretMotorStatorCurrent = Amps.zero();
         public Temperature turrentMotorTemperature = Celsius.zero();
@@ -25,7 +25,7 @@ public interface TurretIO {
         public AngularVelocity turretMotorVelocity = DegreesPerSecond.zero();
     }
 
-    class TurretIOOutputs {
+    public static class TurretIOOutputs {
         public Angle turretPosition = Degrees.zero();
     }
 
