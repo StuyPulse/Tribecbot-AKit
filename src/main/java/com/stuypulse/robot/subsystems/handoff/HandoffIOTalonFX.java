@@ -44,9 +44,11 @@ public class HandoffIOTalonFX implements HandoffIO {
         Motors.Handoff.HANDOFF_CONFIG.configure(motorLead);
         Motors.Handoff.HANDOFF_CONFIG.configure(motorFollow);
 
-        controller = new DutyCycleOut(getTargetDutyCycle());
+        controller = new DutyCycleOut(0);
         follower = new Follower(Ports.Handoff.MOTOR_LEAD, MotorAlignmentValue.Opposed);
         voltageOverride = Optional.empty();
+
+        motorFollow.setControl(follower);
         
         motorLeadSupplyCurrent = motorLead.getSupplyCurrent();
         motorLeadStatorCurrent = motorLead.getStatorCurrent();
@@ -92,7 +94,7 @@ public class HandoffIOTalonFX implements HandoffIO {
     public void setVoltageOverride(Optional<Double> voltage) {
         this.voltageOverride = voltage;
     }
-    
+
     @Override
     public void applyOutputs(HandoffIOOutputs outputs) {
         if(!Settings.EnabledSubsystems.HANDOFF.get()) {
