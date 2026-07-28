@@ -1,5 +1,7 @@
 package com.stuypulse.robot.subsystems.handoff;
 
+import java.util.Optional;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -8,7 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
-import com.stuypulse.robot.subsystems.intake.IntakeIO.IntakeIOInputs;
+import com.stuypulse.robot.constants.Settings;
 
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -88,7 +90,13 @@ public class HandoffIOTalonFX implements HandoffIO {
 
     @Override
     public void applyOutputs(HandoffIOOutputs outputs) {
-        motorLead.setControl(controller.withOutput(outputs.handoffDutyCycle));
+        if(!Settings.EnabledSubsystems.HANDOFF.get()) {
+            motorLead.stopMotor();
+            motorFollow.stopMotor();
+        }else{
+            motorLead.setControl(controller.withOutput(outputs.handoffDutyCycle));
+            motorFollow.setControl(follower);
+        }
     }
 
 

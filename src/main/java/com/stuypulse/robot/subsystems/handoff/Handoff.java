@@ -6,10 +6,10 @@ import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputs;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO;
-import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputs;
 import com.stuypulse.robot.subsystems.handoff.HandoffIOSim;
 import com.stuypulse.robot.subsystems.handoff.HandoffIOTalonFX;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Handoff extends SubsystemBase{
@@ -46,8 +46,29 @@ public class Handoff extends SubsystemBase{
     public void periodicAfterScheduler() {
         io.applyOutputs(outputs);
   }
+
+    private void runHandoffDutyCycle(double dutyCycle) {
+      outputs.handoffDutyCycle = dutyCycle;
+    }
   
-    private void stopMotors() {
-        outputs.handoffDutyCycle = 0.0;
-  }
+    public Command runHandoff() {
+      return run(
+        () -> {
+          runHandoffDutyCycle(1.0);
+        });
+    }
+
+    public Command runReverseHandoff() {
+      return run(
+        () -> {
+          runHandoffDutyCycle(-1.0);
+        });
+    }
+
+    public Command runStopHandoff() {
+      return run(
+        () -> {
+          runHandoffDutyCycle(0.0);
+        });
+    }
 }
