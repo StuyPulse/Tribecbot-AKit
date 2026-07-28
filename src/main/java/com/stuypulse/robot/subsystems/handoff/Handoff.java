@@ -1,5 +1,7 @@
 package com.stuypulse.robot.subsystems.handoff;
 
+import static edu.wpi.first.units.Units.Amps;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.stuypulse.robot.constants.Settings;
@@ -9,6 +11,7 @@ import com.stuypulse.robot.subsystems.handoff.HandoffIO;
 import com.stuypulse.robot.subsystems.handoff.HandoffIOSim;
 import com.stuypulse.robot.subsystems.handoff.HandoffIOTalonFX;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -31,6 +34,8 @@ public class Handoff extends SubsystemBase{
     private final HandoffIOInputsAutoLogged inputs;
     private final HandoffIOOutputs outputs;
 
+    private final Debouncer handoffStallingDebouncer;
+
     private Handoff(HandoffIO io) {
         this.io = io;
         this.inputs = new HandoffIOInputsAutoLogged();
@@ -50,19 +55,26 @@ public class Handoff extends SubsystemBase{
     private void runHandoffDutyCycle(double dutyCycle) {
       outputs.handoffDutyCycle = dutyCycle;
     }
+
+    private boolean handoffStalling() {
+    return handoffStallingDebouncer.calculate(
+        inputs.motorLeadSupplyCurrent.abs(Amps) > Settings.Intake.PIVOT_STALL_CURRENT.in(Amps));
+  }
   
     public Command runHandoff() {
       return run(
         () -> {
           runHandoffDutyCycle(1.0);
-        });
+        })
+        .until(this::handoffStalling());
     }
 
     public Command runReverseHandoff() {
       return run(
         () -> {
           runHandoffDutyCycle(-1.0);
-        });
+        })
+        .until(this::handoffStalling());
     }
 
     public Command runStopHandoff() {
