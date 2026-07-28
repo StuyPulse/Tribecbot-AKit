@@ -1,10 +1,11 @@
 package com.stuypulse.robot.subsystems.superstructure.hood;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.superstructure.hood.HoodIO.HoodIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.hood.HoodIO.HoodIOOutputs;
-
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.Angle;
@@ -12,9 +13,6 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-
-import static edu.wpi.first.units.Units.Degrees;
-
 import org.littletonrobotics.junction.Logger;
 
 public class Hood extends SubsystemBase {
@@ -50,7 +48,8 @@ public class Hood extends SubsystemBase {
 
     OTM = false;
 
-    hoodStallingDebouncer = new Debouncer(Settings.Superstructure.Hood.STALL_DEBOUNCE, DebounceType.kBoth);
+    hoodStallingDebouncer =
+        new Debouncer(Settings.Superstructure.Hood.STALL_DEBOUNCE, DebounceType.kBoth);
   }
 
   @Override
@@ -97,19 +96,21 @@ public class Hood extends SubsystemBase {
     double hoodMin = Settings.Superstructure.Hood.Angles.MIN.in(Degrees);
     double hoodMax = Settings.Superstructure.Hood.Angles.MAX.in(Degrees);
 
-    return Degrees.of(hoodMin + (gamepad.getLeftX() + 1.0) * ((hoodMax - hoodMin) / 2)); 
+    return Degrees.of(hoodMin + (gamepad.getLeftX() + 1.0) * ((hoodMax - hoodMin) / 2));
   }
 
   private boolean isStalling() {
-    return hoodStallingDebouncer.calculate(inputs.hoodMotorStatorCurrent.gt(Settings.Superstructure.Hood.STALL_CURRENT_LIMIT));
+    return hoodStallingDebouncer.calculate(
+        inputs.hoodMotorStatorCurrent.gt(Settings.Superstructure.Hood.STALL_CURRENT_LIMIT));
   }
 
   public Command runHomingUpper() {
     return run(() -> {
-      runVoltage(Settings.Superstructure.Hood.HOOD_HOMING_VOLTAGE);
-    }).until(this::isStalling)
-    .andThen(() -> io.seedHoodPosition(Settings.Superstructure.Hood.MAX_FROM_HORIZON))
-    .andThen(runStow());
+          runVoltage(Settings.Superstructure.Hood.HOOD_HOMING_VOLTAGE);
+        })
+        .until(this::isStalling)
+        .andThen(() -> io.seedHoodPosition(Settings.Superstructure.Hood.MAX_FROM_HORIZON))
+        .andThen(runStow());
   }
 
   public Command runStow() {

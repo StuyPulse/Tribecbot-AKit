@@ -1,98 +1,122 @@
 package com.stuypulse.robot.subsystems.superstructure.turret;
 
-import org.littletonrobotics.junction.Logger;
+import static edu.wpi.first.units.Units.Degrees;
 
 import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.constants.Settings;
-
+import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputs;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Voltage;
-
-import static edu.wpi.first.units.Units.Degrees;
-
-import java.nio.file.attribute.PosixFileAttributeView;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import org.littletonrobotics.junction.Logger;
 
 public class Turret extends SubsystemBase {
-    private static final Turret instance; 
+  private static final Turret instance;
+  private Translation2d driverInput;
 
-    static {
-        switch (Settings.currentMode) {
-            case REAL -> instance = new Turret(new TurretIOTalonFX());
+  static {
+    switch (Settings.currentMode) {
+      case REAL -> instance = new Turret(new TurretIOTalonFX());
 
-            case SIM -> instance = new Turret(new TurretIOTalonFX());
+      case SIM -> instance = new Turret(new TurretIOSim());
 
-            default -> instance = new Turret(new TurretIO() {});
-        }
+      default -> instance = new Turret(new TurretIO() {});
     }
-    public static Turret getInstance(){
-        return instance;
+  }
+
+  public static Turret getInstance() {
+    return instance;
+  }
+
+  private final TurretIO io;
+  private final TurretIOInputsAutoLogged inputs;
+  private final TurretIOOutputs outputs;
+
+  private boolean OTM;
+  private boolean atTolerance;
+
+  private final Debouncer readyToShootDebouncer;
+
+  public Turret(TurretIO io) {
+    driverInput = Translation2d.kZero;
+
+    this.io = io;
+    this.inputs = new TurretIOInputsAutoLogged();
+    this.outputs = new TurretIOOutputs();
+
+    readyToShootDebouncer = new Debouncer(0.5, DebounceType.kBoth);
+    OTM = false;
+    atTolerance = false;
+  }
+
+  @Override
+  public void periodic() {
+    io.updateInputs(inputs);
+    Logger.processInputs("Turret", inputs);
+  }
+
+  public void periodicAfterScheduler() {
+    io.applyOutputs(outputs);
+  }
+
+  public boolean atTolerance() {
+    Angle error = inputs.turretMotorPosition.minus(outputs.turretPosition);
+
+    if (Robot.isReal()) {
+      if (OTM) {
+        return error.abs(Degrees) < Settings.Superstructure.SHOOTER_SOTM_TOLERANCE_RPM_HIGH;
+      } else {
+        return error.abs(Degrees) < Settings.Superstructure.SHOOTER_TOLERANCE_RPM_HIGH;
+      }
+    } else {
+      return error.abs(Degrees) < Settings.Superstructure.SHOOTER_TOLERANCE_RPM_LOW;
     }
+  }
 
-    private final TurretIO io;
-    private final TurretIOInputsAutoLogged inputs;
-    private final TurretIOOutputs outputs;
+  public boolean turretReadyToShoot(){
+    return readyToShootDebouncer.calculate(atTolerance);
+  }
 
-    private boolean OTM;
-    private boolean atTolerance;
+  private void runPosition(Angle position, boolean OTM) {
+    this.OTM = OTM;
 
-    private final Debouncer readyToShootDebouncer;
+    outputs.turretPosition = position;
+  }
 
-    public Turret(TurretIO io){
-        this.io = io;
-        this.inputs = new TurretIOInputsAutoLogged();
-        this.outputs = new TurretIOOutputs();
+  private Angle driverInputToAngle() {
+    Logger.recordOutput("Superstructure/Input/Driver Output", driverInput.getX());
+    return Degrees.of(driverInput.getX() * 180);
+  }
 
-        readyToShootDebouncer = new Debouncer(0.5, DebounceType.kBoth);
-        OTM = false;
-        atTolerance = false;
-    }
+  public Command runFerry() {
+    return run(() -> runPosition(Settings.Superstructure.Turret.FOTM_TOLERANCE, OTM));
+  }
 
-    @Override
-    public void periodic(){
-        io.updateInputs(inputs);
-        Logger.processInputs("Turret", inputs);
-    }
+  public Command runLeftCorner() {
+    return run(() -> runPosition(Settings.Superstructure.Turret.LEFT_CORNER, OTM));
+  }
 
-    public void periodicAfterScheduler(){
-        Logger.recordOutput("Superstructure/Turret/Driver Input", null);
+  public Command runRightCorner() {
+    return run(() -> runPosition(Settings.Superstructure.Turret.RIGHT_CORNER, OTM));
+  }
 
-        io.applyOutputs(outputs);
-    }
+  public Command runKB() {
+    return run(() -> runPosition(Settings.Superstructure.Turret.KB, OTM));
+  }
 
-    public boolean atTolerance(){
-        Angle error = inputs.turretMotorPosition.minus(outputs.position);
+  public Command runShoot() {
+    return run(() -> runPosition(Degrees.of(Settings.Superstructure.Turret.SOTM_TOLERANCE_FAR.getAsDouble()), OTM));
+  }
 
-        if (Robot.isReal()){
-            if (OTM) {
-                return error.abs(Degrees) < Settings.Superstructure.SHOOTER_SOTM_TOLERANCE_RPM_HIGH;
-                return error.abs(Degrees) < Settings.Superstructure.SHOOTER_SOTM_TOLERANCE_RPM_LOW;
-            }else{
-                return error.abs(Degrees) < Settings.Superstructure.SHOOTER_TOLERANCE_RPM_HIGH;
-                return error.abs(Degrees) < Settings.Superstructure.SHOOTER_TOLERANCE_RPM_LOW;
-            }
-        }else{
-            
-        }
-    }
+  public Command runIdle() {
+    return run(() -> runPosition(Degrees.of(0), OTM));
+  }
 
-    private void runVoltage(Voltage voltage){
-        outputs.outputMode = ShooterIOOutputMode.VOLTAGE;
-    }
-
-    private void runPosition(Angle position, boolean OTM){
-        this.OTM = OTM;
-
-        outputs.outputMode = ShooterIOOutputMode.POSITION;
-        outputs.position = position;
-    }
-
-    private Command runAnalog(CommandXboxController gamepad){
-        return run(() -> runPosition(null, OTM));
-    }
+  public Command runAnalog(CommandXboxController gamepad) {
+    return run(() -> runPosition(driverInputToAngle(), OTM));
+  }
 }

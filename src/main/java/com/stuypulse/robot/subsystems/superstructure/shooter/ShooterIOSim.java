@@ -61,7 +61,7 @@ public class ShooterIOSim implements ShooterIO {
             Ports.Superstructure.Shooter.MOTOR_FOLLOW,
             Settings.Superstructure.Shooter.GEAR_RATIO,
             flywheelSim);
-    
+
     shooterLeaderSim.configure(Motors.Superstructure.Shooter.SHOOTER_CONFIG);
     shooterFollowerSim.configure(Motors.Superstructure.Shooter.SHOOTER_CONFIG);
 
