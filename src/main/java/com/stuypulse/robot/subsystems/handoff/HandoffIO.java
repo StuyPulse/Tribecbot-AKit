@@ -1,23 +1,19 @@
 package com.stuypulse.robot.subsystems.handoff;
 
-import org.littletonrobotics.junction.AutoLog;
-
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
-import static edu.wpi.first.units.Units.Volts;
-
-import java.util.Optional;
-
 import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface HandoffIO {
-    @AutoLog
-    class HandoffIOInputs {
+  @AutoLog
+  public static class HandoffIOInputs {
     public Current motorLeadSupplyCurrent = Amps.zero();
     public Current motorLeadStatorCurrent = Amps.zero();
     public Temperature motorLeadTemperature = Celsius.zero();
@@ -29,15 +25,13 @@ public interface HandoffIO {
     public Temperature motorFollowTemperature = Celsius.zero();
     public AngularVelocity motorFollowVelocity = DegreesPerSecond.zero();
     public Voltage motorFollowAppliedVoltage = Volts.zero();
-    }
-
-    class HandoffIOOutputs {
-        public double handoffDutyCycle = 0.0;
   }
 
-    public default void updateInputs(HandoffIOInputs inputs) {}
+  public static class HandoffIOOutputs {
+    public double handoffDutyCycle = 0.0;
+  }
 
-    public default void applyOutputs(HandoffIOOutputs outputs) {}
+  public default void updateInputs(HandoffIOInputs inputs) {}
 
-    public default void setVoltageOverride(Optional<Double> voltage) {}
+  public default void applyOutputs(HandoffIOOutputs outputs) {}
 }
