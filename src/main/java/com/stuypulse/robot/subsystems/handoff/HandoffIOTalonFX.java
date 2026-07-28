@@ -46,7 +46,6 @@ public class HandoffIOTalonFX implements HandoffIO {
 
         controller = new DutyCycleOut(0);
         follower = new Follower(Ports.Handoff.MOTOR_LEAD, MotorAlignmentValue.Opposed);
-        voltageOverride = Optional.empty();
 
         motorFollow.setControl(follower);
         
