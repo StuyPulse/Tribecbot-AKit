@@ -15,7 +15,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface IntakeIO {
   @AutoLog
-  class IntakeIOInputs {
+  public static class IntakeIOInputs {
     public Current pivotMotorSupplyCurrent = Amps.zero();
     public Current pivotMotorStatorCurrent = Amps.zero();
     public Temperature pivotMotorTemperature = Celsius.zero();
@@ -38,13 +38,13 @@ public interface IntakeIO {
     public AngularVelocity rollerFollowerMotorVelocity = DegreesPerSecond.zero();
   }
 
-  public enum PivotIOOutputMode {
+  public static enum PivotIOOutputMode {
     POSITION,
     TORQUE_CURRENT,
     VOLTAGE
   }
 
-  class IntakeIOOutputs {
+  public static class IntakeIOOutputs {
     public PivotIOOutputMode pivotOutputMode = PivotIOOutputMode.POSITION;
     public Angle pivotPosition = Degrees.zero();
     public Current pivotTorqueCurrent = Amps.zero();
