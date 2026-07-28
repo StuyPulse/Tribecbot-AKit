@@ -89,6 +89,11 @@ public class HandoffIOTalonFX implements HandoffIO {
     }
 
     @Override
+    public void setVoltageOverride(Optional<Double> voltage) {
+        this.voltageOverride = voltage;
+    }
+    
+    @Override
     public void applyOutputs(HandoffIOOutputs outputs) {
         if(!Settings.EnabledSubsystems.HANDOFF.get()) {
             motorLead.stopMotor();

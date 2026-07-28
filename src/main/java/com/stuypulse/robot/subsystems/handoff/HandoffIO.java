@@ -5,6 +5,9 @@ import org.littletonrobotics.junction.AutoLog;
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Volts;
+
+import java.util.Optional;
+
 import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -35,4 +38,6 @@ public interface HandoffIO {
     public default void updateInputs(HandoffIOInputs inputs) {}
 
     public default void applyOutputs(HandoffIOOutputs outputs) {}
+
+    public default void setVoltageOverride(Optional<Double> voltage) {}
 }
