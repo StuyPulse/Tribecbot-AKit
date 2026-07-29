@@ -157,8 +157,7 @@ public class Intake extends SubsystemBase {
           runRollersDutyCycle(0);
           runPivotPosition(Settings.Intake.PIVOT_DIGEST_ANGLE);
         })
-        .andThen(new WaitCommand(0.5))
-        .andThen(runIntake())
-        .andThen(new WaitCommand(0.5));
+        .withDeadline(new WaitCommand(0.5))
+        .andThen(runIntake().withDeadline(new WaitCommand(0.5)));
   }
 }
