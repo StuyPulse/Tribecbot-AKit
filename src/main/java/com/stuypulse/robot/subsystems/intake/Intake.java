@@ -91,8 +91,7 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIntake() {
-    return run(
-        () -> {
+    return run(() -> {
           if (inputs.pivotMotorPosition.lte(Settings.Intake.THRESHOLD_TO_START_ROLLERS)) {
             runRollersDutyCycle(1.0);
           } else {
@@ -109,12 +108,12 @@ public class Intake extends SubsystemBase {
           } else {
             runPivotPosition(Settings.Intake.PIVOT_DEPLOY_ANGLE);
           }
-        });
+        })
+        .withName("Intake Intake");
   }
 
   public Command runOuttake() {
-    return run(
-        () -> {
+    return run(() -> {
           if (inputs.pivotMotorPosition.lte(Settings.Intake.THRESHOLD_TO_START_ROLLERS)) {
             runRollersDutyCycle(-1.0);
           } else {
@@ -131,15 +130,16 @@ public class Intake extends SubsystemBase {
           } else {
             runPivotPosition(Settings.Intake.PIVOT_DEPLOY_ANGLE);
           }
-        });
+        })
+        .withName("Intake Outtake");
   }
 
   public Command runStow() {
-    return run(
-        () -> {
+    return run(() -> {
           runRollersDutyCycle(0.0);
           runPivotPosition(Settings.Intake.PIVOT_STOW_ANGLE);
-        });
+        })
+        .withName("Intake Stow");
   }
 
   public Command runHoming() {
@@ -149,7 +149,8 @@ public class Intake extends SubsystemBase {
         })
         .until(this::pivotStalling)
         .andThen(() -> io.seedPivotPosition(Settings.Intake.PIVOT_MIN_ANGLE))
-        .andThen(() -> runPivotPosition(Settings.Intake.PIVOT_MIN_ANGLE));
+        .andThen(() -> runPivotPosition(Settings.Intake.PIVOT_MIN_ANGLE))
+        .withName("Intake Homing");
   }
 
   public Command runAutoDigest() {
@@ -158,6 +159,7 @@ public class Intake extends SubsystemBase {
           runPivotPosition(Settings.Intake.PIVOT_DIGEST_ANGLE);
         })
         .withDeadline(new WaitCommand(0.5))
-        .andThen(runIntake().withDeadline(new WaitCommand(0.5)));
+        .andThen(runIntake().withDeadline(new WaitCommand(0.5)))
+        .withName("Intake Auto Digest");
   }
 }
