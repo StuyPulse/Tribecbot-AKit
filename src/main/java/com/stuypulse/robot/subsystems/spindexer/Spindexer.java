@@ -1,7 +1,6 @@
 package com.stuypulse.robot.subsystems.spindexer;
 
 import com.stuypulse.robot.constants.Settings;
-import com.stuypulse.robot.constants.Settings.Mode;
 import com.stuypulse.robot.subsystems.spindexer.SpindexerIO.SpindexerIOOutputs;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -41,6 +40,7 @@ public class Spindexer extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
+    Logger.recordOutput("Spindexer/Duty Cycle Setpoint", outputs.spindexerLeaderDutyCycle);
     io.applyOutputs(outputs);
   }
 
@@ -49,14 +49,14 @@ public class Spindexer extends SubsystemBase {
   }
 
   public Command runSpindexerForward() {
-    return run(() -> runDutyCycle(Settings.Spindexer.FORWARD_DUTY_CYCLE));
+    return run(() -> runDutyCycle(Settings.Spindexer.FORWARD_DUTY_CYCLE)).withName("Spindexer Forward");
   }
 
   public Command runSpindexerReverse() {
-    return run(() -> runDutyCycle(Settings.Spindexer.REVERSE_DUTY_CYCLE));
+    return run(() -> runDutyCycle(Settings.Spindexer.REVERSE_DUTY_CYCLE)).withName("Spindexer Reverse");
   }
 
   public Command stopSpindexer() {
-    return run(() -> runDutyCycle(0));
+    return run(() -> runDutyCycle(0)).withName("Spindexer Stop");
   }
 }

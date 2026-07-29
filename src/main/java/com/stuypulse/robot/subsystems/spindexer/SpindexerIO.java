@@ -15,7 +15,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface SpindexerIO {
   @AutoLog
-  class SpindexerIOInputs {
+  public static class SpindexerIOInputs {
     public Current spindexerLeaderMotorSupplyCurrent = Amps.zero();
     public Current spindexerLeaderMotorStatorCurrent = Amps.zero();
     public Temperature spindexerLeaderMotorTemperature = Celsius.zero();
@@ -31,7 +31,7 @@ public interface SpindexerIO {
     public AngularVelocity spindexerFollowerMotorVelocity = DegreesPerSecond.zero();
   }
 
-  class SpindexerIOOutputs {
+  public static class SpindexerIOOutputs {
     public double spindexerLeaderDutyCycle = 0;
   }
 
