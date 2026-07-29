@@ -21,7 +21,7 @@ public interface TurretIO {
     public Current turretMotorStatorCurrent = Amps.zero();
     public Temperature turretMotorTemperature = Celsius.zero();
     public Angle turretMotorPosition = Degrees.zero();
-    public Voltage turrentMotorAppliedVoltage = Volts.zero();
+    public Voltage turretMotorAppliedVoltage = Volts.zero();
     public AngularVelocity turretMotorVelocity = DegreesPerSecond.zero();
   }
 
