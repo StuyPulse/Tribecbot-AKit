@@ -6,8 +6,7 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Volts;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -248,8 +247,8 @@ public class Settings {
       public final Angle GAIN_SWITCHING_THRESHOLD_START = Degrees.of(30);
       public final Angle GAIN_SWITCHING_THRESHOLD_END = Degrees.of(3);
 
-      public final Transform2d TURRET_OFFSET =
-          new Transform2d(Units.inchesToMeters(-4.0), Units.inchesToMeters(8.0), Rotation2d.kZero);
+      public final Translation2d TURRET_OFFSET =
+          new Translation2d(Units.inchesToMeters(-4.0), Units.inchesToMeters(8.0));
       public final double TURRET_HEIGHT = Units.inchesToMeters(0.0);
 
       public final double GEAR_RATIO_MOTOR_TO_MECH = (60.0 / 9.0) * (95.0 / 12.0); // 1425.0 / 36.0;

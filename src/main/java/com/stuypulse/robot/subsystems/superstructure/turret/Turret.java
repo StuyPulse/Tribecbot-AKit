@@ -7,6 +7,7 @@ import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputs;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -79,6 +80,10 @@ public class Turret extends SubsystemBase {
 
   public boolean turretReadyToShoot() {
     return readyToShootDebouncer.calculate(atTolerance);
+  }
+
+  public Rotation2d getTurretYaw() {
+    return Rotation2d.fromDegrees(inputs.turretMotorPosition.in(Degrees));
   }
 
   private void runPosition(Angle position, boolean OTM) {

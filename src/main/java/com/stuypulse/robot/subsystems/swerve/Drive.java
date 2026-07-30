@@ -26,6 +26,7 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.constants.Settings.Mode;
 import com.stuypulse.robot.generated.TunerConstants;
+import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.vision.Vision;
 import com.stuypulse.robot.util.LocalADStarAK;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -35,6 +36,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -114,6 +116,15 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   public static SwerveDriveSimulation getDriveSimulation() {
     return driveSimulation;
+  }
+
+  public Pose2d getTurretPose() {
+    Turret turret = Turret.getInstance();
+
+    Transform2d turretTransform =
+        new Transform2d(Settings.Superstructure.Turret.TURRET_OFFSET, turret.getTurretYaw());
+
+    return getPose().transformBy(turretTransform);
   }
 
   // TunerConstants doesn't include these constants, so they are declared locally
