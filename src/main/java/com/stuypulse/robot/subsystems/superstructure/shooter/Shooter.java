@@ -56,6 +56,10 @@ public class Shooter extends SubsystemBase {
     io.applyOutputs(outputs);
   }
 
+  public AngularVelocity getShooterVelocity() {
+    return inputs.shooterLeaderMotorVelocity;
+  }
+
   private void runVelocity(AngularVelocity velocity) {
     outputs.shooterVelocity = velocity;
   }

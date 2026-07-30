@@ -49,6 +49,12 @@ public class Field {
     }
   }
 
+  public static Pose2d transformToOppositeAlliance(Pose2d pose) {
+    Pose2d rotated = pose.rotateBy(Rotation2d.fromDegrees(180));
+    return new Pose2d(
+        rotated.getTranslation().plus(new Translation2d(LENGTH, WIDTH)), rotated.getRotation());
+  }
+
   public static final double[] ALL_TAGS = {
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26,
     27, 28, 29, 30, 31, 32

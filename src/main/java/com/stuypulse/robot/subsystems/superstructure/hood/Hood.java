@@ -80,6 +80,10 @@ public class Hood extends SubsystemBase {
     }
   }
 
+  public Angle getHoodAngle() {
+    return inputs.hoodMotorPosition;
+  }
+
   private void runPosition(Angle position, boolean OTM) {
     this.OTM = OTM;
 

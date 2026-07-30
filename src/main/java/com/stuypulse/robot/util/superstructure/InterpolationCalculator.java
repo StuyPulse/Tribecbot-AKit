@@ -5,6 +5,7 @@
 /***************************************************************/
 package com.stuypulse.robot.util.superstructure;
 
+import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Radians;
 
 import com.stuypulse.robot.constants.Field;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import java.util.Optional;
 
 public class InterpolationCalculator {
@@ -38,7 +40,7 @@ public class InterpolationCalculator {
     cachedInterpolatedFerryInfo = Optional.empty();
   }
 
-  public static double getInterpolatedShotRPM() {
+  public static AngularVelocity getInterpolatedShotRPM() {
     if (cachedInterpolatedShotInfo.isEmpty()) {
       cachedInterpolatedShotInfo = Optional.of(interpolateShotInfo());
     }
@@ -52,7 +54,7 @@ public class InterpolationCalculator {
     return cachedInterpolatedShotInfo.get().targetHoodAngle();
   }
 
-  public static double getInterpolatedFerryRPM() {
+  public static AngularVelocity getInterpolatedFerryRPM() {
     if (cachedInterpolatedFerryInfo.isEmpty()) {
       cachedInterpolatedFerryInfo = Optional.of(interpolateFerryingInfo());
     }
@@ -67,10 +69,10 @@ public class InterpolationCalculator {
   }
 
   public record InterpolatedShotInfo(
-      Angle targetHoodAngle, double targetRPM, double flightTimeSeconds) {}
+      Angle targetHoodAngle, AngularVelocity targetRPM, double flightTimeSeconds) {}
 
   public record InterpolatedFerryInfo(
-      Angle targetHoodAngle, double targetRPM, double flightTimeSeconds) {}
+      Angle targetHoodAngle, AngularVelocity targetRPM, double flightTimeSeconds) {}
 
   static {
     distanceAngleInterpolator = new InterpolatingDoubleTreeMap();
@@ -112,7 +114,7 @@ public class InterpolationCalculator {
     double distanceMeters = currentPose.getDistance(hubPose);
 
     Angle targetAngle = Radians.of(distanceAngleInterpolator.get(distanceMeters));
-    double targetRPM = distanceRPMInterpolator.get(distanceMeters);
+    AngularVelocity targetRPM = RPM.of(distanceRPMInterpolator.get(distanceMeters));
     double flightTime = distanceTOFInterpolator.get(distanceMeters);
 
     return new InterpolatedShotInfo(targetAngle, targetRPM, flightTime);
@@ -135,7 +137,7 @@ public class InterpolationCalculator {
     double distanceMeters = currentPose.getDistance(ferryPose);
 
     Angle targetAngle = Settings.Superstructure.Hood.Angles.FERRY_ANGLE;
-    double targetRPM = ferryingDistanceRPMInterpolator.get(distanceMeters);
+    AngularVelocity targetRPM = RPM.of(ferryingDistanceRPMInterpolator.get(distanceMeters));
     double flightTime = ferryingDistanceTOFInterpolator.get(distanceMeters);
 
     return new InterpolatedFerryInfo(targetAngle, targetRPM, flightTime);
