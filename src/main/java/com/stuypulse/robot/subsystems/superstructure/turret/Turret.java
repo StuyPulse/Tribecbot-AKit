@@ -77,7 +77,7 @@ public class Turret extends SubsystemBase {
     }
   }
 
-  public boolean turretReadyToShoot(){
+  public boolean turretReadyToShoot() {
     return readyToShootDebouncer.calculate(atTolerance);
   }
 
@@ -109,7 +109,10 @@ public class Turret extends SubsystemBase {
   }
 
   public Command runShoot() {
-    return run(() -> runPosition(Degrees.of(Settings.Superstructure.Turret.SOTM_TOLERANCE_FAR.getAsDouble()), OTM));
+    return run(
+        () ->
+            runPosition(
+                Degrees.of(Settings.Superstructure.Turret.SOTM_TOLERANCE_FAR.getAsDouble()), OTM));
   }
 
   public Command runIdle() {
