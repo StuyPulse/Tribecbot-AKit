@@ -1,75 +1,20 @@
-package com.stuypulse.robot.constants;
-
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Volts;
+package com.stuypulse.robot.subsystems.leds;
 
 import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.signals.RGBWColor;
+
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.util.Color;
 
-public class Settings {
-
-  // A Kit stuff
-
-  public static final Mode simMode = Mode.SIM;
-  public static final Mode currentMode = RobotBase.isReal() ? Mode.REAL : simMode;
-
-  public static enum Mode {
-    /** Running on a real robot. */
-    REAL,
-
-    /** Running a physics simulator. */
-    SIM,
-
-    /** Replaying from a log file. */
-    REPLAY
-  }
-
-  // end of A kit stuff
-
-  public interface Intake {
-    Angle PIVOT_STOW_ANGLE = Degrees.of(71.0);
-    Angle PIVOT_DEPLOY_ANGLE = Degrees.of(-10.0);
-    Angle PIVOT_DIGEST_ANGLE = Degrees.of(30);
-
-    Angle PIVOT_ANGLE_TOLERANCE = Degrees.of(5.0);
-
-    Angle PIVOT_MAX_ANGLE = Degrees.of(76.4);
-    Angle PIVOT_MIN_ANGLE = Degrees.of(-10.0);
-
-    Angle THRESHOLD_TO_START_ROLLERS = Degrees.of(10.0);
-
-    Angle ANGLE_THRESHOLD_FOR_HOLDING_VOLTAGE = Degrees.of(15.0);
-    Voltage HOMING_VOLTAGE = Volts.of(3.0);
-
-    Voltage PUSHDOWN_VOLTAGE = Volts.of(-3.0);
-    Current PUSHDOWN_CURRENT_TELEOP =
-        Amps.of(
-            -75.0); // new SmartNumber("Intake/Pushdown Current", -65.0); //TODO: GET ACTUAL TYTY
-    Current PUSHDOWN_CURRENT_AUTON = Amps.of(-80.0);
-
-    double PIVOT_GEAR_RATIO = 32.0 / 20.0 * 64.0 / 18.0 * 60.0 / 8.0;
-
-    Current PIVOT_STALL_CURRENT = Amps.of(0); // TODO: set value
-    double PIVOT_STALL_DEBOUNCE = 1.0; // TODO: VERIFY
-
-    double ROLLER_STALL_DEBOUNCE = 0.05; // TODO: VERIFY
-    Current ROLLER_STALL_CURRENT = Amps.of(50.0);
-  }
-
-  public interface LED {
+public class LEDConstants {
+    
+    public interface LED {
 
     public SolidColor solidColorRequest =
-        new SolidColor(0, Settings.LED.LED_LENGTH - 1).withColor(new RGBWColor(Color.kRed));
+        new SolidColor(0, LEDConstants.LED.LED_LENGTH - 1).withColor(new RGBWColor(Color.kRed));
     public RainbowAnimation rainbowRequest =
-        new RainbowAnimation(0, Settings.LED.LED_LENGTH - 1).withFrameRate(60).withSlot(0);
+        new RainbowAnimation(0, LEDConstants.LED.LED_LENGTH - 1).withFrameRate(60).withSlot(0);
 
     public static RGBWColor rgbwConverter(Color color) {
       return new RGBWColor(color);
@@ -114,11 +59,11 @@ public class Settings {
     RGBWColor LLDEAD = rgbwConverter(Color.kWhite);
 
     SolidColor RIGHT_DEAD_STRIP =
-        new SolidColor(Settings.LED.LED_LENGTH - 6, Settings.LED.LED_LENGTH - 2);
+        new SolidColor(LEDConstants.LED.LED_LENGTH - 6, LEDConstants.LED.LED_LENGTH - 2);
     SolidColor BACK_DEAD_STRIP =
-        new SolidColor(Settings.LED.LED_LENGTH - 13, Settings.LED.LED_LENGTH - 9);
+        new SolidColor(LEDConstants.LED.LED_LENGTH - 13, LEDConstants.LED.LED_LENGTH - 9);
     SolidColor LEFT_DEAD_STRIP =
-        new SolidColor(Settings.LED.LED_LENGTH - 20, Settings.LED.LED_LENGTH - 16);
+        new SolidColor(LEDConstants.LED.LED_LENGTH - 20, LEDConstants.LED.LED_LENGTH - 16);
     SolidColor CANDLE_DEAD_STRIP = new SolidColor(0, 7);
 
     // RGBWColor.gradient(GradientType.kDiscontinuous, Color.kRed,
@@ -130,4 +75,5 @@ public class Settings {
         Units.feetToMeters(
             2); // TODO: update because comparing Translation2d, so make sure it is 2 feet
   }
+
 }

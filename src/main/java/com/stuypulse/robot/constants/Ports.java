@@ -4,7 +4,7 @@ import com.ctre.phoenix6.CANBus;
 
 public class Ports {
   public CANBus RIO = new CANBus("rio");
-  public CANBus CANIVORE = new CANBus("CANIVORE");
+  public static CANBus CANIVORE = new CANBus("CANIVORE");
 
   public interface Gamepad {
     int DRIVER = 0;
@@ -12,6 +12,7 @@ public class Ports {
 
   public interface LED {
     int LED_PORT = 1;
+    int CANDLE_PORT = 61;
   }
 
   public interface Handoff {
