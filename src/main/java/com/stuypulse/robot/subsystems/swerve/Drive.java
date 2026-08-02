@@ -118,6 +118,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     return driveSimulation;
   }
 
+  @AutoLogOutput(key = "Turret/Turret Pose")
   public Pose2d getTurretPose() {
     Turret turret = Turret.getInstance();
 
