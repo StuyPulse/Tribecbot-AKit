@@ -15,7 +15,6 @@ import edu.wpi.first.math.numbers.N2;
 import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
@@ -44,7 +43,9 @@ public class IntakeIOSim implements IntakeIO {
             Settings.Intake.PIVOT_MIN_ANGLE.in(Radians),
             Settings.Intake.PIVOT_MAX_ANGLE.in(Radians),
             true,
-            Settings.Intake.PIVOT_MAX_ANGLE.in(Radians));
+            Settings.Intake.PIVOT_MAX_ANGLE.in(Radians),
+            1,
+            2);
 
     pivotController =
         new PIDController(
@@ -88,19 +89,5 @@ public class IntakeIOSim implements IntakeIO {
         DegreesPerSecond.of(rollerFollowerSim.getAngularVelocityRadPerSec());
     inputs.rollerFollowerMotorPosition = Degrees.of(rollerFollowerSim.getAngularPositionRad());
     // TO DO: Find a way to get the Temperature
-  }
-
-  @Override
-  public void applyOutputs(IntakeIOOutputs outputs) {
-    double pivotAngleDegrees = Units.degreesToRadians(37);
-
-    pivotSim.setInputVoltage(pivotController.calculate(pivotAngleDegrees * Gains.Intake.Pivot.kG));
-    pivotSim.update(0.02);
-
-    rollerLeaderSim.setInputVoltage(12 * outputs.rollerDutyCycle);
-    rollerLeaderSim.update(0.02);
-
-    rollerFollowerSim.setInputVoltage(-12 * outputs.rollerDutyCycle);
-    rollerFollowerSim.update(0.02);
   }
 }

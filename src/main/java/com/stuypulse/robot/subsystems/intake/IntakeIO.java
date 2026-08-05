@@ -38,22 +38,29 @@ public interface IntakeIO {
     public AngularVelocity rollerFollowerMotorVelocity = DegreesPerSecond.zero();
   }
 
+  public default void updateInputs(IntakeIOInputs inputs) {}
+
   public static enum PivotIOOutputMode {
     POSITION,
     TORQUE_CURRENT,
-    VOLTAGE
+    VOLTAGE,
+    STOP
+  }
+
+  public static enum RollerIOOutputMode {
+    DUTY_CYCLE,
+    STOP
   }
 
   public static class IntakeIOOutputs {
-    public PivotIOOutputMode pivotOutputMode = PivotIOOutputMode.POSITION;
-    public Angle pivotPosition = Degrees.zero();
-    public Current pivotTorqueCurrent = Amps.zero();
-    public Voltage pivotVoltage = Volts.zero();
+    public PivotIOOutputMode pivotMode = PivotIOOutputMode.POSITION;
+    public Angle pivotTargetPosition = Degrees.zero();
+    public Current pivotTargetTorqueCurrent = Amps.zero();
+    public Voltage pivotTargetVoltage = Volts.zero();
 
-    public double rollerDutyCycle = 0.0;
+    public RollerIOOutputMode rollerMode = RollerIOOutputMode.DUTY_CYCLE;
+    public double rollerTargetDutyCycle = 0.0;
   }
-
-  public default void updateInputs(IntakeIOInputs inputs) {}
 
   public default void applyOutputs(IntakeIOOutputs outputs) {}
 

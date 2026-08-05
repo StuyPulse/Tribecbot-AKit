@@ -13,7 +13,8 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 public class Settings {
 
   public interface EnabledSubsystems {
-    LoggedNetworkBoolean INTAKE = new LoggedNetworkBoolean("Enabled Subsystems/Intake", true);
+    LoggedNetworkBoolean INTAKE =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Intake", true);
   }
 
   // A Kit stuff
