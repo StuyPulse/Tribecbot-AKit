@@ -8,7 +8,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
-import com.stuypulse.robot.constants.Settings;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -87,16 +86,14 @@ public class HandoffIOTalonFX implements HandoffIO {
 
   @Override
   public void applyOutputs(HandoffIOOutputs outputs) {
-    if (!Settings.EnabledSubsystems.HANDOFF.get()) {
-      motorLead.stopMotor();
-      motorFollow.stopMotor();
+    switch (outputs.handoffMode) {
+      case DUTY_CYCLE -> motorLead.setControl(controller.withOutput(outputs.handoffDutyCycle));
+      case STOP -> {
+        motorLead.stopMotor();
+        motorFollow.stopMotor();
 
-      motorFollow.setControl(follower);
-
-      return;
+        motorFollow.setControl(follower);
+      }
     }
-
-    motorLead.setControl(controller.withOutput(outputs.handoffDutyCycle));
-    motorFollow.setControl(follower);
   }
 }

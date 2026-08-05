@@ -4,17 +4,17 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Volts;
 
-import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
-
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 public class Settings {
 
   public interface EnabledSubsystems {
-    LoggedNetworkBoolean HANDOFF = new LoggedNetworkBoolean("Enabled Subsystems/Handoff", true);
+    LoggedNetworkBoolean HANDOFF =
+        new LoggedNetworkBoolean("/Tunable/Enabled Subsystems/Handoff", true);
   }
 
   // A Kit stuff
@@ -72,5 +72,4 @@ public class Settings {
     Current HANDOFF_STALL_CURRENT = Amps.of(30); // TODO: set value
     double HANDOFF_STALL_DEBOUNCE_SEC = 0.5; // TODO: VERIFY
   }
-
 }

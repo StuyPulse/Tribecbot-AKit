@@ -27,7 +27,13 @@ public interface HandoffIO {
     public Voltage motorFollowAppliedVoltage = Volts.zero();
   }
 
+  public enum HandoffIOOutputMode {
+    DUTY_CYCLE,
+    STOP
+  }
+
   public static class HandoffIOOutputs {
+    public HandoffIOOutputMode handoffMode = HandoffIOOutputMode.DUTY_CYCLE;
     public double handoffDutyCycle = 0.0;
   }
 

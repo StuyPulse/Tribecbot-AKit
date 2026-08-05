@@ -5,38 +5,36 @@
 /***************************************************************/
 package com.stuypulse.robot.util.simulation.TalonFXSimulation;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.sim.TalonFXSimState;
 import com.stuypulse.robot.constants.Motors.TalonFXConfig;
-
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.RobotController;
 
-import com.ctre.phoenix6.sim.TalonFXSimState;
-import com.ctre.phoenix6.hardware.TalonFX;
-
 public class TalonFXSimulation extends TalonFX {
-    private final SystemSim<?> simMotor;
-    private final double gearRatio;
+  private final SystemSim<?> simMotor;
+  private final double gearRatio;
 
-    public TalonFXSimulation(int port, double gearRatio, SystemSim<?> adapter) {
-        super(port);
-        this.gearRatio = gearRatio;
-        this.simMotor = adapter;
-    }
+  public TalonFXSimulation(int port, double gearRatio, SystemSim<?> adapter) {
+    super(port);
+    this.gearRatio = gearRatio;
+    this.simMotor = adapter;
+  }
 
-    public void configure(TalonFXConfig config) {
-        config.configure(this);
-    }
+  public void configure(TalonFXConfig config) {
+    config.configure(this);
+  }
 
-    public void refresh() {
-        final TalonFXSimState simState = this.getSimState();
+  public void refresh() {
+    final TalonFXSimState simState = this.getSimState();
 
-        this.simMotor.setInputVoltage(simState.getMotorVoltageMeasure());
+    this.simMotor.setInputVoltage(simState.getMotorVoltageMeasure());
 
-        Angle rotorPosition = simMotor.getMechanismPosition().times(this.gearRatio);
-        AngularVelocity rotorVelocity = this.simMotor.getMechanismVelocity().times(this.gearRatio);
+    Angle rotorPosition = simMotor.getMechanismPosition().times(this.gearRatio);
+    AngularVelocity rotorVelocity = this.simMotor.getMechanismVelocity().times(this.gearRatio);
 
-        simState.setRawRotorPosition(rotorPosition);
-        simState.setRotorVelocity(rotorVelocity);
-        simState.setSupplyVoltage(RobotController.getBatteryVoltage());
-    }
+    simState.setRawRotorPosition(rotorPosition);
+    simState.setRotorVelocity(rotorVelocity);
+    simState.setSupplyVoltage(RobotController.getBatteryVoltage());
+  }
 }
