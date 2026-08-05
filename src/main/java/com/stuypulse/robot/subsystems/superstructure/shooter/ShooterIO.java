@@ -16,7 +16,7 @@ import org.littletonrobotics.junction.AutoLog;
 
 public interface ShooterIO {
   @AutoLog
-  class ShooterIOInputs {
+  public static class ShooterIOInputs {
     public Current shooterLeaderMotorSupplyCurrent = Amps.zero();
     public Current shooterLeaderMotorStatorCurrent = Amps.zero();
     public Temperature shooterLeaderMotorTemperature = Celsius.zero();
@@ -32,7 +32,13 @@ public interface ShooterIO {
     public AngularVelocity shooterFollowerMotorVelocity = DegreesPerSecond.zero();
   }
 
-  class ShooterIOOutputs {
+  public static enum ShooterIOOutputMode {
+    VELOCITY,
+    STOP
+  }
+
+  public static class ShooterIOOutputs {
+    public ShooterIOOutputMode shooterMode = ShooterIOOutputMode.VELOCITY;
     public AngularVelocity shooterVelocity = RPM.zero();
   }
 

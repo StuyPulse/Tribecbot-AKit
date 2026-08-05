@@ -96,6 +96,16 @@ public class ShooterIOTalonFX implements ShooterIO {
 
   @Override
   public void applyOutputs(ShooterIOOutputs outputs) {
-    shooterLeader.setControl(shooterLeaderController.withVelocity(outputs.shooterVelocity));
+    switch (outputs.shooterMode) {
+      case VELOCITY -> shooterLeader.setControl(
+          shooterLeaderController.withVelocity(outputs.shooterVelocity));
+
+      case STOP -> {
+        shooterLeader.stopMotor();
+        shooterFollower.stopMotor();
+
+        shooterFollower.setControl(shooterFollowerController);
+      }
+    }
   }
 }

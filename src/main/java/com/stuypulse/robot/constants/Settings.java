@@ -20,6 +20,8 @@ public class Settings {
 
   public interface EnabledSubsystems {
     LoggedNetworkBoolean HOOD = new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Hood", true);
+    LoggedNetworkBoolean SHOOTER =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Shooter", true);
   }
 
   // A Kit stuff
@@ -79,12 +81,12 @@ public class Settings {
   }
 
   public interface Superstructure {
-    public final double SHOOTER_TOLERANCE_RPM_HIGH = 50.0;
-    public final double SHOOTER_TOLERANCE_RPM_LOW = 80.0;
-    public final double SHOOTER_SOTM_TOLERANCE_RPM_HIGH = 100.0;
-    public final double SHOOTER_SOTM_TOLERANCE_RPM_LOW = 100.0;
-    public final double SHOOTER_FOTM_TOLERANCE_RPM_HIGH = 150.0;
-    public final double SHOOTER_FOTM_TOLERANCE_RPM_LOW = 250.0;
+    public final AngularVelocity SHOOTER_TOLERANCE_RPM_HIGH = RPM.of(50.0);
+    public final AngularVelocity SHOOTER_TOLERANCE_RPM_LOW = RPM.of(80.0);
+    public final AngularVelocity SHOOTER_SOTM_TOLERANCE_RPM_HIGH = RPM.of(100.0);
+    public final AngularVelocity SHOOTER_SOTM_TOLERANCE_RPM_LOW = RPM.of(100.0);
+    public final AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_HIGH = RPM.of(150.0);
+    public final AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_LOW = RPM.of(250.0);
 
     public final double IS_EMPTY_RPM_TOLERANCE = 150; // TODO: update IS EMPTY VALUE
     public final double IS_EMPTY_DEBOUNCE_TIME = 0.4; // TODO: update IS EMPTY VALUE

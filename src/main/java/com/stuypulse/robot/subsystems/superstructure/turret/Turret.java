@@ -2,7 +2,6 @@ package com.stuypulse.robot.subsystems.superstructure.turret;
 
 import static edu.wpi.first.units.Units.Degrees;
 
-import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputs;
 import edu.wpi.first.math.filter.Debouncer;
@@ -62,20 +61,6 @@ public class Turret extends SubsystemBase {
 
   public void periodicAfterScheduler() {
     io.applyOutputs(outputs);
-  }
-
-  public boolean atTolerance() {
-    Angle error = inputs.turretMotorPosition.minus(outputs.turretPosition);
-
-    if (Robot.isReal()) {
-      if (OTM) {
-        return error.abs(Degrees) < Settings.Superstructure.SHOOTER_SOTM_TOLERANCE_RPM_HIGH;
-      } else {
-        return error.abs(Degrees) < Settings.Superstructure.SHOOTER_TOLERANCE_RPM_HIGH;
-      }
-    } else {
-      return error.abs(Degrees) < Settings.Superstructure.SHOOTER_TOLERANCE_RPM_LOW;
-    }
   }
 
   public boolean turretReadyToShoot() {

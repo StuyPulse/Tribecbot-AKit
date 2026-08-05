@@ -44,6 +44,8 @@ public class Hood extends SubsystemBase {
 
   private Angle driverInput;
 
+  private boolean atTolerance;
+
   private Hood(HoodIO io) {
     this.io = io;
     inputs = new HoodIOInputsAutoLogged();
@@ -54,6 +56,8 @@ public class Hood extends SubsystemBase {
     hoodStallingDebouncer =
         new Debouncer(Settings.Superstructure.Hood.STALL_DEBOUNCE, DebounceType.kBoth);
     hoodAtToleranceDebouncer = new Debouncer(0.05, DebounceType.kBoth);
+
+    this.atTolerance = false;
   }
 
   public enum HoodState {
@@ -126,18 +130,8 @@ public class Hood extends SubsystemBase {
     io.applyOutputs(outputs);
   }
 
-  private boolean atTolerance() {
-    Angle error = inputs.hoodMotorPosition.minus(outputs.position);
-
-    if (state == HoodState.SOTM || state == HoodState.FOTM) {
-      return error.abs(Degrees) < Settings.Superstructure.HOOD_SOTM_TOLERANCE.in(Degrees);
-    } else {
-      return error.abs(Degrees) < Settings.Superstructure.HOOD_TOLERANCE.in(Degrees);
-    }
-  }
-
   public boolean hoodReadyToShoot() {
-    return hoodAtToleranceDebouncer.calculate(atTolerance());
+    return hoodAtToleranceDebouncer.calculate(atTolerance);
   }
 
   public Angle getHoodAngle() {
@@ -151,6 +145,14 @@ public class Hood extends SubsystemBase {
   private void runPosition(Angle position) {
     outputs.outputMode = HoodIOOutputMode.POSITION;
     outputs.position = position;
+
+    Angle error = inputs.hoodMotorPosition.minus(position);
+
+    if (state == HoodState.SOTM || state == HoodState.FOTM) {
+      atTolerance = error.abs(Degrees) < Settings.Superstructure.HOOD_SOTM_TOLERANCE.in(Degrees);
+    } else {
+      atTolerance = error.abs(Degrees) < Settings.Superstructure.HOOD_TOLERANCE.in(Degrees);
+    }
   }
 
   private void runVoltage(Voltage voltage) {
