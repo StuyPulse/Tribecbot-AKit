@@ -100,6 +100,8 @@ public class HoodIOSim implements HoodIO {
       case POSITION -> hoodMotor.setControl(positionController.withPosition(outputs.position));
 
       case VOLTAGE -> hoodMotor.setControl(homingController.withOutput(outputs.voltage));
+
+      case STOP -> hoodMotor.stopMotor();
     }
   }
 

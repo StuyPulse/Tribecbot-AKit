@@ -2,10 +2,11 @@ package com.stuypulse.robot.subsystems.superstructure.hood;
 
 import static edu.wpi.first.units.Units.Degrees;
 
-import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.superstructure.hood.HoodIO.HoodIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.hood.HoodIO.HoodIOOutputs;
+import com.stuypulse.robot.util.superstructure.InterpolationCalculator;
+import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.Angle;
@@ -36,20 +37,39 @@ public class Hood extends SubsystemBase {
   private final HoodIOInputsAutoLogged inputs;
   private final HoodIOOutputs outputs;
 
-  // Using SOTM or FOTM
-  private boolean OTM;
+  private HoodState state;
 
   private final Debouncer hoodStallingDebouncer;
+  private final Debouncer hoodAtToleranceDebouncer;
+
+  private Angle driverInput;
 
   private Hood(HoodIO io) {
     this.io = io;
     inputs = new HoodIOInputsAutoLogged();
     outputs = new HoodIOOutputs();
 
-    OTM = false;
+    setState(HoodState.STOW);
 
     hoodStallingDebouncer =
         new Debouncer(Settings.Superstructure.Hood.STALL_DEBOUNCE, DebounceType.kBoth);
+    hoodAtToleranceDebouncer = new Debouncer(0.05, DebounceType.kBoth);
+  }
+
+  public enum HoodState {
+    STOW,
+    FERRY,
+    MANUAL_OVERRIDE,
+    KB,
+    LEFT_CORNER,
+    RIGHT_CORNER,
+    INTERPOLATION,
+    SOTM,
+    FOTM,
+    ANALOG,
+    HOMING_UPPER,
+    HOMING_LOWER,
+    IDLE;
   }
 
   @Override
@@ -59,6 +79,46 @@ public class Hood extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
+    if (!Settings.EnabledSubsystems.HOOD.get()) {
+      stopHood();
+
+      return;
+    }
+
+    switch (state) {
+      case HOMING_UPPER -> {
+        if (isStalling()) {
+          io.seedHoodPosition(Settings.Superstructure.Hood.MAX_FROM_HORIZON);
+          setState(HoodState.STOW);
+        } else {
+          runVoltage(Settings.Superstructure.Hood.HOOD_HOMING_VOLTAGE);
+        }
+      }
+
+      case HOMING_LOWER -> {
+        if (isStalling()) {
+          io.seedHoodPosition(Settings.Superstructure.Hood.MIN_FROM_HORIZON);
+          setState(HoodState.STOW);
+        } else {
+          runVoltage(Settings.Superstructure.Hood.HOOD_HOMING_VOLTAGE.unaryMinus());
+        }
+      }
+
+      case STOW -> runPosition(Settings.Superstructure.Hood.Angles.STOW);
+      case FERRY -> runPosition(InterpolationCalculator.getInterpolatedFerryAngle());
+      case MANUAL_OVERRIDE -> runPosition(
+          Degrees.of(Settings.Superstructure.Hood.Angles.MANUAL_OVERRIDE_DEG.get()));
+      case KB -> runPosition(Settings.Superstructure.Hood.Angles.KB);
+      case LEFT_CORNER -> runPosition(Settings.Superstructure.Hood.Angles.LEFT_CORNER);
+      case RIGHT_CORNER -> runPosition(Settings.Superstructure.Hood.Angles.RIGHT_CORNER);
+      case INTERPOLATION -> runPosition(InterpolationCalculator.getInterpolatedShotAngle());
+      case SOTM -> runPosition(SOTMCalculator.calculateHoodAngleSOTM());
+      case FOTM -> runPosition(SOTMCalculator.calculateHoodAngleFOTM());
+      case ANALOG -> runPosition(driverInput);
+      case IDLE -> stopHood();
+    }
+
+    Logger.recordOutput("States/Hood", state);
     Logger.recordOutput("Hood/Output Mode", outputs.outputMode);
     Logger.recordOutput("Hood/Position Setpoint", outputs.position);
     Logger.recordOutput("Hood/Voltage Setpoint", outputs.voltage);
@@ -66,27 +126,29 @@ public class Hood extends SubsystemBase {
     io.applyOutputs(outputs);
   }
 
-  public boolean atTolerance() {
+  private boolean atTolerance() {
     Angle error = inputs.hoodMotorPosition.minus(outputs.position);
 
-    if (Robot.isReal()) {
-      if (OTM) {
-        return error.abs(Degrees) < Settings.Superstructure.HOOD_SOTM_TOLERANCE.in(Degrees);
-      } else {
-        return error.abs(Degrees) < Settings.Superstructure.HOOD_TOLERANCE.in(Degrees);
-      }
+    if (state == HoodState.SOTM || state == HoodState.FOTM) {
+      return error.abs(Degrees) < Settings.Superstructure.HOOD_SOTM_TOLERANCE.in(Degrees);
     } else {
-      return error.abs(Degrees) < Settings.Superstructure.HOOD_TOLERANCE.in(Degrees) + 5;
+      return error.abs(Degrees) < Settings.Superstructure.HOOD_TOLERANCE.in(Degrees);
     }
+  }
+
+  public boolean hoodReadyToShoot() {
+    return hoodAtToleranceDebouncer.calculate(atTolerance());
   }
 
   public Angle getHoodAngle() {
     return inputs.hoodMotorPosition;
   }
 
-  private void runPosition(Angle position, boolean OTM) {
-    this.OTM = OTM;
+  private void stopHood() {
+    outputs.outputMode = HoodIOOutputMode.STOP;
+  }
 
+  private void runPosition(Angle position) {
     outputs.outputMode = HoodIOOutputMode.POSITION;
     outputs.position = position;
   }
@@ -96,11 +158,11 @@ public class Hood extends SubsystemBase {
     outputs.voltage = voltage;
   }
 
-  private Angle hoodAnalogToInput(CommandXboxController gamepad) {
+  public void hoodAnalogToInput(CommandXboxController gamepad) {
     double hoodMin = Settings.Superstructure.Hood.Angles.MIN.in(Degrees);
     double hoodMax = Settings.Superstructure.Hood.Angles.MAX.in(Degrees);
 
-    return Degrees.of(hoodMin + (gamepad.getLeftX() + 1.0) * ((hoodMax - hoodMin) / 2));
+    this.driverInput = Degrees.of(hoodMin + (gamepad.getLeftX() + 1.0) * ((hoodMax - hoodMin) / 2));
   }
 
   private boolean isStalling() {
@@ -108,20 +170,29 @@ public class Hood extends SubsystemBase {
         inputs.hoodMotorStatorCurrent.gt(Settings.Superstructure.Hood.STALL_CURRENT_LIMIT));
   }
 
-  public Command runHomingUpper() {
-    return run(() -> {
-          runVoltage(Settings.Superstructure.Hood.HOOD_HOMING_VOLTAGE);
-        })
-        .until(this::isStalling)
-        .andThen(() -> io.seedHoodPosition(Settings.Superstructure.Hood.MAX_FROM_HORIZON))
-        .andThen(runStow());
+  private void setState(HoodState state) {
+    this.state = state;
   }
 
-  public Command runStow() {
-    return run(() -> runPosition(Settings.Superstructure.Hood.Angles.STOW, false));
+  public Command homeUpper() {
+    return runOnce(() -> setState(HoodState.HOMING_UPPER)).withName("Hood Home Upper");
   }
 
-  public Command runAnalog(CommandXboxController gamepad) {
-    return run(() -> runPosition(hoodAnalogToInput(gamepad), false));
+  public Command homeLower() {
+    return runOnce(() -> setState(HoodState.HOMING_LOWER)).withName("Hood Home Lower");
+  }
+
+  public Command hoodAnalog(CommandXboxController gamepad) {
+    return runOnce(() -> setState(HoodState.ANALOG)).andThen(() -> hoodAnalogToInput(gamepad));
+  }
+
+  public Command seedRelativeEncoderAtUpperHardstop() {
+    return runOnce(() -> io.seedHoodPosition(Settings.Superstructure.Hood.MAX_FROM_HORIZON))
+        .withName("Hood Seed Relative Encoder at Upper Hardstop");
+  }
+
+  public Command seedRelativeEncoderAtLowerHardstop() {
+    return runOnce(() -> io.seedHoodPosition(Settings.Superstructure.Hood.MIN_FROM_HORIZON))
+        .withName("Hood Seed Relative Encoder at Lower Hardstop");
   }
 }

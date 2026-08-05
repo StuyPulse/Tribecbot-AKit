@@ -13,9 +13,14 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class Settings {
+
+  public interface EnabledSubsystems {
+    LoggedNetworkBoolean HOOD = new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Hood", true);
+  }
 
   // A Kit stuff
 
@@ -202,7 +207,7 @@ public class Settings {
       public final double STALL_DEBOUNCE = 0.5;
 
       public interface Angles {
-        public final LoggedNetworkNumber MANUAL_OVERRIDE =
+        public final LoggedNetworkNumber MANUAL_OVERRIDE_DEG =
             new LoggedNetworkNumber("InterpolationTesting/Shoot State Target Angle (deg)", 44.0);
         public final Angle MAX = FORWARD_SOFT_LIMIT;
         public final Angle MIN = REVERSE_SOFT_LIMIT;

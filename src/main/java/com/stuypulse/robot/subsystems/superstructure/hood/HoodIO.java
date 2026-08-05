@@ -26,7 +26,8 @@ public interface HoodIO {
 
   public static enum HoodIOOutputMode {
     POSITION,
-    VOLTAGE
+    VOLTAGE,
+    STOP
   }
 
   public static class HoodIOOutputs {
