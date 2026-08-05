@@ -31,7 +31,13 @@ public interface SpindexerIO {
     public AngularVelocity spindexerFollowerMotorVelocity = DegreesPerSecond.zero();
   }
 
+  public enum SpindexerIOOutputMode {
+    DUTY_CYCLE,
+    STOP
+  }
+
   public static class SpindexerIOOutputs {
+    public SpindexerIOOutputMode spindexerMode = SpindexerIOOutputMode.DUTY_CYCLE;
     public double spindexerLeaderDutyCycle = 0;
   }
 

@@ -8,8 +8,14 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 public class Settings {
+
+  public interface EnabledSubsystems {
+    LoggedNetworkBoolean SPINDEXER =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Spindexer", true);
+  }
 
   // A Kit stuff
 

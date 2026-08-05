@@ -96,8 +96,16 @@ public class SpindexerIOTalonFX implements SpindexerIO {
 
   @Override
   public void applyOutputs(SpindexerIOOutputs outputs) {
-    // TODO:Enabled Subsystems Check
-    spindexerLeaderMotor.setControl(
-        spindexerController.withOutput(outputs.spindexerLeaderDutyCycle));
+    switch (outputs.spindexerMode) {
+      case DUTY_CYCLE -> spindexerLeaderMotor.setControl(
+          spindexerController.withOutput(outputs.spindexerLeaderDutyCycle));
+
+      case STOP -> {
+        spindexerLeaderMotor.stopMotor();
+        spindexerFollowerMotor.stopMotor();
+
+        spindexerFollowerMotor.setControl(followerController);
+      }
+    }
   }
 }
