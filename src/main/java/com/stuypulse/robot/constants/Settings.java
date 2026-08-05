@@ -33,6 +33,13 @@ public class Settings {
     REPLAY
   }
 
+  public static enum VisionMode {
+    LIMELIGHT,
+    PHOTON
+  }
+
+  public static final VisionMode currentVisionMode = VisionMode.PHOTON;
+
   // end of A kit stuff
 
   public interface Intake {

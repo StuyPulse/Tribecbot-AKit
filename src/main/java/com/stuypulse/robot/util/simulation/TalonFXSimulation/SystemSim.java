@@ -8,15 +8,48 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
+/**
+ *
+ *
+ * <h2>System Simulation</h2>
+ *
+ * <p>This interface defines the contract for a system simulation, which can be used to abstract the
+ * behavior of all WPILib linear system sims in one interface.
+ */
 public interface SystemSim<T> {
+  /**
+   * Sets the input voltage for the simulation.
+   *
+   * @param voltage The input voltage to set for the simulation.
+   */
   void setInputVoltage(Voltage voltage);
 
+  /**
+   * Updates the simulation
+   *
+   * @param dt The time step to advance the simulation
+   */
   void update(Time dt);
 
+  /**
+   * Gets the current position of the mechanism in the simulation.
+   *
+   * @return The current position of the mechanism.
+   */
   Angle getMechanismPosition();
 
+  /**
+   * Gets the current velocity of the mechanism in the simulation.
+   *
+   * @return The current velocity of the mechanism.
+   */
   AngularVelocity getMechanismVelocity();
 
+  /**
+   * Gets the wrapped WPILib linear system simulation instance.
+   *
+   * @return The wrapped WPILib linear system simulation instance.
+   */
   T getLinearSystemSim();
 
   static SystemSim<DCMotorSim> of(DCMotorSim dcMotorSim) {
