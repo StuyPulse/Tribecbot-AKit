@@ -158,7 +158,7 @@ public class Hood extends SubsystemBase {
     outputs.voltage = voltage;
   }
 
-  public void hoodAnalogToInput(CommandXboxController gamepad) {
+  private void hoodAnalogToInput(CommandXboxController gamepad) {
     double hoodMin = Settings.Superstructure.Hood.Angles.MIN.in(Degrees);
     double hoodMax = Settings.Superstructure.Hood.Angles.MAX.in(Degrees);
 
@@ -183,7 +183,9 @@ public class Hood extends SubsystemBase {
   }
 
   public Command hoodAnalog(CommandXboxController gamepad) {
-    return runOnce(() -> setState(HoodState.ANALOG)).andThen(() -> hoodAnalogToInput(gamepad));
+    return runOnce(() -> setState(HoodState.ANALOG))
+        .andThen(() -> hoodAnalogToInput(gamepad))
+        .withName("Hood Analog");
   }
 
   public Command seedRelativeEncoderAtUpperHardstop() {
