@@ -211,16 +211,16 @@ public class Intake extends SubsystemBase {
         .andThen(Commands.waitSeconds(0.5))
         .andThen(digest().andThen(Commands.waitSeconds(0.5)).andThen(deploy()))
         .andThen(Commands.waitSeconds(0.5))
-        .andThen(digest()
-        .andThen(Commands.waitSeconds(0.5))
-        .andThen(deploy()));
+        .andThen(digest().andThen(Commands.waitSeconds(0.5)).andThen(deploy()))
+        .withName("Intake Auto Digest");
   }
 
   public Command teleopDigest() {
     return digest()
         .andThen(Commands.waitSeconds(0.5))
         .andThen(deploy())
-        .andThen(Commands.waitSeconds(0.5));
+        .andThen(Commands.waitSeconds(0.5))
+        .withName("Intake Teleop Digest");
   }
 
   public Command outtake() {
