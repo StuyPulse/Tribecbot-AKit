@@ -54,16 +54,16 @@ public interface IntakeIO {
   }
 
   public static class IntakeIOOutputs {
-    @AutoLogOutput(key = "Intake/Pivot/Output Mode") 
+    @AutoLogOutput(key = "Intake/Pivot/Output Mode")
     public PivotIOOutputMode pivotMode = PivotIOOutputMode.POSITION;
 
-    @AutoLogOutput(key = "Intake/Pivot/Target Position") 
+    @AutoLogOutput(key = "Intake/Pivot/Target Position")
     public Angle pivotTargetPosition = Degrees.zero();
 
-    @AutoLogOutput(key = "Intake/Pivot/Target Torque Current") 
+    @AutoLogOutput(key = "Intake/Pivot/Target Torque Current")
     public Current pivotTargetTorqueCurrent = Amps.zero();
-    
-    @AutoLogOutput(key = " Intake/Pivot/Target Voltage") 
+
+    @AutoLogOutput(key = " Intake/Pivot/Target Voltage")
     public Voltage pivotTargetVoltage = Volts.zero();
 
     @AutoLogOutput(key = "Intake/Rollers/Output Mode")

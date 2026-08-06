@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -35,8 +34,11 @@ public class Intake extends SubsystemBase {
     return instance;
   }
 
-  @AutoLogOutput(key = "States/Intake/Pivot") private PivotState pivotState;
-  @AutoLogOutput(key = "States/Intake/Rollers") private RollerState rollerState;
+  @AutoLogOutput(key = "States/Intake/Pivot")
+  private PivotState pivotState;
+
+  @AutoLogOutput(key = "States/Intake/Rollers")
+  private RollerState rollerState;
 
   private final DualDebouncer pivotPositionDebouncer;
   private final Debouncer pivotStallingDebouncer;
@@ -233,13 +235,21 @@ public class Intake extends SubsystemBase {
   }
 
   public Command seedPivotDeployed() {
-    return runOnce(() -> io.seedPivotPosition(Settings.Intake.PIVOT_DEPLOY_ANGLE))
+    return runOnce(
+            () -> {
+              io.seedPivotPosition(Settings.Intake.PIVOT_DEPLOY_ANGLE);
+              setPivotState(PivotState.DEPLOY);
+            })
         .ignoringDisable(true)
         .withName("Intake Seed Pivot Deployed");
   }
 
   public Command seedPivotStowed() {
-    return runOnce(() -> io.seedPivotPosition(Settings.Intake.PIVOT_STOW_ANGLE))
+    return runOnce(
+            () -> {
+              io.seedPivotPosition(Settings.Intake.PIVOT_STOW_ANGLE);
+              setPivotState(PivotState.STOW);
+            })
         .ignoringDisable(true)
         .withName("Intake Seed Pivot Stowed");
   }
