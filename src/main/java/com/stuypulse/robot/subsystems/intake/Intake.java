@@ -22,9 +22,9 @@ public class Intake extends SubsystemBase {
 
   static {
     switch (Settings.currentMode) {
-      case REAL -> instance = new Intake(new IntakeIOTalonFX());
+      case REAL -> instance = new Intake(new IntakeIOTalonFX(IntakeHardware.createReal()));
 
-      case SIM -> instance = new Intake(new IntakeIOSim());
+      case SIM -> instance = new Intake(new IntakeIOSim(IntakeHardware.createSim()));
 
       default -> instance = new Intake(new IntakeIO() {});
     }

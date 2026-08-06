@@ -2,15 +2,20 @@ package com.stuypulse.robot.constants;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 public class Settings {
+  public static final Time DT = Seconds.of(0.020);
 
   public interface EnabledSubsystems {
     LoggedNetworkBoolean INTAKE =
@@ -70,5 +75,10 @@ public class Settings {
 
     double ROLLER_STALL_DEBOUNCE = 0.05; // TODO: VERIFY
     Current ROLLER_STALL_CURRENT = Amps.of(50.0);
+
+    // Sim
+    double ARM_LENGTH_METERS = 0.4;
+    double ARM_MASS_KG = 2.0;
+    double PIVOT_MOI = SingleJointedArmSim.estimateMOI(ARM_MASS_KG, ARM_LENGTH_METERS);
   }
 }
