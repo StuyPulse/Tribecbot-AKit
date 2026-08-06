@@ -1,5 +1,7 @@
 package com.stuypulse.robot.subsystems.intake;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -8,21 +10,16 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
 import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.constants.Settings;
-
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
-
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-
-import static edu.wpi.first.units.Units.*;
-import edu.wpi.first.units.measure.*;
 
 public class IntakeIOSim implements IntakeIO {
   private final SystemSim<SingleJointedArmSim> pivotSim;
@@ -60,13 +57,14 @@ public class IntakeIOSim implements IntakeIO {
   private final StatusSignal<AngularVelocity> rollerFollowerVelocity;
 
   public IntakeIOSim() {
-    this.pivotSim = SystemSim.of(
+    this.pivotSim =
+        SystemSim.of(
             new SingleJointedArmSim(
                 LinearSystemId.createDCMotorSystem(
-                    DCMotor.getKrakenX60(1),
+                    DCMotor.getKrakenX44Foc(1),
                     Settings.Intake.PIVOT_MOI,
                     Settings.Intake.PIVOT_GEAR_RATIO),
-                DCMotor.getKrakenX60(1),
+                DCMotor.getKrakenX60Foc(1),
                 Settings.Intake.PIVOT_GEAR_RATIO,
                 Settings.Intake.ARM_LENGTH_METERS,
                 Settings.Intake.PIVOT_MIN_ANGLE.in(Radians),
@@ -74,15 +72,17 @@ public class IntakeIOSim implements IntakeIO {
                 true,
                 Settings.Intake.PIVOT_MAX_ANGLE.in(Radians)));
 
-    this.rollerSim = SystemSim.of(
+    this.rollerSim =
+        SystemSim.of(
             new DCMotorSim(
                 LinearSystemId.createDCMotorSystem(
-                    DCMotor.getKrakenX60(2),
+                    DCMotor.getKrakenX60Foc(2),
                     0.01, // arbitrary
                     1.0),
-                DCMotor.getKrakenX60(2)));
+                DCMotor.getKrakenX60Foc(2)));
 
-    this.pivotMotor = new TalonFXSimulation(Ports.Intake.PIVOT, Settings.Intake.PIVOT_GEAR_RATIO, pivotSim);
+    this.pivotMotor =
+        new TalonFXSimulation(Ports.Intake.PIVOT, Settings.Intake.PIVOT_GEAR_RATIO, pivotSim);
     this.rollerLeaderMotor = new TalonFXSimulation(Ports.Intake.ROLLER_LEADER, 1.0, rollerSim);
     this.rollerFollowerMotor = new TalonFXSimulation(Ports.Intake.ROLLER_FOLLOWER, 1.0, rollerSim);
 
@@ -164,6 +164,13 @@ public class IntakeIOSim implements IntakeIO {
     inputs.rollerFollowerMotorTemperature = rollerFollowerTemperature.getValue();
     inputs.rollerFollowerMotorAppliedVoltage = rollerFollowerAppliedVoltage.getValue();
     inputs.rollerFollowerMotorVelocity = rollerFollowerVelocity.getValue();
+
+    this.pivotSim.update(Settings.DT);
+    this.pivotMotor.refresh();
+
+    this.rollerSim.update(Settings.DT);
+    this.rollerLeaderMotor.refresh();
+    this.rollerFollowerMotor.refresh();
   }
 
   // @Override
