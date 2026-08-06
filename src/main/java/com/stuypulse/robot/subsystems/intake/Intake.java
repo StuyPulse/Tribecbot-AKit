@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Intake extends SubsystemBase {
@@ -33,8 +35,8 @@ public class Intake extends SubsystemBase {
     return instance;
   }
 
-  private PivotState pivotState;
-  private RollerState rollerState;
+  @AutoLogOutput(key = "States/Intake/Pivot") private PivotState pivotState;
+  @AutoLogOutput(key = "States/Intake/Rollers") private RollerState rollerState;
 
   private final DualDebouncer pivotPositionDebouncer;
   private final Debouncer pivotStallingDebouncer;
@@ -119,12 +121,6 @@ public class Intake extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
-    Logger.recordOutput("Intake/Pivot/Mode", outputs.pivotMode);
-    Logger.recordOutput("Intake/Roller/Mode", outputs.rollerMode);
-    Logger.recordOutput("Intake/Pivot/Target Position", outputs.pivotTargetPosition);
-    Logger.recordOutput("Intake/Pivot/Target Torque Current", outputs.pivotTargetTorqueCurrent);
-    Logger.recordOutput("Intake/Pivot/Target Voltage", outputs.pivotTargetVoltage);
-    Logger.recordOutput("Intake/Roller/Target Duty Cycle", outputs.rollerTargetDutyCycle);
     io.applyOutputs(outputs);
   }
 

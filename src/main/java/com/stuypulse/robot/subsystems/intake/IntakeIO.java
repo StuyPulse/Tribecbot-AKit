@@ -12,6 +12,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public interface IntakeIO {
   @AutoLog
@@ -53,12 +54,22 @@ public interface IntakeIO {
   }
 
   public static class IntakeIOOutputs {
+    @AutoLogOutput(key = "Intake/Pivot/Output Mode") 
     public PivotIOOutputMode pivotMode = PivotIOOutputMode.POSITION;
+
+    @AutoLogOutput(key = "Intake/Pivot/Target Position") 
     public Angle pivotTargetPosition = Degrees.zero();
+
+    @AutoLogOutput(key = "Intake/Pivot/Target Torque Current") 
     public Current pivotTargetTorqueCurrent = Amps.zero();
+    
+    @AutoLogOutput(key = " Intake/Pivot/Target Voltage") 
     public Voltage pivotTargetVoltage = Volts.zero();
 
+    @AutoLogOutput(key = "Intake/Rollers/Output Mode")
     public RollerIOOutputMode rollerMode = RollerIOOutputMode.DUTY_CYCLE;
+
+    @AutoLogOutput(key = "Intake/Rollers/Target Duty Cycle")
     public double rollerTargetDutyCycle = 0.0;
   }
 
