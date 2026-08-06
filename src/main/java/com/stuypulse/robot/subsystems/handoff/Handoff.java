@@ -9,6 +9,8 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Handoff extends SubsystemBase {
@@ -32,6 +34,7 @@ public class Handoff extends SubsystemBase {
   private final HandoffIOInputsAutoLogged inputs;
   private final HandoffIOOutputs outputs;
 
+  @AutoLogOutput(key = "States/Handoff")
   private HandoffState state;
 
   private final Debouncer handoffStallingDebouncer;
@@ -72,8 +75,6 @@ public class Handoff extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
-    Logger.recordOutput("Handoff/Output Mode", outputs.handoffMode);
-    Logger.recordOutput("Handoff/Duty Cycle Setpoint", outputs.handoffDutyCycle);
     io.applyOutputs(outputs);
   }
 
@@ -88,7 +89,8 @@ public class Handoff extends SubsystemBase {
 
   public boolean isHandoffStalling() {
     return handoffStallingDebouncer.calculate(
-        inputs.motorLeadSupplyCurrent.abs(Amps) > Settings.Handoff.HANDOFF_STALL_CURRENT_AMPS.get());
+        inputs.motorLeadSupplyCurrent.abs(Amps)
+            > Settings.Handoff.HANDOFF_STALL_CURRENT_AMPS.get());
   }
 
   private void setState(HandoffState state) {

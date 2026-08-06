@@ -10,6 +10,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public interface HandoffIO {
   @AutoLog
@@ -33,7 +34,10 @@ public interface HandoffIO {
   }
 
   public static class HandoffIOOutputs {
+    @AutoLogOutput(key = "Handoff/Output Mode")
     public HandoffIOOutputMode handoffMode = HandoffIOOutputMode.DUTY_CYCLE;
+
+    @AutoLogOutput(key = "Handoff/Target Duty Cycle")
     public double handoffDutyCycle = 0.0;
   }
 
