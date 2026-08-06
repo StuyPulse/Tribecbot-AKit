@@ -11,7 +11,6 @@ import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
-
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 public class Settings {
