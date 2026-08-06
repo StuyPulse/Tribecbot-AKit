@@ -47,9 +47,7 @@ public class Spindexer extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Spindexer", inputs);
-  }
 
-  public void periodicAfterScheduler() {
     if (!Settings.EnabledSubsystems.SPINDEXER.get()) {
       stop();
 
@@ -61,7 +59,9 @@ public class Spindexer extends SubsystemBase {
       case REVERSE -> runDutyCycle(Settings.Spindexer.REVERSE_DUTY_CYCLE);
       case STOP -> stop();
     }
+  }
 
+  public void periodicAfterScheduler() {
     Logger.recordOutput("States/Spindexer", state);
     Logger.recordOutput("Spindexer/Output Mode", outputs.spindexerMode);
     Logger.recordOutput("Spindexer/Duty Cycle Setpoint", outputs.spindexerLeaderDutyCycle);
