@@ -72,9 +72,7 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
-  }
 
-  public void periodicAfterScheduler() {
     if (!Settings.EnabledSubsystems.INTAKE.get()) {
       stopPivot();
       stopRollers();
@@ -118,13 +116,16 @@ public class Intake extends SubsystemBase {
     } else {
       stopRollers();
     }
+  }
 
+  public void periodicAfterScheduler() {
     Logger.recordOutput("Intake/Pivot/Mode", outputs.pivotMode);
     Logger.recordOutput("Intake/Roller/Mode", outputs.rollerMode);
     Logger.recordOutput("Intake/Pivot/Target Position", outputs.pivotTargetPosition);
     Logger.recordOutput("Intake/Pivot/Target Torque Current", outputs.pivotTargetTorqueCurrent);
     Logger.recordOutput("Intake/Pivot/Target Voltage", outputs.pivotTargetVoltage);
     Logger.recordOutput("Intake/Roller/Target Duty Cycle", outputs.rollerTargetDutyCycle);
+    io.applyOutputs(outputs);
   }
 
   private boolean isPivotBelowPushdownThreshold() {
