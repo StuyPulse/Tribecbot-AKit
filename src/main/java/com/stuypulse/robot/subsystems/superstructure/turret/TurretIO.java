@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public interface TurretIO {
   @AutoLog
@@ -34,10 +35,16 @@ public interface TurretIO {
   }
 
   public static class TurretIOOutputs {
+    @AutoLogOutput(key = "Superstructure/Turret/Output Mode")
     public TurretIOOutputMode turretMode = TurretIOOutputMode.POSITION;
+
+    @AutoLogOutput(key = "Superstructure/Turret/Target Position")
     public Angle turretPosition = Degrees.zero();
 
+    @AutoLogOutput(key = "Superstructure/Turret/Gain Slot")
     public int gainSlot = 0;
+
+    @AutoLogOutput(key = "Superstruture/Turret/Feedforward")
     public double feedForward = 0;
   }
 

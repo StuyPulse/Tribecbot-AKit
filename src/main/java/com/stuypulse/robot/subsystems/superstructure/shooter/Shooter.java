@@ -11,6 +11,8 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -34,6 +36,7 @@ public class Shooter extends SubsystemBase {
   private final ShooterIOInputsAutoLogged inputs;
   private final ShooterIOOutputs outputs;
 
+  @AutoLogOutput(key = "States/Shooter")
   private ShooterState state;
 
   private final Debouncer readyToShootDebouncer;
@@ -92,9 +95,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
-    Logger.recordOutput("States/Shooter", state);
-    Logger.recordOutput("Shooter/Output Mode", outputs.shooterMode);
-    Logger.recordOutput("Shooter/Velocity Setpoint", outputs.shooterVelocity);
     io.applyOutputs(outputs);
   }
 

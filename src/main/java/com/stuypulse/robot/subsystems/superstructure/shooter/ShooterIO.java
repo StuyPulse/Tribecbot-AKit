@@ -13,6 +13,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public interface ShooterIO {
   @AutoLog
@@ -38,7 +39,10 @@ public interface ShooterIO {
   }
 
   public static class ShooterIOOutputs {
+    @AutoLogOutput(key = "Superstructure/Shooter/Output Mode")
     public ShooterIOOutputMode shooterMode = ShooterIOOutputMode.VELOCITY;
+
+    @AutoLogOutput(key = "Superstructure/Shooter/Target Velocity")
     public AngularVelocity shooterVelocity = RPM.zero();
   }
 

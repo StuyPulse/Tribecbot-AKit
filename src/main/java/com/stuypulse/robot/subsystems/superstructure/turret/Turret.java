@@ -23,6 +23,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Turret extends SubsystemBase {
@@ -46,6 +48,7 @@ public class Turret extends SubsystemBase {
   private final TurretIOInputsAutoLogged inputs;
   private final TurretIOOutputs outputs;
 
+  @AutoLogOutput(key = "States/Turret")
   private TurretState state;
 
   private boolean atTolerance;
@@ -148,6 +151,7 @@ public class Turret extends SubsystemBase {
     return delta;
   }
 
+  @AutoLogOutput(key = "Superstructure/Turret/Absolute Angle")
   private Angle getVectorSpaceAngle() {
     return TurretAngleCalculator.getAbsoluteAngle(
         inputs.encoder17tPosition.in(Degrees), inputs.encoder18tPosition.in(Degrees));
@@ -223,6 +227,7 @@ public class Turret extends SubsystemBase {
     io.applyOutputs(outputs);
   }
 
+  @AutoLogOutput(key = "Superstructure/Turret/Ready To Shoot")
   public boolean turretReadyToShoot() {
     return readyToShootDebouncer.calculate(atTolerance);
   }

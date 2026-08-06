@@ -12,6 +12,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public interface HoodIO {
   @AutoLog
@@ -31,9 +32,13 @@ public interface HoodIO {
   }
 
   public static class HoodIOOutputs {
+    @AutoLogOutput(key = "Superstructure/Hood/Output Mode")
     public HoodIOOutputMode outputMode = HoodIOOutputMode.POSITION;
 
+    @AutoLogOutput(key = "Superstructure/Hood/Target Position")
     public Angle position = Degrees.zero();
+
+    @AutoLogOutput(key = "Superstructure/Hood/Target Voltage")
     public Voltage voltage = Volts.zero();
   }
 

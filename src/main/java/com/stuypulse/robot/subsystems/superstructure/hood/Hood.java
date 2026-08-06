@@ -14,6 +14,8 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Hood extends SubsystemBase {
@@ -37,6 +39,7 @@ public class Hood extends SubsystemBase {
   private final HoodIOInputsAutoLogged inputs;
   private final HoodIOOutputs outputs;
 
+  @AutoLogOutput(key = "States/Intake")
   private HoodState state;
 
   private final Debouncer hoodStallingDebouncer;
@@ -122,11 +125,6 @@ public class Hood extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
-    Logger.recordOutput("States/Hood", state);
-    Logger.recordOutput("Hood/Output Mode", outputs.outputMode);
-    Logger.recordOutput("Hood/Position Setpoint", outputs.position);
-    Logger.recordOutput("Hood/Voltage Setpoint", outputs.voltage);
-
     io.applyOutputs(outputs);
   }
 
