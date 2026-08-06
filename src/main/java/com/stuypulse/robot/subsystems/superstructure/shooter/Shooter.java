@@ -69,9 +69,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
-  }
 
-  public void periodicAfterScheduler() {
     if (!Settings.EnabledSubsystems.SHOOTER.get()) {
       stopShooter();
 
@@ -91,7 +89,9 @@ public class Shooter extends SubsystemBase {
       case SOTM -> runVelocity(SOTMCalculator.calculateShooterRPMSOTM());
       case FOTM -> runVelocity(SOTMCalculator.calculateShooterRPMFOTM());
     }
+  }
 
+  public void periodicAfterScheduler() {
     Logger.recordOutput("States/Shooter", state);
     Logger.recordOutput("Shooter/Output Mode", outputs.shooterMode);
     Logger.recordOutput("Shooter/Velocity Setpoint", outputs.shooterVelocity);

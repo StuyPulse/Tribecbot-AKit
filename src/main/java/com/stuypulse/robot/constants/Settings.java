@@ -22,7 +22,8 @@ public class Settings {
     LoggedNetworkBoolean HOOD = new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Hood", true);
     LoggedNetworkBoolean SHOOTER =
         new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Shooter", true);
-    LoggedNetworkBoolean TURRET = new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Turret", true);
+    LoggedNetworkBoolean TURRET =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Turret", true);
   }
 
   // A Kit stuff

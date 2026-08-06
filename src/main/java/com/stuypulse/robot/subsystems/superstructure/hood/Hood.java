@@ -80,9 +80,7 @@ public class Hood extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Hood", inputs);
-  }
-
-  public void periodicAfterScheduler() {
+    
     if (!Settings.EnabledSubsystems.HOOD.get()) {
       stopHood();
 
@@ -121,7 +119,9 @@ public class Hood extends SubsystemBase {
       case ANALOG -> runPosition(driverInput);
       case IDLE -> stopHood();
     }
+  }
 
+  public void periodicAfterScheduler() {
     Logger.recordOutput("States/Hood", state);
     Logger.recordOutput("Hood/Output Mode", outputs.outputMode);
     Logger.recordOutput("Hood/Position Setpoint", outputs.position);
