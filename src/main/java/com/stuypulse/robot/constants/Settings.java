@@ -22,6 +22,7 @@ public class Settings {
     LoggedNetworkBoolean HOOD = new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Hood", true);
     LoggedNetworkBoolean SHOOTER =
         new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Shooter", true);
+    LoggedNetworkBoolean TURRET = new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Turret", true);
   }
 
   // A Kit stuff
@@ -229,11 +230,11 @@ public class Settings {
       public final LoggedNetworkNumber SOTM_TOLERANCE_THRESHOLD_METERS =
           new LoggedNetworkNumber(
               "Superstructure/Turret/SOTM Tolerance Dist Threshold (Meters)", 1.75);
-      public final LoggedNetworkNumber SOTM_TOLERANCE_CLOSE =
-          new LoggedNetworkNumber("Superstructure/Turret/SOTM Tolerance (Close)", 10.0);
-      public final LoggedNetworkNumber SOTM_TOLERANCE_FAR =
+      public final LoggedNetworkNumber SOTM_TOLERANCE_CLOSE_DEG =
+          new LoggedNetworkNumber("Superstructure/Turret/SOTM Tolerance Close (Deg)", 10.0);
+      public final LoggedNetworkNumber SOTM_TOLERANCE_FAR_DEG =
           new LoggedNetworkNumber(
-              "Superstructure/Turret/SOTM Tolerance (Far)", 6.0); // Degrees.of(10.0);
+              "Superstructure/Turret/SOTM Tolerance Far (Deg)", 6.0); // Degrees.of(10.0);
       public final Angle FOTM_TOLERANCE = Degrees.of(10.0);
 
       public final Angle KB = Degrees.of(0.0);

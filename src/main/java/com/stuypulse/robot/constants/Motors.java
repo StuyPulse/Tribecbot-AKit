@@ -119,6 +119,53 @@ public interface Motors {
                   Settings.Superstructure.Hood.FORWARD_SOFT_LIMIT.in(Rotations),
                   Settings.Superstructure.Hood.REVERSE_SOFT_LIMIT.in(Rotations));
     }
+
+    public interface Turret {
+      TalonFXConfig TURRET_CONFIG = 
+          new TalonFXConfig()
+              .withInvertedValue(InvertedValue.Clockwise_Positive)
+              .withNeutralMode(NeutralModeValue.Brake)
+
+              .withSupplyCurrentLimitAmps(80)
+              .withStatorCurrentLimitEnabled(false)
+              .withRampRate(0.0)
+
+              .withPIDConstants(Gains.Superstructure.Turret.slot0.kP, Gains.Superstructure.Turret.slot0.kI,
+                      Gains.Superstructure.Turret.slot0.kD, 0)
+              .withFFConstants(Gains.Superstructure.Turret.slot0.kS, Gains.Superstructure.Turret.slot0.kV,
+                      Gains.Superstructure.Turret.slot0.kA, 0)
+              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign, 0)
+
+              .withPIDConstants(0, 0, 10.0, 2)
+              .withFFConstants(Gains.Superstructure.Turret.slot0.kS, Gains.Superstructure.Turret.slot0.kV,
+                      Gains.Superstructure.Turret.slot0.kA, 2)
+              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign, 2)
+
+              .withPIDConstants(Gains.Superstructure.Turret.slot1.kP.get(),
+                      Gains.Superstructure.Turret.slot1.kI.get(), Gains.Superstructure.Turret.slot1.kD.get(), 1)
+              .withFFConstants(Gains.Superstructure.Turret.slot1.kS.get(), Gains.Superstructure.Turret.slot1.kV.get(),
+                      Gains.Superstructure.Turret.slot1.kA.get(), 1)
+              .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign, 1)
+
+              .withSensorToMechanismRatio(Settings.Superstructure.Turret.GEAR_RATIO_MOTOR_TO_MECH)
+
+              .withSoftLimits(
+                      false, false,
+                      Settings.Superstructure.Turret.SoftwareLimit.FORWARD_MAX_ROTATIONS,
+                      Settings.Superstructure.Turret.SoftwareLimit.BACKWARDS_MAX_ROTATIONS);
+
+      CANCoderConfig ENCODER_17T_CONFIG = 
+          new CANCoderConfig()
+              .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                .withMagnetOffset(Settings.Superstructure.Turret.Encoder17t.OFFSET.in(Rotations))
+                .withAbsoluteSensorDiscontinuityPoint(1.0);
+
+      CANCoderConfig ENCODER_18T_CONFIG = 
+          new CANCoderConfig()
+              .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                .withMagnetOffset(Settings.Superstructure.Turret.Encoder18t.OFFSET.in(Rotations))
+                .withAbsoluteSensorDiscontinuityPoint(1.0);
+    }
   }
 
   public static class CANCoderConfig {
