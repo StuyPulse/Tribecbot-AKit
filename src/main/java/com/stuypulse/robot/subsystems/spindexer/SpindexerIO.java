@@ -12,6 +12,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public interface SpindexerIO {
   @AutoLog
@@ -37,7 +38,10 @@ public interface SpindexerIO {
   }
 
   public static class SpindexerIOOutputs {
+    @AutoLogOutput(key = "Spindexer/Output Mode")
     public SpindexerIOOutputMode spindexerMode = SpindexerIOOutputMode.DUTY_CYCLE;
+
+    @AutoLogOutput(key = "Spindexer/Duty Cycle Setpoint")
     public double spindexerLeaderDutyCycle = 0;
   }
 

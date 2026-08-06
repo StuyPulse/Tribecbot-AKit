@@ -4,6 +4,8 @@ import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.spindexer.SpindexerIO.SpindexerIOOutputs;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Spindexer extends SubsystemBase {
@@ -27,6 +29,7 @@ public class Spindexer extends SubsystemBase {
   private final SpindexerIOInputsAutoLogged inputs;
   private final SpindexerIOOutputs outputs;
 
+  @AutoLogOutput(key = "States/Spindexer")
   private SpindexerState state;
 
   private Spindexer(SpindexerIO io) {
@@ -62,9 +65,6 @@ public class Spindexer extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
-    Logger.recordOutput("States/Spindexer", state);
-    Logger.recordOutput("Spindexer/Output Mode", outputs.spindexerMode);
-    Logger.recordOutput("Spindexer/Duty Cycle Setpoint", outputs.spindexerLeaderDutyCycle);
     io.applyOutputs(outputs);
   }
 
