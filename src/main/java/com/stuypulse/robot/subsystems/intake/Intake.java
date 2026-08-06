@@ -237,11 +237,13 @@ public class Intake extends SubsystemBase {
 
   public Command seedPivotDeployed() {
     return runOnce(() -> io.seedPivotPosition(Settings.Intake.PIVOT_DEPLOY_ANGLE))
+        .ignoringDisable(true)
         .withName("Intake Seed Pivot Deployed");
   }
 
   public Command seedPivotStowed() {
     return runOnce(() -> io.seedPivotPosition(Settings.Intake.PIVOT_STOW_ANGLE))
+        .ignoringDisable(true)
         .withName("Intake Seed Pivot Stowed");
   }
 }
