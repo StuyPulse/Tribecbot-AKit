@@ -82,14 +82,14 @@ public class Spindexer extends SubsystemBase {
   }
 
   public Command runSpindexerForward() {
-    return run(() -> setState(SpindexerState.FORWARD)).withName("Spindexer Forward");
+    return runOnce(() -> setState(SpindexerState.FORWARD)).withName("Spindexer Forward");
   }
 
   public Command runSpindexerReverse() {
-    return run(() -> setState(SpindexerState.REVERSE)).withName("Spindexer Reverse");
+    return runOnce(() -> setState(SpindexerState.REVERSE)).withName("Spindexer Reverse");
   }
 
   public Command stopSpindexer() {
-    return run(() -> setState(SpindexerState.STOP)).withName("Spindexer Stop");
+    return runOnce(() -> setState(SpindexerState.STOP)).withName("Spindexer Stop");
   }
 }
