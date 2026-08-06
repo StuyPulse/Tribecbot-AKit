@@ -57,9 +57,7 @@ public class Handoff extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Handoff", inputs);
-  }
 
-  public void periodicAfterScheduler() {
     if (!Settings.EnabledSubsystems.HANDOFF.get()) {
       stopHandoff();
 
@@ -71,7 +69,9 @@ public class Handoff extends SubsystemBase {
       case REVERSE -> runHandoffDutyCycle(-1);
       case STOP -> stopHandoff();
     }
+  }
 
+  public void periodicAfterScheduler() {
     Logger.recordOutput("Handoff/Output Mode", outputs.handoffMode);
     Logger.recordOutput("Handoff/Duty Cycle Setpoint", outputs.handoffDutyCycle);
     io.applyOutputs(outputs);
