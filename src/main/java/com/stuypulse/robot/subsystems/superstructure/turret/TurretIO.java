@@ -22,9 +22,18 @@ public interface TurretIO {
     public Angle turretMotorPosition = Degrees.zero();
     public Voltage turretMotorAppliedVoltage = Volts.zero();
     public AngularVelocity turretMotorVelocity = DegreesPerSecond.zero();
+
+    public Angle encoder17tPosition = Degrees.zero();
+    public Angle encoder18tPosition = Degrees.zero();
+  }
+
+  public enum TurretIOOutputMode {
+    POSITION,
+    STOP
   }
 
   public static class TurretIOOutputs {
+    public TurretIOOutputMode turretMode = TurretIOOutputMode.POSITION;
     public Angle turretPosition = Degrees.zero();
   }
 
