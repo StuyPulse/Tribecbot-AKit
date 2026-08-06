@@ -1,0 +1,34 @@
+name: build
+on:
+  push:
+    branches: [ main, staging ]
+  pull_request:
+    branches: [ main, staging ]
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    container: wpilib/roborio-cross-ubuntu:2026-22.04-py314
+    steps:
+    - uses: actions/checkout@v7
+
+    - name: Add repository to git safe directories
+      run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Compile and run tests on robot code
+      run: ./gradlew build
+
+    - name: Notify Slack
+      if: always()
+      uses: slackapi/slack-github-action@v2.1.1
+      with:
+        webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+        webhook-type: incoming-webhook
+        payload: |
+          blocks:
+            - type: section
+              text:
+                type: mrkdwn
+                text: "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }} Build *${{ job.status }}* for `${{ github.repository }}` on `${{ github.ref_name }}` — <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|view run>"
