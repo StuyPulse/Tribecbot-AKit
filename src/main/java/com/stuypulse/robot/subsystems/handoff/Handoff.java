@@ -65,8 +65,8 @@ public class Handoff extends SubsystemBase {
     }
 
     switch (state) {
-      case FORWARD -> runHandoffDutyCycle(1);
-      case REVERSE -> runHandoffDutyCycle(-1);
+      case FORWARD -> runHandoffDutyCycle(Settings.Handoff.FORWARD_DUTY_CYCLE);
+      case REVERSE -> runHandoffDutyCycle(Settings.Handoff.REVERSE_DUTY_CYCLE);
       case STOP -> stopHandoff();
     }
   }
@@ -88,7 +88,7 @@ public class Handoff extends SubsystemBase {
 
   public boolean isHandoffStalling() {
     return handoffStallingDebouncer.calculate(
-        inputs.motorLeadSupplyCurrent.abs(Amps) > Settings.Handoff.HANDOFF_STALL_CURRENT.in(Amps));
+        inputs.motorLeadSupplyCurrent.abs(Amps) > Settings.Handoff.HANDOFF_STALL_CURRENT_AMPS.get());
   }
 
   private void setState(HandoffState state) {

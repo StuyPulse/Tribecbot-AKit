@@ -9,6 +9,7 @@ import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class Settings {
 
@@ -60,7 +61,7 @@ public class Settings {
     Voltage PUSHDOWN_VOLTAGE = Volts.of(-3.0);
     Current PUSHDOWN_CURRENT_TELEOP =
         Amps.of(
-            -75.0); // new SmartNumber("Intake/Pushdown Current", -65.0); //TODO: GET ACTUAL TYTY
+            -75.0); // new LoggedNetworkNumber("Intake/Pushdown Current", -65.0); //TODO: GET ACTUAL TYTY
     Current PUSHDOWN_CURRENT_AUTON = Amps.of(-80.0);
 
     double PIVOT_GEAR_RATIO = 32.0 / 20.0 * 64.0 / 18.0 * 60.0 / 8.0;
@@ -76,7 +77,20 @@ public class Settings {
 
     public final double GEAR_RATIO = 3.0 / 1.0;
 
-    Current HANDOFF_STALL_CURRENT = Amps.of(30); // TODO: set value
-    double HANDOFF_STALL_DEBOUNCE_SEC = 0.5; // TODO: VERIFY
+    double HANDOFF_STOP = 0.0;
+    double HANDOFF_MAX = 4800.0;
+    double HANDOFF_REVERSE = -500.0;
+    double RPM_TOLERANCE = 2200.0;
+    double REVERSE_TIME = 2.0;
+    double RPM_SOTM_TOLERANCE = 700.0;
+    LoggedNetworkNumber HANDOFF_RPM = new LoggedNetworkNumber("/Tuning/Handoff/Target RPM", HANDOFF_MAX);
+
+    double IS_EMPTY_AMPERAGE = 8; //TODO: update IS EMPTY VALUE
+
+    double FORWARD_DUTY_CYCLE = 1.0;
+    double REVERSE_DUTY_CYCLE = -1.0;
+
+    LoggedNetworkNumber HANDOFF_STALL_CURRENT_AMPS = new LoggedNetworkNumber("/Tuning/Handoff/Stall Current Limit for Reverse", 30.0);
+    double HANDOFF_STALL_DEBOUNCE_SEC = 0.5;
   }
 }
