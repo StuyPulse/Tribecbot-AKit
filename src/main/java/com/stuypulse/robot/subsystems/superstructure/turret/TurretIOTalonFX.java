@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Hertz;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -83,9 +84,31 @@ public class TurretIOTalonFX implements TurretIO {
   @Override
   public void applyOutputs(TurretIOOutputs outputs) {
     switch (outputs.turretMode) {
-      case POSITION -> turretMotor.setControl(positionController.withPosition(outputs.turretPosition));
+      case POSITION -> turretMotor.setControl(
+          positionController
+              .withPosition(outputs.turretPosition)
+              .withSlot(outputs.gainSlot)
+              .withFeedForward(outputs.feedForward));
 
       case STOP -> turretMotor.stopMotor();
     }
+  }
+
+  @Override
+  public void seedTurretPosition(Angle position) {
+    turretMotor.setPosition(position);
+  }
+
+  @Override
+  public void refreshMagnetSensorConfigurations(
+      MagnetSensorConfigs encoder17tConfigs, MagnetSensorConfigs encoder18tConfigs) {
+    encoder17t.getConfigurator().refresh(encoder17tConfigs);
+    encoder18t.getConfigurator().refresh(encoder18tConfigs);
+  }
+
+  @Override
+  public void configureEncoders() {
+    Motors.Superstructure.Turret.ENCODER_17T_CONFIG.configure(encoder17t);
+    Motors.Superstructure.Turret.ENCODER_18T_CONFIG.configure(encoder18t);
   }
 }

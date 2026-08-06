@@ -80,7 +80,7 @@ public class Hood extends SubsystemBase {
   public void periodic() {
     io.updateInputs(inputs);
     Logger.processInputs("Hood", inputs);
-    
+
     if (!Settings.EnabledSubsystems.HOOD.get()) {
       stopHood();
 

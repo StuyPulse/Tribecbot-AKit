@@ -26,6 +26,8 @@ public class Settings {
         new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Turret", true);
   }
 
+  public static final double DT = 0.02;
+
   // A Kit stuff
 
   public static final Mode simMode = Mode.SIM;

@@ -13,7 +13,8 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
 
   // Gamepads
-  public final CommandXboxController driver = new CommandXboxController(Ports.Gamepad.DRIVER);
+  public static final CommandXboxController driver =
+      new CommandXboxController(Ports.Gamepad.DRIVER);
 
   // Subsystem
 
