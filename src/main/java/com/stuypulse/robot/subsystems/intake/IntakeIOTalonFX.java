@@ -5,14 +5,12 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
 import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
-
 import edu.wpi.first.units.measure.*;
 
 public class IntakeIOTalonFX implements IntakeIO {

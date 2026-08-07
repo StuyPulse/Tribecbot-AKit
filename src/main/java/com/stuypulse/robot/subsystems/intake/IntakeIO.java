@@ -7,7 +7,6 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -60,7 +59,7 @@ public interface IntakeIO {
     @AutoLogOutput(key = "Intake/Pivot/Target Torque Current")
     public Current pivotTargetTorqueCurrent = Amps.zero();
 
-    @AutoLogOutput(key = " Intake/Pivot/Target Voltage")
+    @AutoLogOutput(key = "Intake/Pivot/Target Voltage")
     public Voltage pivotTargetVoltage = Volts.zero();
 
     @AutoLogOutput(key = "Intake/Rollers/Output Mode")
