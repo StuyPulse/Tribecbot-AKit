@@ -39,6 +39,7 @@ public class Shooter extends SubsystemBase {
   private ShooterState state;
 
   private final Debouncer readyToShootDebouncer;
+  private final Debouncer currentlyShootingDebouncer;
 
   private boolean atTolerance;
 
@@ -50,6 +51,7 @@ public class Shooter extends SubsystemBase {
     setState(ShooterState.MANUAL_OVERRIDE);
 
     readyToShootDebouncer = new Debouncer(0.5, DebounceType.kBoth);
+    currentlyShootingDebouncer = new Debouncer(2, DebounceType.kFalling);
 
     this.atTolerance = false;
   }
@@ -130,6 +132,10 @@ public class Shooter extends SubsystemBase {
 
   public boolean readyToShoot() {
     return readyToShootDebouncer.calculate(atTolerance);
+  }
+
+  public boolean isShooting() {
+    return currentlyShootingDebouncer.calculate(inputs.shooterLeaderMotorStatorCurrent.gt(Settings.Superstructure.Shooter.IS_SHOOTING_CURRENT));
   }
 
   private void setState(ShooterState state) {
