@@ -189,6 +189,16 @@ public interface Motors {
             .withSensorToMechanismRatio(Settings.Spindexer.GEAR_RATIO);
   }
 
+  public interface Handoff {
+    TalonFXConfig HANDOFF_CONFIG =
+        new Motors.TalonFXConfig()
+            .withInvertedValue(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake)
+            .withSupplyCurrentLimitAmps(80.0)
+            .withStatorCurrentLimitEnabled(false)
+            .withRampRate(0.25);
+  }
+
   public static class CANCoderConfig {
     private final CANcoderConfiguration configuration = new CANcoderConfiguration();
     private final MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs();
