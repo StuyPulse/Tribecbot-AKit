@@ -132,39 +132,6 @@ public class IntakeIOTalonFX implements IntakeIO {
     inputs.rollerFollowerMotorVelocity = rollerFollowerVelocity.getValue();
   }
 
-  // @Override
-  // public void runPivotPosition(Angle position) {
-  //   pivotMotor.setControl(pivotPositionController.withPosition(position));
-  // }
-
-  // @Override
-  // public void runPivotTorqueCurrent(Current torqueCurrent) {
-  //   pivotMotor.setControl(pivotPushdownController.withOutput(torqueCurrent));
-  // }
-
-  // @Override
-  // public void runPivotVoltage(Voltage voltage) {
-  //   pivotMotor.setControl(pivotVoltageController.withOutput(voltage));
-  // }
-
-  // @Override
-  // public void runRollersDutyCycle(double dutyCycle) {
-  //   rollerLeaderMotor.setControl(rollerLeaderController.withOutput(dutyCycle));
-  // }
-
-  // @Override
-  // public void stopPivot() {
-  //   pivotMotor.setControl(pivotVoltageController.withOutput(0));
-  // }
-
-  // @Override
-  // public void stopRollers() {
-  //   rollerLeaderMotor.stopMotor();
-  //   rollerFollowerMotor.stopMotor();
-
-  //   rollerFollowerMotor.setControl(rollerFollowerController);
-  // }
-
   @Override
   public void seedPivotPosition(Angle position) {
     pivotMotor.setPosition(position);
