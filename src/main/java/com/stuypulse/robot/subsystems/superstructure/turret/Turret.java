@@ -72,7 +72,7 @@ public class Turret extends SubsystemBase {
     readyToShootDebouncer = new Debouncer(0.05, DebounceType.kBoth);
     atTolerance = false;
 
-    prevActualTargetAngle = getTargetAngle().in(Degrees);
+    prevActualTargetAngle = getScoringAngle().in(Degrees);
 
     hasUsedAbsoluteEncoder = false;
     hasInitializedFilter = false;
@@ -89,21 +89,6 @@ public class Turret extends SubsystemBase {
     RIGHT_CORNER,
     KB,
     TESTING;
-  }
-
-  private Angle getTargetAngle() {
-    return switch (state) {
-      case IDLE -> inputs.turretMotorPosition;
-      case ZERO -> Degrees.zero();
-      case SCORE -> getScoringAngle();
-      case SOTM -> SOTMCalculator.calculateTurretAngleSOTM();
-      case FOTM -> SOTMCalculator.calculateTurretAngleFOTM();
-      case FERRY -> getFerryAngle();
-      case LEFT_CORNER -> Settings.Superstructure.Turret.LEFT_CORNER;
-      case RIGHT_CORNER -> Settings.Superstructure.Turret.RIGHT_CORNER;
-      case KB -> Settings.Superstructure.Turret.KB;
-      case TESTING -> driverInput;
-    };
   }
 
   private Angle getScoringAngle() {
@@ -126,9 +111,9 @@ public class Turret extends SubsystemBase {
     return TurretAngleCalculator.getPointAtTargetAngle(target, turret, robot.getRotation());
   }
 
-  private double getWrappedTargetAngle() {
+  private double getWrappedTargetAngle(Angle targetAngle) {
     double currentAngle = inputs.turretMotorPosition.in(Degrees);
-    return currentAngle + getDelta(getTargetAngle().in(Degrees), currentAngle);
+    return currentAngle + getDelta(targetAngle.in(Degrees), currentAngle);
   }
 
   private double getDelta(double target, double current) {
@@ -161,65 +146,25 @@ public class Turret extends SubsystemBase {
     io.updateInputs(inputs);
     Logger.processInputs("Turret", inputs);
 
-    if (!hasUsedAbsoluteEncoder) {
-      seedTurret();
-      hasUsedAbsoluteEncoder = true;
-    }
-
-    double currentAngle = inputs.turretMotorPosition.in(Degrees);
-    double actualTargetAngle = currentAngle + getDelta(getTargetAngle().in(Degrees), currentAngle);
-
-    if (!hasInitializedFilter) {
-      prevActualTargetAngle = actualTargetAngle;
-      hasInitializedFilter = true;
-    }
-
-    double delta = actualTargetAngle - prevActualTargetAngle;
-
-    boolean deltaIsSignificant =
-        Math.abs(delta) >= Settings.Superstructure.Turret.SETPOINT_FILTER_THRESHOLD_DEG;
-
-    boolean driverIsMoving =
-        Math.abs(RobotContainer.driver.getLeftX()) > DriverConstants.Driver.Drive.DEADBAND
-            || Math.abs(RobotContainer.driver.getLeftY()) > DriverConstants.Driver.Drive.DEADBAND
-            || Math.abs(RobotContainer.driver.getRightX()) > DriverConstants.Driver.Drive.DEADBAND;
-
-    if (deltaIsSignificant || driverIsMoving) {
-      prevActualTargetAngle = actualTargetAngle;
-    }
-
-    if (isWrapping) {
-      isWrapping =
-          Math.abs(getWrappedTargetAngle() - currentAngle)
-              > Settings.Superstructure.Turret.GAIN_SWITCHING_THRESHOLD_END.in(Degrees);
-    } else {
-      isWrapping =
-          Math.abs(getWrappedTargetAngle() - currentAngle)
-              > Settings.Superstructure.Turret.GAIN_SWITCHING_THRESHOLD_START.in(Degrees);
-    }
-
-    int slot = 0;
-
-    if (isWrapping) {
-      slot = 1;
-    }
-
     if (!Settings.EnabledSubsystems.TURRET.get()) {
       stopTurret();
 
       return;
     }
 
-    double omega = Drive.getInstance().getChassisSpeeds().omegaRadiansPerSecond;
-    double omegaFF = Gains.Superstructure.Turret.kOmega.get() * omega;
-    double setpointVelocityRPS = delta / (360 * Settings.DT);
+    switch (state) {
+      case IDLE -> runPosition(inputs.turretMotorPosition);
+      case ZERO -> runPosition(Degrees.zero());
+      case SCORE -> runPosition(getScoringAngle());
+      case SOTM -> runPosition(SOTMCalculator.calculateTurretAngleSOTM());
+      case FOTM -> runPosition(SOTMCalculator.calculateTurretAngleFOTM());
+      case FERRY -> runPosition(getFerryAngle());
+      case LEFT_CORNER -> runPosition(Settings.Superstructure.Turret.LEFT_CORNER);
+      case RIGHT_CORNER -> runPosition(Settings.Superstructure.Turret.RIGHT_CORNER);
+      case KB -> runPosition(Settings.Superstructure.Turret.KB);
+      case TESTING -> runPosition(driverInput);
+    };
 
-    // the component of the turret's setpoint velocity that comes from robot translation
-    double translationalComponentVelocityRPS = setpointVelocityRPS - omega / (2 * Math.PI);
-    double translationFF =
-        Gains.Superstructure.Turret.kTranslation.get() * translationalComponentVelocityRPS;
-
-    runPosition(Degrees.of(prevActualTargetAngle), slot, omegaFF + translationFF);
   }
 
   public void periodicAfterScheduler() {
@@ -269,11 +214,65 @@ public class Turret extends SubsystemBase {
     io.configureEncoders();
   }
 
-  private void runPosition(Angle position, int gainSlot, double feedForward) {
-    outputs.turretPosition = position;
-    outputs.gainSlot = gainSlot;
-    outputs.feedForward = feedForward;
+  private void runPosition(Angle position) {
+    if (!hasUsedAbsoluteEncoder) {
+      seedTurret();
+      hasUsedAbsoluteEncoder = true;
+    }
 
+    double currentAngle = inputs.turretMotorPosition.in(Degrees);
+    double actualTargetAngle = currentAngle + getDelta(position.in(Degrees), currentAngle);
+
+    if (!hasInitializedFilter) {
+      prevActualTargetAngle = actualTargetAngle;
+      hasInitializedFilter = true;
+    }
+
+    double delta = actualTargetAngle - prevActualTargetAngle;
+
+    boolean deltaIsSignificant =
+        Math.abs(delta) >= Settings.Superstructure.Turret.SETPOINT_FILTER_THRESHOLD_DEG;
+
+    boolean driverIsMoving =
+        Math.abs(RobotContainer.driver.getLeftX()) > DriverConstants.Driver.Drive.DEADBAND
+            || Math.abs(RobotContainer.driver.getLeftY()) > DriverConstants.Driver.Drive.DEADBAND
+            || Math.abs(RobotContainer.driver.getRightX()) > DriverConstants.Driver.Drive.DEADBAND;
+
+    if (deltaIsSignificant || driverIsMoving) {
+      prevActualTargetAngle = actualTargetAngle;
+    }
+
+    if (isWrapping) {
+      isWrapping =
+          Math.abs(getWrappedTargetAngle(position) - currentAngle)
+              > Settings.Superstructure.Turret.GAIN_SWITCHING_THRESHOLD_END.in(Degrees);
+    } else {
+      isWrapping =
+          Math.abs(getWrappedTargetAngle(position) - currentAngle)
+              > Settings.Superstructure.Turret.GAIN_SWITCHING_THRESHOLD_START.in(Degrees);
+    }
+
+    int slot = 0;
+
+    if (isWrapping) {
+      slot = 1;
+    }
+
+    double omega = Drive.getInstance().getChassisSpeeds().omegaRadiansPerSecond;
+    double omegaFF = Gains.Superstructure.Turret.kOmega.get() * omega;
+    double setpointVelocityRPS = delta / (360 * Settings.DT);
+
+    // the component of the turret's setpoint velocity that comes from robot translation
+    double translationalComponentVelocityRPS = setpointVelocityRPS - omega / (2 * Math.PI);
+    double translationFF =
+        Gains.Superstructure.Turret.kTranslation.get() * translationalComponentVelocityRPS;
+
+    outputs.turretMode = TurretIOOutputMode.POSITION;
+    outputs.turretPosition = Degrees.of(prevActualTargetAngle);
+    outputs.gainSlot = slot;
+    outputs.feedForward = omegaFF + translationFF;
+
+    // At Tolerance Calculation
     Angle error = inputs.turretMotorPosition.minus(position);
     Drive swerve = Drive.getInstance();
 
