@@ -114,6 +114,10 @@ public class Superstructure extends SubsystemBase {
     turret.setState(state.getTurretState());
   }
 
+  public SuperstructureState getState() {
+    return state;
+  }
+
   public boolean shouldStop() {
     if (!shouldStop.isEmpty()) {
       return shouldStop.get();

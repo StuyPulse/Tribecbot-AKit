@@ -8,6 +8,12 @@
 package com.stuypulse.robot;
 
 import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
+import com.stuypulse.robot.subsystems.swerve.Drive;
+import com.stuypulse.robot.util.superstructure.InterpolationCalculator;
+import com.stuypulse.robot.util.superstructure.SOTMCalculator;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -80,7 +86,19 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
 
+    SuperstructureState superstructureState = Superstructure.getInstance().getState();
+
+    if (superstructureState == SuperstructureState.SOTM) {
+      SOTMCalculator.updateSOTMSolution();
+    } else if (superstructureState == SuperstructureState.FOTM) {
+      SOTMCalculator.updateFOTMSolution();
+    }
+
     robotContainer.periodicAfterScheduler();
+
+    Superstructure.getInstance().clearMemoized();
+    Drive.getInstance().clearMemoized();
+    InterpolationCalculator.clearMemoized();
   }
 
   /** This function is called once when the robot is disabled. */
