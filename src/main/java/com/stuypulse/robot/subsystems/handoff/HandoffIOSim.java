@@ -1,7 +1,7 @@
 package com.stuypulse.robot.subsystems.handoff;
 
 import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.DegreesPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -30,13 +30,13 @@ public class HandoffIOSim implements HandoffIO {
   public void updateInputs(HandoffIOInputs inputs) {
     inputs.motorLeadSupplyCurrent = Amps.of(motorLeaderSim.getCurrentDrawAmps());
     inputs.motorLeadStatorCurrent = Amps.of(motorLeaderSim.getCurrentDrawAmps());
-    inputs.motorLeadVelocity = DegreesPerSecond.of(motorLeaderSim.getAngularVelocityRadPerSec());
+    inputs.motorLeadVelocity = RadiansPerSecond.of(motorLeaderSim.getAngularVelocityRadPerSec());
     inputs.motorLeadAppliedVoltage = Volts.of(motorLeaderSim.getInputVoltage());
 
     inputs.motorFollowSupplyCurrent = Amps.of(motorFollowerSim.getCurrentDrawAmps());
     inputs.motorFollowStatorCurrent = Amps.of(motorFollowerSim.getCurrentDrawAmps());
     inputs.motorFollowVelocity =
-        DegreesPerSecond.of(motorFollowerSim.getAngularVelocityRadPerSec());
+        RadiansPerSecond.of(motorFollowerSim.getAngularVelocityRadPerSec());
     inputs.motorFollowAppliedVoltage = Volts.of(motorFollowerSim.getInputVoltage());
   }
 
