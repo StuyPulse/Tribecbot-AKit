@@ -37,7 +37,7 @@ public interface Motors {
 
   public interface Intake {
     TalonFXConfig PIVOT_CONFIG =
-        new Motors.TalonFXConfig()
+        new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Brake)
             .withSupplyCurrentLimitAmps(10.0) // was 60 on practice day
@@ -59,7 +59,7 @@ public interface Motors {
             .withSensorToMechanismRatio(Settings.Intake.PIVOT_GEAR_RATIO);
 
     TalonFXConfig ROLLER_CONFIG =
-        new Motors.TalonFXConfig()
+        new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast)
             .withSupplyCurrentLimitAmps(37.0)
@@ -176,6 +176,17 @@ public interface Motors {
               .withMagnetOffset(Settings.Superstructure.Turret.Encoder18t.OFFSET.in(Rotations))
               .withAbsoluteSensorDiscontinuityPoint(1.0);
     }
+  }
+
+  public interface Spindexer {
+    TalonFXConfig SPINDEXER_CONFIG =
+        new TalonFXConfig()
+            .withInvertedValue(InvertedValue.Clockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Brake)
+            .withSupplyCurrentLimitAmps(45)
+            .withStatorCurrentLimitEnabled(false)
+            .withRampRate(0.25)
+            .withSensorToMechanismRatio(Settings.Spindexer.GEAR_RATIO);
   }
 
   public static class CANCoderConfig {
