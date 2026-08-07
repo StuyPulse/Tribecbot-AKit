@@ -23,6 +23,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
+import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.constants.Settings.Mode;
 import com.stuypulse.robot.generated.TunerConstants;
@@ -53,6 +54,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -67,6 +69,13 @@ import org.littletonrobotics.junction.Logger;
 public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   private static final Drive instance;
   private static SwerveDriveSimulation driveSimulation = null;
+
+  private Optional<Boolean> isBehindHub = Optional.empty();
+  private Optional<Boolean> isOutsideAllianceZone = Optional.empty();
+  private Optional<Boolean> isInOpponentZone = Optional.empty();
+  private Optional<Boolean> isUnderTrench = Optional.empty();
+  private Optional<Boolean> isBehindTower = Optional.empty();
+  private Optional<Boolean> isBtwnOppHubAndWall = Optional.empty();
 
   static {
     switch (Settings.currentMode) {
@@ -126,6 +135,191 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         new Transform2d(Settings.Superstructure.Turret.TURRET_OFFSET, turret.getTurretYaw());
 
     return getPose().transformBy(turretTransform);
+  }
+
+  public boolean isUnderTrench() {
+    if (isUnderTrench.isEmpty()) {
+      Translation2d turretTranslation = getTurretPose().getTranslation();
+
+      boolean isBetweenRightTrenchesY =
+          Field.AllianceRightTrench.rightEdge.getY() < turretTranslation.getY()
+              && Field.AllianceRightTrench.leftEdge.getY() > turretTranslation.getY();
+
+      boolean isBetweenLeftTrenchesY =
+          Field.AllianceLeftTrench.rightEdge.getY() < turretTranslation.getY()
+              && Field.AllianceLeftTrench.leftEdge.getY() > turretTranslation.getY();
+
+      boolean isUnderAllianceTrenchX =
+          Math.abs(turretTranslation.getX() - Field.AllianceRightTrench.rightEdge.getX())
+              < Field.TRENCH_HOOD_TOLERANCE.in(Meters);
+
+      boolean isUnderOpponentTrenchX =
+          Math.abs(turretTranslation.getX() - Field.OpponentRightTrench.rightEdge.getX())
+              < Field.TRENCH_HOOD_TOLERANCE.in(Meters);
+
+      boolean isUnderTrench =
+          (isBetweenRightTrenchesY || isBetweenLeftTrenchesY)
+              && (isUnderAllianceTrenchX || isUnderOpponentTrenchX);
+
+      this.isUnderTrench = Optional.of(isUnderTrench);
+    }
+
+    return isUnderTrench.get();
+  }
+
+  public boolean isInOpponentZone() {
+    if (isInOpponentZone.isEmpty()) {
+      Translation2d turretTranslation = getTurretPose().getTranslation();
+      isInOpponentZone = Optional.of(turretTranslation.getMeasureX().gt(Field.OPPONENT_ZONE_X));
+    }
+    return isInOpponentZone.get();
+  }
+
+  public boolean isBehindTower() {
+    if (isBehindTower.isEmpty()) {
+      boolean withinTowerX = getPose().getTranslation().getX() < Field.TOWER_FAR_CENTER.getX();
+      boolean withinTowerY =
+          Field.TOWER_FAR_RIGHT.getY() < getTurretPose().getTranslation().getY()
+              && getTurretPose().getTranslation().getY() < Field.TOWER_FAR_LEFT.getY();
+      isBehindTower = Optional.of(withinTowerX && withinTowerY);
+    }
+
+    return isBehindTower.get();
+  }
+
+  /**
+   * Checks whether the robot turret pose is behind the hub or not in the neutral zone. For stopping
+   * ferrying to prevent fuel hitting the hub.
+   *
+   * @return true if robot turret pose is behind the hub.
+   */
+  public boolean isBehindHub() {
+    if (isBehindHub.isEmpty()) {
+      // === TRIANGLE === (CUSTOM VERTEX)
+      Translation2d turretTranslation = getTurretPose().getTranslation();
+
+      boolean behindHubX = Field.HUB_FAR_LEFT_CORNER.getX() < turretTranslation.getX();
+      // && turretTranslation.getX() < Field.hubFarLeftCorner.getX() + Field.hubToleranceX; // With
+      // this line the triangle will be cut to more like a trapezoid.
+
+      Pose2d hubFarLeftCornerWithTolerance =
+          new Pose2d(
+              Field.HUB_FAR_LEFT_CORNER.getMeasureX(),
+              Field.HUB_FAR_LEFT_CORNER.getMeasureY().plus(Field.BEHIND_HUB_TOLERANCE_Y),
+              new Rotation2d());
+      Pose2d hubFarRightCornerWithTolerance =
+          new Pose2d(
+              Field.HUB_FAR_RIGHT_CORNER.getMeasureX(),
+              Field.HUB_FAR_RIGHT_CORNER.getMeasureY().minus(Field.BEHIND_HUB_TOLERANCE_Y),
+              new Rotation2d());
+
+      // Find point on triangle using the point-slope formula (of the line constructed by the hub
+      // corner pose and ferry pose)
+      // y = (slope)(robotX - hubCornerX) + (hubCornerY)
+      // where the slope = (hubCornerY - vertexY)/(hubCornerX - vertexX)
+      double leftY =
+          ((hubFarLeftCornerWithTolerance.getY() - Field.BEHIND_HUB_TRIANGLE_VERTEX.getY())
+                      / (hubFarLeftCornerWithTolerance.getX()
+                          - Field.BEHIND_HUB_TRIANGLE_VERTEX.getX())) // (Slope)
+                  * (turretTranslation.getX() - hubFarLeftCornerWithTolerance.getX())
+              + hubFarLeftCornerWithTolerance.getY(); // *(robotX - hubCornerX) + (hubCornerY)
+      double rightY =
+          ((hubFarRightCornerWithTolerance.getY() - Field.BEHIND_HUB_TRIANGLE_VERTEX.getY())
+                      / (hubFarRightCornerWithTolerance.getX()
+                          - Field.BEHIND_HUB_TRIANGLE_VERTEX.getX())) // (Slope)
+                  * (turretTranslation.getX() - hubFarRightCornerWithTolerance.getX())
+              + hubFarRightCornerWithTolerance.getY(); // *(robotX - hubCornerX) + (hubCornerY)
+
+      // Debug:
+      // leftBehindHubYPlublisher.set(new Pose2d(getTurretPose().getX(), leftY, new Rotation2d()));
+      // rightBehindHubYPlublisher.set(new Pose2d(getTurretPose().getX(), rightY, new
+      // Rotation2d()));
+      // vertexBehindHubPublisher.set(Field.BEHIND_HUB_TRIANGLE_VERTEX);
+
+      boolean withinHubY = rightY < getTurretPose().getY() && getTurretPose().getY() < leftY;
+
+      isBehindHub = Optional.of(behindHubX && withinHubY);
+
+      // === TRIANGLE === (FROM FERRY ZONES):
+      // Translation2d turretTranslation = getTurretPose().getTranslation();
+      // boolean behindHubX = Field.hubFarLeftCorner.getX() < turretTranslation.getX();
+      // 		// && turretTranslation.getX() < Field.hubFarLeftCorner.getX() + Field.hubToleranceX; //
+      // With this line the triangle will be cut to more like a trapezoid.
+      // // Find point on triangle using the point-slope formula (of the line constructed by the hub
+      // corner pose and ferry pose)
+      // // y = (slope)(robotX - hubCornerX) + (hubCornerY)
+      // // where the slope = (hubCornerY - ferryY)/(hubCornerX - ferryX)
+      // double leftY = ((Field.hubFarLeftCorner.getY() -
+      // Field.leftFerryZone.getY())/(Field.hubFarLeftCorner.getX() - Field.leftFerryZone.getX()))
+      // // (Slope)
+      // 				* (turretTranslation.getX() - Field.hubFarLeftCorner.getX()) +
+      // Field.hubFarLeftCorner.getY(); // *(robotX - hubCornerX) + (hubCornerY)
+      // double rightY = ((Field.hubFarRightCorner.getY() -
+      // Field.rightFerryZone.getY())/(Field.hubFarRightCorner.getX() -
+      // Field.rightFerryZone.getX())) // (Slope)
+      // 				* (turretTranslation.getX() - Field.hubFarRightCorner.getX()) +
+      // Field.hubFarRightCorner.getY(); // *(robotX - hubCornerX) + (hubCornerY)
+      // leftBehindHubYPlublisher.set(new Pose2d(getTurretPose().getX(), leftY -
+      // Field.hubToleranceY, new Rotation2d()));
+      // rightBehindHubYPlublisher.set(new Pose2d(getTurretPose().getX(), rightY +
+      // Field.hubToleranceY, new Rotation2d()));
+      // boolean withinHubY = rightY + Field.hubToleranceY < getTurretPose().getY()
+      // 					&& getTurretPose().getY() < leftY - Field.hubToleranceY;
+      // return behindHubX && withinHubY;
+      // === RECTANGLE ===:
+      // Translation2d turretTranslation = getTurretPose().getTranslation();
+      // boolean behindHubX = Field.hubFarLeftCorner.getX() < turretTranslation.getX()
+      // 		&& turretTranslation.getX() < Field.hubFarLeftCorner.getX() + Field.hubToleranceX;
+      // boolean withinHubY = Field.hubFarRightCorner.getY() + Field.hubToleranceY <
+      // getTurretPose().getY()
+      // 		&& getTurretPose().getY() < Field.hubFarLeftCorner.getY() - Field.hubToleranceY;
+      // return behindHubX && withinHubY;
+    }
+
+    return isBehindHub.get();
+  }
+
+  public boolean isOutsideAllianceZone() {
+    if (isOutsideAllianceZone.isEmpty()) {
+      isOutsideAllianceZone =
+          Optional.of(
+              getPose()
+                  .getMeasureX()
+                  .lt(
+                      Field.AllianceRightTrench.rightEdge
+                          .getMeasureX()
+                          .plus(Field.TRENCH_HOOD_TOLERANCE)));
+    }
+
+    return isOutsideAllianceZone.get();
+  }
+
+  public boolean isBtwnOppHubAndWall() {
+    if (!isBtwnOppHubAndWall.isEmpty()) {
+      return isBtwnOppHubAndWall.get();
+    }
+
+    Translation2d turretTranslation = getTurretPose().getTranslation();
+
+    boolean btwnOppHubAndWallX =
+        turretTranslation.getMeasureX().lt(Field.LENGTH)
+            && turretTranslation.getMeasureX().gt(Field.OPPONENT_HUB_DS_X);
+    boolean btwnOppHubAndWallY =
+        turretTranslation.getY() < Field.HUB_FAR_LEFT_CORNER.getY()
+            && turretTranslation.getY() > Field.HUB_FAR_RIGHT_CORNER.getY();
+
+    isBtwnOppHubAndWall = Optional.of(btwnOppHubAndWallX && btwnOppHubAndWallY);
+
+    return isBtwnOppHubAndWall.get();
+  }
+
+  public void clearMemoized() {
+    isBehindHub = Optional.empty();
+    isOutsideAllianceZone = Optional.empty();
+    isInOpponentZone = Optional.empty();
+    isUnderTrench = Optional.empty();
+    isBehindTower = Optional.empty();
+    isBtwnOppHubAndWall = Optional.empty();
   }
 
   // TunerConstants doesn't include these constants, so they are declared locally

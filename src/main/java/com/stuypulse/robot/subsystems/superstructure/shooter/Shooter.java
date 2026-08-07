@@ -135,10 +135,12 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isShooting() {
-    return currentlyShootingDebouncer.calculate(inputs.shooterLeaderMotorStatorCurrent.gt(Settings.Superstructure.Shooter.IS_SHOOTING_CURRENT));
+    return currentlyShootingDebouncer.calculate(
+        inputs.shooterLeaderMotorStatorCurrent.gt(
+            Settings.Superstructure.Shooter.IS_SHOOTING_CURRENT));
   }
 
-  private void setState(ShooterState state) {
+  public void setState(ShooterState state) {
     this.state = state;
   }
 }

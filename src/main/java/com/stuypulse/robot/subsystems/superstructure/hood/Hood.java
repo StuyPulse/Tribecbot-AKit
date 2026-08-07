@@ -169,7 +169,7 @@ public class Hood extends SubsystemBase {
         inputs.hoodMotorStatorCurrent.gt(Settings.Superstructure.Hood.STALL_CURRENT_LIMIT));
   }
 
-  private void setState(HoodState state) {
+  public void setState(HoodState state) {
     this.state = state;
   }
 

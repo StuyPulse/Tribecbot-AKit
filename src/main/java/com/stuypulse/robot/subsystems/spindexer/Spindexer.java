@@ -2,6 +2,8 @@ package com.stuypulse.robot.subsystems.spindexer;
 
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.spindexer.SpindexerIO.SpindexerIOOutputs;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -56,6 +58,12 @@ public class Spindexer extends SubsystemBase {
       return;
     }
 
+    if (Superstructure.getInstance().shouldStop()) {
+      stop();
+
+      return;
+    }
+
     switch (state) {
       case FORWARD -> runDutyCycle(Settings.Spindexer.FORWARD_DUTY_CYCLE);
       case REVERSE -> runDutyCycle(Settings.Spindexer.REVERSE_DUTY_CYCLE);
@@ -76,8 +84,12 @@ public class Spindexer extends SubsystemBase {
     outputs.spindexerMode = SpindexerIO.SpindexerIOOutputMode.STOP;
   }
 
-  private void setState(SpindexerState state) {
+  public void setState(SpindexerState state) {
     this.state = state;
+  }
+
+  public SpindexerState getState() {
+    return state;
   }
 
   public Command runSpindexerForward() {

@@ -51,6 +51,7 @@ public class Turret extends SubsystemBase {
   private TurretState state;
 
   private boolean atTolerance;
+  private boolean lagging;
 
   private boolean hasUsedAbsoluteEncoder;
   private boolean hasInitializedFilter;
@@ -180,6 +181,18 @@ public class Turret extends SubsystemBase {
     return new Rotation2d(inputs.turretMotorPosition);
   }
 
+  public boolean isWrapping() {
+    return isWrapping;
+  }
+
+  public boolean atTolerance() {
+    return atTolerance;
+  }
+
+  public boolean isTurretLaggingFOTM() {
+    return lagging && state == TurretState.FOTM;
+  }
+
   private void seedTurret() {
     io.seedTurretPosition(getVectorSpaceAngle());
   }
@@ -290,13 +303,16 @@ public class Turret extends SubsystemBase {
         };
 
     atTolerance = error.abs(Degrees) < tolerance.in(Degrees);
+    lagging =
+        error.abs(Degrees)
+            >= Settings.Superstructure.Turret.GAIN_SWITCHING_THRESHOLD_START.in(Degrees);
   }
 
   private void setDriverInput(CommandXboxController gamepad) {
     driverInput = Degrees.of(gamepad.getLeftX() * 180);
   }
 
-  private void setState(TurretState state) {
+  public void setState(TurretState state) {
     this.state = state;
   }
 
