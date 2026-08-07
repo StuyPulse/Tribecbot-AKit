@@ -61,7 +61,7 @@ public class IntakeIOSim implements IntakeIO {
         SystemSim.of(
             new SingleJointedArmSim(
                 LinearSystemId.createDCMotorSystem(
-                    DCMotor.getKrakenX44Foc(1),
+                    DCMotor.getKrakenX60Foc(1),
                     Settings.Intake.PIVOT_MOI,
                     Settings.Intake.PIVOT_GEAR_RATIO),
                 DCMotor.getKrakenX60Foc(1),
