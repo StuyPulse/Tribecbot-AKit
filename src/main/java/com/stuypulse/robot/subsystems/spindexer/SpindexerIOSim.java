@@ -40,8 +40,6 @@ public class SpindexerIOSim implements SpindexerIO {
 
   @Override
   public void applyOutputs(SpindexerIOOutputs outputs) {
-    // TODO:Enabled Subsystems Check
-    // TODO:Possibly battery sim?
     spindexerLeaderSim.setInputVoltage(12 * outputs.spindexerLeaderDutyCycle);
     spindexerLeaderSim.update(0.02);
 
