@@ -27,7 +27,7 @@ public class Settings {
     LoggedNetworkBoolean SPINDEXER =
         new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Spindexer", true);
     LoggedNetworkBoolean HANDOFF =
-        new LoggedNetworkBoolean("/Tunable/Enabled Subsystems/Handoff", true);
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Handoff", true);
   }
 
   public static final double DT = 0.02;
