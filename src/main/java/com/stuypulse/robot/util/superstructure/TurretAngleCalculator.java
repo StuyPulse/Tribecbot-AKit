@@ -96,8 +96,8 @@ public class TurretAngleCalculator {
 
     Angle targetAngle =
         Robot.isReal()
-            ? Radians.of(-yaw).plus(Degrees.of(robotHeading.getDegrees()))
-            : Radians.of(yaw).minus(Degrees.of(robotHeading.getDegrees()));
+            ? Radians.of(-yaw).plus(robotHeading.getMeasure())
+            : Radians.of(yaw).minus(robotHeading.getMeasure());
 
     return targetAngle;
   }
