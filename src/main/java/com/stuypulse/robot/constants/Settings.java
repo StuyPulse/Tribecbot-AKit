@@ -179,7 +179,7 @@ public class Settings {
 
       public interface RPM {
         public final LoggedNetworkNumber MANUAL_OVERRIDE =
-            new LoggedNetworkNumber("InterpolationTesting/Shoot State Target RPM", 3863.0);
+            new LoggedNetworkNumber("/Tuning/InterpolationTesting/Shoot State Target RPM", 3863.0);
 
         public final AngularVelocity REVERSE = RPM.zero();
         public final AngularVelocity KB = RPM.of(2675.0);
@@ -218,7 +218,8 @@ public class Settings {
 
       public interface Angles {
         public final LoggedNetworkNumber MANUAL_OVERRIDE_DEG =
-            new LoggedNetworkNumber("InterpolationTesting/Shoot State Target Angle (deg)", 44.0);
+            new LoggedNetworkNumber(
+                "/Tuning/InterpolationTesting/Shoot State Target Angle (deg)", 44.0);
         public final Angle MAX = FORWARD_SOFT_LIMIT;
         public final Angle MIN = REVERSE_SOFT_LIMIT;
         public final Angle FERRY_ANGLE = MAX; // Degrees.of(44.0);
@@ -236,12 +237,12 @@ public class Settings {
       public final Angle TOLERANCE = Degrees.of(2.0);
       public final LoggedNetworkNumber SOTM_TOLERANCE_THRESHOLD_METERS =
           new LoggedNetworkNumber(
-              "Superstructure/Turret/SOTM Tolerance Dist Threshold (Meters)", 1.75);
+              "/Tuning/Superstructure/Turret/SOTM Tolerance Dist Threshold (Meters)", 1.75);
       public final LoggedNetworkNumber SOTM_TOLERANCE_CLOSE_DEG =
-          new LoggedNetworkNumber("Superstructure/Turret/SOTM Tolerance Close (Deg)", 10.0);
+          new LoggedNetworkNumber("/Tuning/Superstructure/Turret/SOTM Tolerance Close (Deg)", 10.0);
       public final LoggedNetworkNumber SOTM_TOLERANCE_FAR_DEG =
           new LoggedNetworkNumber(
-              "Superstructure/Turret/SOTM Tolerance Far (Deg)", 6.0); // Degrees.of(10.0);
+              "/Tuning/Superstructure/Turret/SOTM Tolerance Far (Deg)", 6.0); // Degrees.of(10.0);
       public final Angle FOTM_TOLERANCE = Degrees.of(10.0);
 
       public final Angle KB = Degrees.of(0.0);
@@ -269,7 +270,7 @@ public class Settings {
       public final double GEAR_RATIO_MOTOR_TO_MECH = (60.0 / 9.0) * (95.0 / 12.0); // 1425.0 / 36.0;
 
       // public final LoggedNetworkNumber ARBITRARY_kA_TERM = new
-      // LoggedNetworkNumber("Superstructure/Turret/Gains/arbitrary kA", 1.5);
+      // LoggedNetworkNumber("/Tuning/Superstructure/Turret/Gains/arbitrary kA", 1.5);
 
       public interface BigGear {
         public final int TEETH = 95;
@@ -295,7 +296,7 @@ public class Settings {
       public final int MAX_ITERATIONS = 10;
       double TIME_TOLERANCE = 1e-3;
       LoggedNetworkNumber UPDATE_DELAY =
-          new LoggedNetworkNumber("Superstructure/SOTM/update delay", 0.05);
+          new LoggedNetworkNumber("/Tuning/Superstructure/SOTM/update delay", 0.05);
     }
   }
 
