@@ -162,6 +162,10 @@ public class Superstructure extends SubsystemBase {
     this.shouldStop = Optional.empty();
   }
 
+  public boolean isHopperEmpty() {
+    return !shooter.isShooting();
+  }
+
   public void periodicAfterScheduler() {
     if (state == SuperstructureState.SOTM && shouldStop() && DriverStation.isEnabled()) {
       sotmStoppedTimer.start();
