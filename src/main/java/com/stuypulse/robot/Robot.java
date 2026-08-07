@@ -10,6 +10,7 @@ package com.stuypulse.robot;
 import com.stuypulse.robot.constants.Settings;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -24,6 +25,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
+  private final RobotContainer robotContainer;
 
   private static Alliance alliance;
 
@@ -32,6 +34,7 @@ public class Robot extends LoggedRobot {
   }
 
   public Robot() {
+    robotContainer = new RobotContainer();
     // Record metadata
     // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
     // Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -74,7 +77,11 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during all modes. */
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+
+    robotContainer.periodicAfterScheduler();
+  }
 
   /** This function is called once when the robot is disabled. */
   @Override
