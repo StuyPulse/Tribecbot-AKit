@@ -163,8 +163,8 @@ public class Turret extends SubsystemBase {
       case RIGHT_CORNER -> runPosition(Settings.Superstructure.Turret.RIGHT_CORNER);
       case KB -> runPosition(Settings.Superstructure.Turret.KB);
       case TESTING -> runPosition(driverInput);
-    };
-
+    }
+    ;
   }
 
   public void periodicAfterScheduler() {
@@ -305,27 +305,29 @@ public class Turret extends SubsystemBase {
   }
 
   public Command turretAnalog(CommandXboxController gamepad) {
-    return runOnce(() -> setState(TurretState.TESTING)).andThen(() -> setDriverInput(gamepad));
+    return runOnce(() -> setState(TurretState.TESTING))
+        .andThen(() -> setDriverInput(gamepad))
+        .withName("Turret Analog");
   }
 
   public Command turretFerry() {
-    return runOnce(() -> setState(TurretState.FERRY));
+    return runOnce(() -> setState(TurretState.FERRY)).withName("Turret Ferry");
   }
 
   public Command turretIdle() {
-    return runOnce(() -> setState(TurretState.IDLE));
+    return runOnce(() -> setState(TurretState.IDLE)).withName("Turret Idle");
   }
 
   public Command turretLeftCorner() {
-    return runOnce(() -> setState(TurretState.LEFT_CORNER));
+    return runOnce(() -> setState(TurretState.LEFT_CORNER)).withName("Turret Left Corner");
   }
 
   public Command turretRightCorner() {
-    return runOnce(() -> setState(TurretState.RIGHT_CORNER));
+    return runOnce(() -> setState(TurretState.RIGHT_CORNER)).withName("Turret Right Corner");
   }
 
   public Command turretShoot() {
-    return runOnce(() -> setState(TurretState.SCORE));
+    return runOnce(() -> setState(TurretState.SCORE)).withName("Turret Shoot");
   }
 
   public Command zeroTurret() {
@@ -334,6 +336,7 @@ public class Turret extends SubsystemBase {
               zeroEncoders();
               seedTurret();
             })
+        .withName("Zero Turret")
         .ignoringDisable(true);
   }
 }
