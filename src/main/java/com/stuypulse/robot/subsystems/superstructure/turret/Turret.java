@@ -205,26 +205,17 @@ public class Turret extends SubsystemBase {
     double encoderPos17T = inputs.encoder17tPosition.in(Rotations);
     double encoderPos18T = inputs.encoder18tPosition.in(Rotations);
 
-    io.refreshMagnetSensorConfigurations(
-        Motors.Superstructure.Turret.ENCODER_17T_CONFIG.getConfiguration().MagnetSensor,
-        Motors.Superstructure.Turret.ENCODER_18T_CONFIG.getConfiguration().MagnetSensor);
+    io.refreshMagnetSensorConfigurations();
 
     double currentOffset17T =
-        Motors.Superstructure.Turret.ENCODER_17T_CONFIG.getConfiguration()
-            .MagnetSensor
-            .MagnetOffset;
+        inputs.encoder17tMagnetOffset;
     double currentOffset18T =
-        Motors.Superstructure.Turret.ENCODER_18T_CONFIG.getConfiguration()
-            .MagnetSensor
-            .MagnetOffset;
+        inputs.encoder18tMagnetOffset;
 
     double newOffset17T = currentOffset17T - encoderPos17T;
     double newOffset18T = currentOffset18T - encoderPos18T;
 
-    Motors.Superstructure.Turret.ENCODER_17T_CONFIG.withMagnetOffset(newOffset17T);
-    Motors.Superstructure.Turret.ENCODER_18T_CONFIG.withMagnetOffset(newOffset18T);
-
-    io.configureEncoders();
+    io.reconfigureEncoderMagnetOffsets(newOffset17T, newOffset18T);
   }
 
   private void runPosition(Angle position) {

@@ -27,6 +27,9 @@ public interface TurretIO {
 
     public Angle encoder17tPosition = Degrees.zero();
     public Angle encoder18tPosition = Degrees.zero();
+
+    public double encoder17tMagnetOffset = 0;
+    public double encoder18tMagnetOffset = 0;
   }
 
   public enum TurretIOOutputMode {
@@ -54,8 +57,7 @@ public interface TurretIO {
 
   public default void seedTurretPosition(Angle position) {}
 
-  public default void refreshMagnetSensorConfigurations(
-      MagnetSensorConfigs encoder17tConfigs, MagnetSensorConfigs encoder18tConfigs) {}
+  public default void refreshMagnetSensorConfigurations() {}
 
-  public default void configureEncoders() {}
+  public default void reconfigureEncoderMagnetOffsets(double offset17t, double offset18t) {}
 }

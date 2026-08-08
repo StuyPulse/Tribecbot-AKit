@@ -1,6 +1,7 @@
 package com.stuypulse.robot.subsystems.superstructure.turret;
 
 import static edu.wpi.first.units.Units.Hertz;
+import static edu.wpi.first.units.Units.Rotations;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -8,8 +9,12 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Ports;
+import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.Motors.CANCoderConfig;
+
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
@@ -21,6 +26,9 @@ public class TurretIOTalonFX implements TurretIO {
 
   private final CANcoder encoder17t;
   private final CANcoder encoder18t;
+
+  private CANCoderConfig encoder17tConfig;
+  private CANCoderConfig encoder18tConfig;
 
   private final PositionVoltage positionController;
 
@@ -36,17 +44,25 @@ public class TurretIOTalonFX implements TurretIO {
 
   public TurretIOTalonFX() {
     turretMotor = new TalonFX(Ports.Superstructure.Turret.MOTOR, Ports.RIO);
+    Motors.Superstructure.Turret.TURRET_CONFIG.configure(turretMotor);
 
     turretMotor.getClosedLoopError().setUpdateFrequency(Hertz.of(50));
+
+    positionController = new PositionVoltage(0).withEnableFOC(true);
 
     encoder17t = new CANcoder(Ports.Superstructure.Turret.ENCODER17T, Ports.RIO);
     encoder18t = new CANcoder(Ports.Superstructure.Turret.ENCODER18T, Ports.RIO);
 
-    Motors.Superstructure.Turret.TURRET_CONFIG.configure(turretMotor);
-    Motors.Superstructure.Turret.ENCODER_17T_CONFIG.configure(encoder17t);
-    Motors.Superstructure.Turret.ENCODER_18T_CONFIG.configure(encoder18t);
-
-    positionController = new PositionVoltage(0).withEnableFOC(true);
+    encoder17tConfig =  
+      new CANCoderConfig()
+              .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+              .withMagnetOffset(Settings.Superstructure.Turret.Encoder17t.OFFSET.in(Rotations))
+              .withAbsoluteSensorDiscontinuityPoint(1.0);
+    encoder18tConfig = 
+      new CANCoderConfig()
+              .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+              .withMagnetOffset(Settings.Superstructure.Turret.Encoder18t.OFFSET.in(Rotations))
+              .withAbsoluteSensorDiscontinuityPoint(1.0);
 
     turretMotorPosition = turretMotor.getPosition();
     turretMotorSupplyCurrent = turretMotor.getSupplyCurrent();
@@ -79,6 +95,9 @@ public class TurretIOTalonFX implements TurretIO {
 
     inputs.encoder17tPosition = encoder17tPosition.getValue();
     inputs.encoder18tPosition = encoder18tPosition.getValue();
+    
+    inputs.encoder17tMagnetOffset = encoder17tConfig.getConfiguration().MagnetSensor.MagnetOffset;
+    inputs.encoder18tMagnetOffset = encoder18tConfig.getConfiguration().MagnetSensor.MagnetOffset;
   }
 
   @Override
@@ -100,15 +119,17 @@ public class TurretIOTalonFX implements TurretIO {
   }
 
   @Override
-  public void refreshMagnetSensorConfigurations(
-      MagnetSensorConfigs encoder17tConfigs, MagnetSensorConfigs encoder18tConfigs) {
-    encoder17t.getConfigurator().refresh(encoder17tConfigs);
-    encoder18t.getConfigurator().refresh(encoder18tConfigs);
+  public void refreshMagnetSensorConfigurations() {
+    encoder17t.getConfigurator().refresh(encoder17tConfig.getConfiguration().MagnetSensor);
+    encoder18t.getConfigurator().refresh(encoder18tConfig.getConfiguration().MagnetSensor);
   }
 
   @Override
-  public void configureEncoders() {
-    Motors.Superstructure.Turret.ENCODER_17T_CONFIG.configure(encoder17t);
-    Motors.Superstructure.Turret.ENCODER_18T_CONFIG.configure(encoder18t);
+  public void reconfigureEncoderMagnetOffsets(double offset17t, double offset18t) {
+    encoder17tConfig.withMagnetOffset(offset17t);
+    encoder18tConfig.withMagnetOffset(offset18t);
+
+    encoder17tConfig.configure(encoder17t);
+    encoder18tConfig.configure(encoder18t);
   }
 }
