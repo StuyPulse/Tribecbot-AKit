@@ -134,6 +134,10 @@ public class Shooter extends SubsystemBase {
     return readyToShootDebouncer.calculate(atTolerance);
   }
 
+  public boolean atTolerance() {
+    return atTolerance;
+  }
+
   public boolean isShooting() {
     return currentlyShootingDebouncer.calculate(
         inputs.shooterLeaderMotorStatorCurrent.gt(

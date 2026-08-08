@@ -127,8 +127,12 @@ public class Hood extends SubsystemBase {
     io.applyOutputs(outputs);
   }
 
-  public boolean hoodReadyToShoot() {
+  public boolean readyToShoot() {
     return hoodAtToleranceDebouncer.calculate(atTolerance);
+  }
+
+  public boolean atTolerance() {
+    return atTolerance;
   }
 
   public Angle getHoodAngle() {

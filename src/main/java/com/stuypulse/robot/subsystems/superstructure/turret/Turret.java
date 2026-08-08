@@ -173,7 +173,7 @@ public class Turret extends SubsystemBase {
   }
 
   @AutoLogOutput(key = "Superstructure/Turret/Ready To Shoot")
-  public boolean turretReadyToShoot() {
+  public boolean readyToShoot() {
     return readyToShootDebouncer.calculate(atTolerance);
   }
 

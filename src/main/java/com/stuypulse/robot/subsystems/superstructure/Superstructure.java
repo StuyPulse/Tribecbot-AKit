@@ -158,6 +158,14 @@ public class Superstructure extends SubsystemBase {
     return shouldStop;
   }
 
+  public boolean isReadyToShoot() {
+    return hood.readyToShoot() && shooter.readyToShoot() && turret.readyToShoot();
+  }
+
+  public boolean atTolerance() {
+    return hood.atTolerance() && shooter.atTolerance() && turret.atTolerance();
+  }
+
   public void clearMemoized() {
     this.shouldStop = Optional.empty();
   }
