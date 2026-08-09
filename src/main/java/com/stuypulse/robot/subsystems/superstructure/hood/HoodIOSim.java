@@ -1,6 +1,7 @@
 package com.stuypulse.robot.subsystems.superstructure.hood;
 
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -11,7 +12,6 @@ import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.units.measure.Angle;
@@ -27,11 +27,9 @@ public class HoodIOSim implements HoodIO {
   private static final double HOOD_ARM_LENGTH_METERS = 0.3;
 
   private static final double MIN_HEIGHT =
-      HOOD_ARM_LENGTH_METERS
-          * Math.sin(((Rotation2d) Settings.Superstructure.Hood.Angles.MIN).getRadians());
+      HOOD_ARM_LENGTH_METERS * Math.sin(Settings.Superstructure.Hood.Angles.MIN.in(Radians));
   private static final double MAX_HEIGHT =
-      HOOD_ARM_LENGTH_METERS
-          * Math.sin(((Rotation2d) Settings.Superstructure.Hood.Angles.MAX).getRadians());
+      HOOD_ARM_LENGTH_METERS * Math.sin(Settings.Superstructure.Hood.Angles.MAX.in(Radians));
 
   private static final double DRUM_RADIUS = 0.01;
 
