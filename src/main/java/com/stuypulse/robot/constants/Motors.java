@@ -163,18 +163,6 @@ public interface Motors {
                   false,
                   Settings.Superstructure.Turret.SoftwareLimit.FORWARD_MAX_ROTATIONS,
                   Settings.Superstructure.Turret.SoftwareLimit.BACKWARDS_MAX_ROTATIONS);
-
-      CANCoderConfig ENCODER_17T_CONFIG =
-          new CANCoderConfig()
-              .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-              .withMagnetOffset(Settings.Superstructure.Turret.Encoder17t.OFFSET.in(Rotations))
-              .withAbsoluteSensorDiscontinuityPoint(1.0);
-
-      CANCoderConfig ENCODER_18T_CONFIG =
-          new CANCoderConfig()
-              .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-              .withMagnetOffset(Settings.Superstructure.Turret.Encoder18t.OFFSET.in(Rotations))
-              .withAbsoluteSensorDiscontinuityPoint(1.0);
     }
   }
 

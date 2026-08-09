@@ -7,7 +7,6 @@ import com.stuypulse.robot.RobotContainer;
 import com.stuypulse.robot.constants.DriverConstants;
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.Gains;
-import com.stuypulse.robot.constants.Motors;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputs;
@@ -55,6 +54,8 @@ public class Turret extends SubsystemBase {
 
   private boolean hasUsedAbsoluteEncoder;
   private boolean hasInitializedFilter;
+  private boolean zeroingEncoders;
+  private boolean hasRefreshedEncoderMagnetOffsets;
 
   private double prevActualTargetAngle;
   private boolean isWrapping;
@@ -77,6 +78,8 @@ public class Turret extends SubsystemBase {
 
     hasUsedAbsoluteEncoder = false;
     hasInitializedFilter = false;
+    zeroingEncoders = false;
+    hasRefreshedEncoderMagnetOffsets = false;
   }
 
   public enum TurretState {
@@ -169,6 +172,22 @@ public class Turret extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
+    if (zeroingEncoders && hasRefreshedEncoderMagnetOffsets) {
+      double currentOffset17T = inputs.encoder17tMagnetOffset;
+      double currentOffset18T = inputs.encoder18tMagnetOffset;
+
+      double newOffset17T = currentOffset17T - inputs.encoder17tPosition.in(Rotations);
+      double newOffset18T = currentOffset18T - inputs.encoder18tPosition.in(Rotations);
+
+      io.reconfigureEncoderMagnetOffsets(newOffset17T, newOffset18T);
+
+      zeroingEncoders = false;
+      hasRefreshedEncoderMagnetOffsets = false;
+    } else if (zeroingEncoders && !hasRefreshedEncoderMagnetOffsets) {
+      io.refreshEncoderMagnetSensorConfigurations();
+      hasRefreshedEncoderMagnetOffsets = true;
+    }
+
     io.applyOutputs(outputs);
   }
 
@@ -202,20 +221,7 @@ public class Turret extends SubsystemBase {
   }
 
   private void zeroEncoders() {
-    double encoderPos17T = inputs.encoder17tPosition.in(Rotations);
-    double encoderPos18T = inputs.encoder18tPosition.in(Rotations);
-
-    io.refreshMagnetSensorConfigurations();
-
-    double currentOffset17T =
-        inputs.encoder17tMagnetOffset;
-    double currentOffset18T =
-        inputs.encoder18tMagnetOffset;
-
-    double newOffset17T = currentOffset17T - encoderPos17T;
-    double newOffset18T = currentOffset18T - encoderPos18T;
-
-    io.reconfigureEncoderMagnetOffsets(newOffset17T, newOffset18T);
+    zeroingEncoders = true;
   }
 
   private void runPosition(Angle position) {
