@@ -34,6 +34,7 @@ public class TurretIOSim implements TurretIO {
             new DCMotorSim(
                 LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 1.0, 2.8),
                 DCMotor.getKrakenX60(1),
+                1.0,
                 2.8));
 
     controller = new PositionVoltage(0).withEnableFOC(true);
