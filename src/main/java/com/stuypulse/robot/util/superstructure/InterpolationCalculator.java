@@ -15,7 +15,7 @@ import com.stuypulse.robot.constants.Settings.Superstructure.FerryRPMInterpolati
 import com.stuypulse.robot.constants.Settings.Superstructure.FerryTOFInterpolation;
 import com.stuypulse.robot.constants.Settings.Superstructure.RPMInterpolation;
 import com.stuypulse.robot.constants.Settings.Superstructure.TOFInterpolation;
-import com.stuypulse.robot.subsystems.swerve.Drive;
+import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
@@ -102,9 +102,7 @@ public class InterpolationCalculator {
   }
 
   public static InterpolatedShotInfo interpolateShotInfo() {
-    Drive drive = Drive.getInstance();
-
-    return interpolateShotInfo(drive.getTurretPose(), Field.HUB_CENTER);
+    return interpolateShotInfo(Turret.getInstance().getTurretPose(), Field.HUB_CENTER);
   }
 
   public static InterpolatedShotInfo interpolateShotInfo(Pose2d turretPose, Pose2d targetPose) {
@@ -121,9 +119,7 @@ public class InterpolationCalculator {
   }
 
   public static InterpolatedFerryInfo interpolateFerryingInfo() {
-    Drive drive = Drive.getInstance();
-
-    Pose2d turretPose = drive.getTurretPose();
+    Pose2d turretPose = Turret.getInstance().getTurretPose();
     Pose2d ferryPose = Field.getFerryZonePose(turretPose.getTranslation());
 
     return interpolateFerryingInfo(turretPose, ferryPose);

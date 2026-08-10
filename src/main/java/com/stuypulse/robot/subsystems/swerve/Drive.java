@@ -37,7 +37,6 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -127,19 +126,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     return driveSimulation;
   }
 
-  @AutoLogOutput(key = "Turret/Turret Pose")
-  public Pose2d getTurretPose() {
-    Turret turret = Turret.getInstance();
-
-    Transform2d turretTransform =
-        new Transform2d(Settings.Superstructure.Turret.TURRET_OFFSET, turret.getTurretYaw());
-
-    return getPose().transformBy(turretTransform);
-  }
-
   public boolean isUnderTrench() {
     if (isUnderTrench.isEmpty()) {
-      Translation2d turretTranslation = getTurretPose().getTranslation();
+      Translation2d turretTranslation = Turret.getInstance().getTurretPose().getTranslation();
 
       boolean isBetweenRightTrenchesY =
           Field.AllianceRightTrench.rightEdge.getY() < turretTranslation.getY()
@@ -169,7 +158,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
   public boolean isInOpponentZone() {
     if (isInOpponentZone.isEmpty()) {
-      Translation2d turretTranslation = getTurretPose().getTranslation();
+      Translation2d turretTranslation = Turret.getInstance().getTurretPose().getTranslation();
       isInOpponentZone = Optional.of(turretTranslation.getMeasureX().gt(Field.OPPONENT_ZONE_X));
     }
     return isInOpponentZone.get();
@@ -179,8 +168,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     if (isBehindTower.isEmpty()) {
       boolean withinTowerX = getPose().getTranslation().getX() < Field.TOWER_FAR_CENTER.getX();
       boolean withinTowerY =
-          Field.TOWER_FAR_RIGHT.getY() < getTurretPose().getTranslation().getY()
-              && getTurretPose().getTranslation().getY() < Field.TOWER_FAR_LEFT.getY();
+          Field.TOWER_FAR_RIGHT.getY()
+                  < Turret.getInstance().getTurretPose().getTranslation().getY()
+              && Turret.getInstance().getTurretPose().getTranslation().getY()
+                  < Field.TOWER_FAR_LEFT.getY();
       isBehindTower = Optional.of(withinTowerX && withinTowerY);
     }
 
@@ -196,7 +187,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   public boolean isBehindHub() {
     if (isBehindHub.isEmpty()) {
       // === TRIANGLE === (CUSTOM VERTEX)
-      Translation2d turretTranslation = getTurretPose().getTranslation();
+      Translation2d turretTranslation = Turret.getInstance().getTurretPose().getTranslation();
 
       boolean behindHubX = Field.HUB_FAR_LEFT_CORNER.getX() < turretTranslation.getX();
       // && turretTranslation.getX() < Field.hubFarLeftCorner.getX() + Field.hubToleranceX; // With
@@ -236,7 +227,9 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
       // Rotation2d()));
       // vertexBehindHubPublisher.set(Field.BEHIND_HUB_TRIANGLE_VERTEX);
 
-      boolean withinHubY = rightY < getTurretPose().getY() && getTurretPose().getY() < leftY;
+      boolean withinHubY =
+          rightY < Turret.getInstance().getTurretPose().getY()
+              && Turret.getInstance().getTurretPose().getY() < leftY;
 
       isBehindHub = Optional.of(behindHubX && withinHubY);
 
@@ -299,7 +292,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
       return isBtwnOppHubAndWall.get();
     }
 
-    Translation2d turretTranslation = getTurretPose().getTranslation();
+    Translation2d turretTranslation = Turret.getInstance().getTurretPose().getTranslation();
 
     boolean btwnOppHubAndWallX =
         turretTranslation.getMeasureX().lt(Field.LENGTH)
@@ -338,19 +331,6 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
   private static final double ROBOT_MASS_KG = 74.088;
   private static final double ROBOT_MOI = 6.883;
   private static final double WHEEL_COF = 1.2;
-  private static final RobotConfig PP_CONFIG =
-      new RobotConfig(
-          ROBOT_MASS_KG,
-          ROBOT_MOI,
-          new ModuleConfig(
-              TunerConstants.FrontLeft.WheelRadius,
-              TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
-              WHEEL_COF,
-              DCMotor.getKrakenX60Foc(1)
-                  .withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
-              TunerConstants.FrontLeft.SlipCurrent,
-              1),
-          getModuleTranslations());
 
   private static DriveTrainSimulationConfig mapleSimConfig = null;
 
@@ -418,16 +398,20 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     PhoenixOdometryThread.getInstance().start();
 
     // Configure AutoBuilder for PathPlanner
-    AutoBuilder.configure(
-        this::getPose,
-        this::resetOdometry,
-        this::getChassisSpeeds,
-        this::runVelocity,
-        new PPHolonomicDriveController(
-            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
-        PP_CONFIG,
-        () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-        this);
+    try {
+      AutoBuilder.configure(
+          this::getPose,
+          this::resetOdometry,
+          this::getChassisSpeeds,
+          this::runVelocity,
+          new PPHolonomicDriveController(
+              new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+          RobotConfig.fromGUISettings(),
+          () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+          this);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     Pathfinding.setPathfinder(new LocalADStarAK());
     PathPlannerLogging.setLogActivePathCallback(
         (activePath) -> {

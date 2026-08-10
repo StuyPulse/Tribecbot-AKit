@@ -220,7 +220,7 @@ public class SOTMCalculator {
 
     Drive drive = Drive.getInstance();
 
-    Pose2d turretPose = drive.getTurretPose();
+    Pose2d turretPose = Turret.getInstance().getTurretPose();
     Pose2d robotPose = drive.getPose();
     Pose2d hubPose = Field.HUB_CENTER;
 
@@ -337,7 +337,7 @@ public class SOTMCalculator {
   public static void updateFOTMSolution() {
     Drive drive = Drive.getInstance();
 
-    Pose2d turretPose = drive.getTurretPose();
+    Pose2d turretPose = Turret.getInstance().getTurretPose();
     Pose2d robotPose = drive.getPose();
     Pose2d ferryPose = Field.getFerryZonePose(turretPose.getTranslation());
 

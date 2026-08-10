@@ -1,0 +1,50 @@
+{
+  "robotWidth": 0.981,
+  "robotLength": 0.762,
+  "holonomicMode": true,
+  "pathFolders": [
+    "Anti Collision",
+    "BC To Dot",
+    "BC modified",
+    "Bump Stuff",
+    "Follow",
+    "Shallow",
+    "PathFinder Test",
+    "To Depot",
+    "To NZ",
+    "To Score"
+  ],
+  "autoFolders": [
+    "BC Extras",
+    "BC Main",
+    "Duel"
+  ],
+  "defaultMaxVel": 4.19,
+  "defaultMaxAccel": 10.0,
+  "defaultMaxAngVel": 300.0,
+  "defaultMaxAngAccel": 900.0,
+  "defaultNominalVoltage": 12.7,
+  "robotMass": 64.86,
+  "robotMOI": 6.883,
+  "robotTrackwidth": 0.546,
+  "driveWheelRadius": 0.051,
+  "driveGearing": 7.67,
+  "maxDriveSpeed": 4.16,
+  "driveMotorType": "krakenX60FOC",
+  "driveCurrentLimit": 120.0,
+  "wheelCOF": 1.542,
+  "flModuleX": 0.229,
+  "flModuleY": 0.33,
+  "frModuleX": 0.229,
+  "frModuleY": -0.33,
+  "blModuleX": -0.229,
+  "blModuleY": 0.33,
+  "brModuleX": -0.229,
+  "brModuleY": -0.33,
+  "bumperOffsetX": 0.0,
+  "bumperOffsetY": 0.0,
+  "robotFeatures": [
+    "{\"name\":\"Intake\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":0.475,\"y\":0.0},\"size\":{\"width\":0.98,\"length\":0.19},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":true}}",
+    "{\"name\":\"Turret\",\"type\":\"rounded_rect\",\"data\":{\"center\":{\"x\":-0.15,\"y\":0.275},\"size\":{\"width\":0.3,\"length\":0.35},\"borderRadius\":0.05,\"strokeWidth\":0.02,\"filled\":false}}"
+  ]
+}

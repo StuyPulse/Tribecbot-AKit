@@ -8,6 +8,7 @@ package com.stuypulse.robot;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
 import com.stuypulse.robot.subsystems.spindexer.Spindexer;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.hood.Hood;
 import com.stuypulse.robot.subsystems.superstructure.shooter.Shooter;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
@@ -31,6 +32,7 @@ public class RobotContainer {
   private final Turret turret = Turret.getInstance();
   private final Drive drive = Drive.getInstance();
   private final Vision vision = Vision.getInstance();
+  private final Superstructure superstructure = Superstructure.getInstance();
 
   // Autons
   private static LoggedDashboardChooser<Command> autonChooser =
@@ -75,5 +77,6 @@ public class RobotContainer {
     hood.periodicAfterScheduler();
     turret.periodicAfterScheduler();
     vision.periodicAfterScheduler();
+    superstructure.periodicAfterScheduler();
   }
 }

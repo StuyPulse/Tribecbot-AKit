@@ -17,9 +17,11 @@ import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -99,7 +101,7 @@ public class Turret extends SubsystemBase {
     Drive swerve = Drive.getInstance();
 
     Translation2d target = Field.HUB_CENTER.getTranslation();
-    Translation2d turret = swerve.getTurretPose().getTranslation();
+    Translation2d turret = getTurretPose().getTranslation();
 
     return TurretAngleCalculator.getPointAtTargetAngle(
         target, turret, swerve.getPose().getRotation());
@@ -110,7 +112,7 @@ public class Turret extends SubsystemBase {
 
     Pose2d robot = swerve.getPose();
     Translation2d target = Field.getFerryZonePose(robot.getTranslation()).getTranslation();
-    Translation2d turret = swerve.getTurretPose().getTranslation();
+    Translation2d turret = getTurretPose().getTranslation();
 
     return TurretAngleCalculator.getPointAtTargetAngle(target, turret, robot.getRotation());
   }
@@ -200,6 +202,13 @@ public class Turret extends SubsystemBase {
     return new Rotation2d(inputs.turretMotorPosition);
   }
 
+  public Pose2d getTurretPose() {
+    Transform2d turretTransform =
+        new Transform2d(Settings.Superstructure.Turret.TURRET_OFFSET, getTurretYaw());
+
+    return Drive.getInstance().getPose().transformBy(turretTransform);
+  }
+
   public boolean isWrapping() {
     return isWrapping;
   }
@@ -284,12 +293,10 @@ public class Turret extends SubsystemBase {
 
     // At Tolerance Calculation
     Angle error = inputs.turretMotorPosition.minus(position);
-    Drive swerve = Drive.getInstance();
 
     Angle tolerance =
         switch (state) {
-          case SOTM -> swerve
-                      .getTurretPose()
+          case SOTM -> getTurretPose()
                       .getTranslation()
                       .getDistance(Field.HUB_CENTER.getTranslation())
                   > Settings.Superstructure.Turret.SOTM_TOLERANCE_THRESHOLD_METERS.get()
@@ -344,11 +351,9 @@ public class Turret extends SubsystemBase {
   }
 
   public Command zeroTurret() {
-    return runOnce(
-            () -> {
-              zeroEncoders();
-              seedTurret();
-            })
+    return runOnce(this::zeroEncoders)
+        .andThen(Commands.waitUntil(() -> zeroingEncoders == false))
+        .andThen(runOnce(this::seedTurret))
         .withName("Zero Turret")
         .ignoringDisable(true);
   }

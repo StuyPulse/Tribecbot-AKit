@@ -67,6 +67,8 @@ public class Superstructure extends SubsystemBase {
     fotmStoppedTimer.stop();
 
     cachedStateIdleDebouncer = new Debouncer(0.1, DebounceType.kBoth);
+
+    this.shouldStop = Optional.empty();
   }
 
   public enum SuperstructureState {
