@@ -13,7 +13,7 @@ public class HandoffIOSim implements HandoffIO {
   private final DCMotorSim motorLeaderSim;
   private final DCMotorSim motorFollowerSim;
 
-  HandoffIOSim() {
+  public HandoffIOSim() {
 
     motorLeaderSim =
         new DCMotorSim(
