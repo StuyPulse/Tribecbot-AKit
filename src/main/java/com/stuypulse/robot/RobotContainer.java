@@ -7,6 +7,7 @@ package com.stuypulse.robot;
 
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
+import com.stuypulse.robot.subsystems.intake.Intake;
 import com.stuypulse.robot.subsystems.spindexer.Spindexer;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.hood.Hood;
@@ -31,6 +32,7 @@ public class RobotContainer {
   private final Hood hood = Hood.getInstance();
   private final Turret turret = Turret.getInstance();
   private final Drive drive = Drive.getInstance();
+  private final Intake intake = Intake.getInstance();
   private final Vision vision = Vision.getInstance();
   private final Superstructure superstructure = Superstructure.getInstance();
 
@@ -73,6 +75,7 @@ public class RobotContainer {
   public void periodicAfterScheduler() {
     handoff.periodicAfterScheduler();
     spindexer.periodicAfterScheduler();
+    intake.periodicAfterScheduler();
     shooter.periodicAfterScheduler();
     hood.periodicAfterScheduler();
     turret.periodicAfterScheduler();

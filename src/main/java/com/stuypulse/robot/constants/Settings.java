@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -11,14 +12,18 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class Settings {
 
   public interface EnabledSubsystems {
+    LoggedNetworkBoolean INTAKE =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Intake", true);
     LoggedNetworkBoolean HOOD = new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Hood", true);
     LoggedNetworkBoolean SHOOTER =
         new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Shooter", true);
@@ -30,7 +35,7 @@ public class Settings {
         new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Handoff", true);
   }
 
-  public static final double DT = 0.02;
+  public static final Time DT = Seconds.of(0.02);
 
   // A Kit stuff
 
@@ -86,6 +91,11 @@ public class Settings {
 
     double ROLLER_STALL_DEBOUNCE = 0.05; // TODO: VERIFY
     Current ROLLER_STALL_CURRENT = Amps.of(50.0);
+
+    // Sim
+    double ARM_LENGTH_METERS = 0.4;
+    double ARM_MASS_KG = 2.0;
+    double PIVOT_MOI = SingleJointedArmSim.estimateMOI(ARM_MASS_KG, ARM_LENGTH_METERS);
   }
 
   public interface Superstructure {

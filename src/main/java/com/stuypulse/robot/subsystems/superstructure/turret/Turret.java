@@ -2,6 +2,7 @@ package com.stuypulse.robot.subsystems.superstructure.turret;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.stuypulse.robot.RobotContainer;
 import com.stuypulse.robot.constants.DriverConstants;
@@ -279,7 +280,7 @@ public class Turret extends SubsystemBase {
 
     double omega = Drive.getInstance().getChassisSpeeds().omegaRadiansPerSecond;
     double omegaFF = Gains.Superstructure.Turret.kOmega.get() * omega;
-    double setpointVelocityRPS = delta / (360 * Settings.DT);
+    double setpointVelocityRPS = delta / (360 * Settings.DT.in(Seconds));
 
     // the component of the turret's setpoint velocity that comes from robot translation
     double translationalComponentVelocityRPS = setpointVelocityRPS - omega / (2 * Math.PI);
