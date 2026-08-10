@@ -50,7 +50,7 @@ public class Shooter extends SubsystemBase {
 
     setState(ShooterState.MANUAL_OVERRIDE);
 
-    readyToShootDebouncer = new Debouncer(0.5, DebounceType.kBoth);
+    readyToShootDebouncer = new Debouncer(0.05, DebounceType.kBoth);
     currentlyShootingDebouncer = new Debouncer(2, DebounceType.kFalling);
 
     this.atTolerance = false;
