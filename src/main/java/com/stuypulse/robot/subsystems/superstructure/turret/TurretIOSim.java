@@ -72,6 +72,10 @@ public class TurretIOSim implements TurretIO {
 
   @Override
   public void applyOutputs(TurretIOOutputs outputs) {
-    simMotor.setControl(controller.withPosition(outputs.turretPosition));
+    switch (outputs.turretMode) {
+      case POSITION -> simMotor.setControl(controller.withPosition(outputs.turretPosition));
+
+      case STOP -> simMotor.stopMotor();
+    }
   }
 }
