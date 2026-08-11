@@ -88,9 +88,4 @@ public class LEDIOCANdle implements LEDIO {
             leds.setControl(LEDConstants.BACK_DEAD_STRIP.withColor(LEDConstants.LLDEAD));
         }
     }
-
-    @Override
-    public void clearAllAnimations() {
-        leds.clearAllAnimations();
-    }
 }

@@ -41,7 +41,5 @@ public interface LEDIO {
 
   public default void applyOutputs(LEDIOOutputs outputs) {}
 
-  default void clearAllAnimations() {}
-
   default void periodic() {};
 }
