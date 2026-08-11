@@ -1,6 +1,5 @@
 package com.stuypulse.robot.subsystems.leds;
 
-import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.signals.RGBWColor;
 import edu.wpi.first.math.util.Units;

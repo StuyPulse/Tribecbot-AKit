@@ -5,11 +5,11 @@ import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.controls.ControlRequest;
-import com.ctre.phoenix6.signals.RGBWColor;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.AutoLog;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 public interface LEDIO {
   @AutoLog
@@ -24,14 +24,22 @@ public interface LEDIO {
   }
 
   public static class LEDIOOutputs {
-    public RGBWColor color;
+    @AutoLogOutput(key = "LEDs/Pattern")
+    public ControlRequest pattern = LEDConstants.solidColorRequest.withColor(LEDConstants.DISABLED);
+
+    @AutoLogOutput(key = "LEDs/Left Limelight Dead")
+    public boolean leftLimelightDead = false;
+
+    @AutoLogOutput(key = "LEDs/Right Limelight Dead")
+    public boolean rightLimelightDead = false;
+
+    @AutoLogOutput(key = "LEDs/Back Limelight Dead")
+    public boolean backLimelightDead = false;
   }
 
   public default void updateInputs(LEDIOInputs inputs) {}
 
   public default void applyOutputs(LEDIOOutputs outputs) {}
-
-  default void setControl(ControlRequest request) {}
 
   default void clearAllAnimations() {}
 }

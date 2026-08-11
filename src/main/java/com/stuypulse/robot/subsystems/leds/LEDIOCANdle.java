@@ -1,10 +1,10 @@
 package com.stuypulse.robot.subsystems.leds;
 
+import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.CANdleFeaturesConfigs;
 import com.ctre.phoenix6.configs.LEDConfigs;
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
 import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
@@ -15,65 +15,82 @@ import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
 
 public class LEDIOCANdle implements LEDIO {
-  private final CANdle leds;
-  public boolean isConnected = false;
+    private final CANdle leds;
 
-  public StatusSignal<Voltage> supplyVoltage;
-  public StatusSignal<Voltage> fiveVRailVoltage;
-  public StatusSignal<Current> outputCurrentAmps;
-  public StatusSignal<Temperature> LEDTemperature;
-  public boolean hardwareFault = false;
-  public boolean underVoltageFault = false;
+    private StatusSignal<Voltage> supplyVoltage;
+    private StatusSignal<Voltage> fiveVRailVoltage;
+    private StatusSignal<Current> outputCurrentAmps;
+    private StatusSignal<Temperature> LEDTemperature;
+    private StatusSignal<Boolean> hardwareFault;
+    private StatusSignal<Boolean> underVoltageFault;
 
-  private CANdleConfiguration candleConfigs;
-  private ControlRequest ledPattern =
-      LEDConstants.solidColorRequest.withColor(LEDConstants.DISABLED);
+    private CANdleConfiguration candleConfigs;
 
-  public LEDIOCANdle() {
+    public LEDIOCANdle() {
+        leds = new CANdle(Ports.LED.CANDLE_PORT, Ports.CANIVORE);
+        candleConfigs = new CANdleConfiguration()
+                .withLED(
+                        new LEDConfigs()
+                                .withBrightnessScalar(1.0)
+                                .withStripType(StripTypeValue.GRB)
+                                .withLossOfSignalBehavior(LossOfSignalBehaviorValue.KeepRunning))
+                .withCANdleFeatures(
+                        new CANdleFeaturesConfigs()
+                                .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled));
 
-    leds = new CANdle(Ports.LED.CANDLE_PORT, Ports.CANIVORE);
-    candleConfigs =
-        new CANdleConfiguration()
-            .withLED(
-                new LEDConfigs()
-                    .withBrightnessScalar(1.0)
-                    .withStripType(StripTypeValue.GRB)
-                    .withLossOfSignalBehavior(LossOfSignalBehaviorValue.KeepRunning))
-            .withCANdleFeatures(
-                new CANdleFeaturesConfigs()
-                    .withStatusLedWhenActive(StatusLedWhenActiveValue.Enabled));
+        leds.getConfigurator().apply(candleConfigs);
 
-    leds.getConfigurator().apply(candleConfigs);
+        this.supplyVoltage = leds.getSupplyVoltage();
+        this.fiveVRailVoltage = leds.getFiveVRailVoltage();
+        this.outputCurrentAmps = leds.getOutputCurrent();
+        this.LEDTemperature = leds.getDeviceTemp();
+        this.hardwareFault = leds.getFault_Hardware();
+        this.underVoltageFault = leds.getFault_Undervoltage();
 
-    leds.setControl(ledPattern);
+        leds.getSupplyVoltage().setUpdateFrequency(10);
+        leds.getFiveVRailVoltage().setUpdateFrequency(10);
+        leds.getOutputCurrent().setUpdateFrequency(10);
+        leds.getDeviceTemp().setUpdateFrequency(10);
+        leds.getFault_Hardware().setUpdateFrequency(4);
+        leds.getFault_Undervoltage().setUpdateFrequency(4);
+        leds.optimizeBusUtilization();
+    }
 
-    leds.getSupplyVoltage().setUpdateFrequency(10);
-    leds.getFiveVRailVoltage().setUpdateFrequency(10);
-    leds.getOutputCurrent().setUpdateFrequency(10);
-    leds.getDeviceTemp().setUpdateFrequency(10);
-    leds.getFault_Hardware().setUpdateFrequency(4);
-    leds.getFault_Undervoltage().setUpdateFrequency(4);
-    leds.optimizeBusUtilization();
-  }
+    @Override
+    public void updateInputs(LEDIOInputs inputs) {
+        BaseStatusSignal.refreshAll(
+                supplyVoltage,
+                fiveVRailVoltage,
+                outputCurrentAmps,
+                LEDTemperature,
+                hardwareFault,
+                underVoltageFault);
 
-  @Override
-  public void updateInputs(LEDIOInputs inputs) {
-    inputs.isConnected = leds.isConnected();
-    inputs.supplyVoltage = leds.getSupplyVoltage().getValue();
-    inputs.fiveVRailVoltage = leds.getFiveVRailVoltage().getValue();
-    inputs.outputCurrentAmps = leds.getOutputCurrent().getValue();
-    inputs.LEDTemperature = leds.getDeviceTemp().getValue();
-    inputs.hardwareFault = leds.getFault_Hardware().getValue();
-    inputs.underVoltageFault = leds.getFault_Undervoltage().getValue();
-  }
+        inputs.isConnected = leds.isConnected();
+        inputs.supplyVoltage = supplyVoltage.getValue();
+        inputs.fiveVRailVoltage = fiveVRailVoltage.getValue();
+        inputs.outputCurrentAmps = outputCurrentAmps.getValue();
+        inputs.LEDTemperature = LEDTemperature.getValue();
+        inputs.hardwareFault = hardwareFault.getValue();
+        inputs.underVoltageFault = underVoltageFault.getValue();
+    }
 
-  @Override
-  public void setControl(ControlRequest request) {
-    leds.setControl(request);
-  }
+    @Override
+    public void applyOutputs(LEDIOOutputs outputs) {
+        leds.setControl(outputs.pattern);
+        if (outputs.leftLimelightDead) {
+            leds.setControl(LEDConstants.LEFT_DEAD_STRIP.withColor(LEDConstants.LLDEAD));
+        }
+        if (outputs.rightLimelightDead) {
+            leds.setControl(LEDConstants.RIGHT_DEAD_STRIP.withColor(LEDConstants.LLDEAD));
+        }
+        if (outputs.backLimelightDead) {
+            leds.setControl(LEDConstants.BACK_DEAD_STRIP.withColor(LEDConstants.LLDEAD));
+        }
+    }
 
-  @Override
-  public void clearAllAnimations() {
-    leds.clearAllAnimations();
-  }
+    @Override
+    public void clearAllAnimations() {
+        leds.clearAllAnimations();
+    }
 }
