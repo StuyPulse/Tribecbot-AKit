@@ -34,8 +34,20 @@ public class Robot extends LoggedRobot {
 
   private static Alliance alliance;
 
+  public enum OperationMode {
+    DISABLED,
+    AUTON,
+    TELEOP,
+    TEST
+  }
+  private static OperationMode mode = OperationMode.DISABLED;
+
   public static boolean isBlue() {
     return alliance == Alliance.Blue;
+  }
+
+  public static OperationMode getOperationMode() {
+    return mode;
   }
 
   public Robot() {
@@ -80,6 +92,11 @@ public class Robot extends LoggedRobot {
     Logger.start();
   }
 
+  @Override
+  public void robotInit() {
+    mode = OperationMode.DISABLED;
+  }
+
   /** This function is called periodically during all modes. */
   @Override
   public void robotPeriodic() {
@@ -102,7 +119,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when the robot is disabled. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    mode = OperationMode.DISABLED;
+  }
 
   /** This function is called periodically when disabled. */
   @Override
@@ -114,7 +133,9 @@ public class Robot extends LoggedRobot {
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    mode = OperationMode.AUTON;
+  }
 
   /** This function is called periodically during autonomous. */
   @Override
@@ -122,7 +143,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when teleop is enabled. */
   @Override
-  public void teleopInit() {}
+  public void teleopInit() {
+    mode = OperationMode.TELEOP;
+  }
 
   /** This function is called periodically during operator control. */
   @Override
@@ -130,7 +153,9 @@ public class Robot extends LoggedRobot {
 
   /** This function is called once when test mode is enabled. */
   @Override
-  public void testInit() {}
+  public void testInit() {
+    mode = OperationMode.TEST;
+  }
 
   /** This function is called periodically during test mode. */
   @Override
