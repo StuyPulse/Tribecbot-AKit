@@ -8,6 +8,13 @@
 package com.stuypulse.robot;
 
 import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
+import com.stuypulse.robot.subsystems.swerve.Drive;
+import com.stuypulse.robot.util.superstructure.InterpolationCalculator;
+import com.stuypulse.robot.util.superstructure.SOTMCalculator;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -24,6 +31,12 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
   private final RobotContainer robotContainer;
+
+  private static Alliance alliance;
+
+  public static boolean isBlue() {
+    return alliance == Alliance.Blue;
+  }
 
   public Robot() {
     robotContainer = new RobotContainer();
@@ -72,7 +85,19 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
 
+    SuperstructureState superstructureState = Superstructure.getInstance().getState();
+
+    if (superstructureState == SuperstructureState.SOTM) {
+      SOTMCalculator.updateSOTMSolution();
+    } else if (superstructureState == SuperstructureState.FOTM) {
+      SOTMCalculator.updateFOTMSolution();
+    }
+
     robotContainer.periodicAfterScheduler();
+
+    Superstructure.getInstance().clearMemoized();
+    Drive.getInstance().clearMemoized();
+    InterpolationCalculator.clearMemoized();
   }
 
   /** This function is called once when the robot is disabled. */
@@ -81,7 +106,11 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically when disabled. */
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+    if (DriverStation.getAlliance().isPresent()) {
+      alliance = DriverStation.getAlliance().get();
+    }
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
