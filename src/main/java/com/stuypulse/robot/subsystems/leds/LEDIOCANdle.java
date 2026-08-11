@@ -10,7 +10,6 @@ import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
 import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
 import com.ctre.phoenix6.signals.StripTypeValue;
 import com.stuypulse.robot.constants.Ports;
-
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
@@ -18,7 +17,7 @@ import edu.wpi.first.units.measure.Voltage;
 public class LEDIOCANdle implements LEDIO {
   private final CANdle leds;
   public boolean isConnected = false;
-  
+
   public StatusSignal<Voltage> supplyVoltage;
   public StatusSignal<Voltage> fiveVRailVoltage;
   public StatusSignal<Current> outputCurrentAmps;
@@ -75,6 +74,6 @@ public class LEDIOCANdle implements LEDIO {
 
   @Override
   public void clearAllAnimations() {
-      leds.clearAllAnimations();
-    }
+    leds.clearAllAnimations();
+  }
 }

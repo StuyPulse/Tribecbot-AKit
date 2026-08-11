@@ -4,14 +4,11 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.signals.RGBWColor;
-
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
-
 import org.littletonrobotics.junction.AutoLog;
 
 public interface LEDIO {

@@ -3,13 +3,12 @@ package com.stuypulse.robot.subsystems.leds;
 import com.ctre.phoenix6.controls.RainbowAnimation;
 import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.signals.RGBWColor;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDConstants {
-    
-    public interface LED {
+
+  public interface LED {
 
     public SolidColor solidColorRequest =
         new SolidColor(0, LEDConstants.LED.LED_LENGTH - 1).withColor(new RGBWColor(Color.kRed));
@@ -75,5 +74,4 @@ public class LEDConstants {
         Units.feetToMeters(
             2); // TODO: update because comparing Translation2d, so make sure it is 2 feet
   }
-
 }

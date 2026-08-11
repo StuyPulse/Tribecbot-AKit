@@ -2,19 +2,41 @@ package com.stuypulse.robot.constants;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.controls.RainbowAnimation;
-import com.ctre.phoenix6.controls.SolidColor;
-import com.ctre.phoenix6.signals.RGBWColor;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
+import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public class Settings {
+
+  public interface EnabledSubsystems {
+    LoggedNetworkBoolean INTAKE =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Intake", true);
+    LoggedNetworkBoolean HOOD = new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Hood", true);
+    LoggedNetworkBoolean SHOOTER =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Shooter", true);
+    LoggedNetworkBoolean TURRET =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Turret", true);
+    LoggedNetworkBoolean SPINDEXER =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Spindexer", true);
+    LoggedNetworkBoolean HANDOFF =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Handoff", true);
+    LoggedNetworkBoolean LEDs = new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/LEDs", true);
+  }
+
+  public static final Time DT = Seconds.of(0.02);
 
   // A Kit stuff
 
@@ -31,6 +53,13 @@ public class Settings {
     /** Replaying from a log file. */
     REPLAY
   }
+
+  public static enum VisionMode {
+    LIMELIGHT,
+    PHOTON
+  }
+
+  public static final VisionMode currentVisionMode = VisionMode.PHOTON;
 
   // end of A kit stuff
 
@@ -52,7 +81,8 @@ public class Settings {
     Voltage PUSHDOWN_VOLTAGE = Volts.of(-3.0);
     Current PUSHDOWN_CURRENT_TELEOP =
         Amps.of(
-            -75.0); // new SmartNumber("Intake/Pushdown Current", -65.0); //TODO: GET ACTUAL TYTY
+            -75.0); // new LoggedNetworkNumber("Intake/Pushdown Current", -65.0); //TODO: GET ACTUAL
+    // TYTY
     Current PUSHDOWN_CURRENT_AUTON = Amps.of(-80.0);
 
     double PIVOT_GEAR_RATIO = 32.0 / 20.0 * 64.0 / 18.0 * 60.0 / 8.0;
@@ -62,72 +92,264 @@ public class Settings {
 
     double ROLLER_STALL_DEBOUNCE = 0.05; // TODO: VERIFY
     Current ROLLER_STALL_CURRENT = Amps.of(50.0);
+
+    // Sim
+    double ARM_LENGTH_METERS = 0.4;
+    double ARM_MASS_KG = 2.0;
+    double PIVOT_MOI = SingleJointedArmSim.estimateMOI(ARM_MASS_KG, ARM_LENGTH_METERS);
   }
 
-  public interface LED {
+  public interface Superstructure {
+    public final AngularVelocity SHOOTER_TOLERANCE_RPM_HIGH = RPM.of(50.0);
+    public final AngularVelocity SHOOTER_TOLERANCE_RPM_LOW = RPM.of(80.0);
+    public final AngularVelocity SHOOTER_SOTM_TOLERANCE_RPM_HIGH = RPM.of(100.0);
+    public final AngularVelocity SHOOTER_SOTM_TOLERANCE_RPM_LOW = RPM.of(100.0);
+    public final AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_HIGH = RPM.of(150.0);
+    public final AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_LOW = RPM.of(250.0);
 
-    public SolidColor solidColorRequest =
-        new SolidColor(0, Settings.LED.LED_LENGTH - 1).withColor(new RGBWColor(Color.kRed));
-    public RainbowAnimation rainbowRequest =
-        new RainbowAnimation(0, Settings.LED.LED_LENGTH - 1).withFrameRate(60).withSlot(0);
+    public final double IS_EMPTY_RPM_TOLERANCE = 150; // TODO: update IS EMPTY VALUE
+    public final double IS_EMPTY_DEBOUNCE_TIME = 0.4; // TODO: update IS EMPTY VALUE
 
-    public static RGBWColor rgbwConverter(Color color) {
-      return new RGBWColor(color);
+    public final Angle HOOD_TOLERANCE = Degrees.of(0.5);
+    public final Angle HOOD_SOTM_TOLERANCE = Degrees.of(2);
+
+    public interface AngleInterpolation {
+      double[][] distanceAngleInterpolationValues = {
+        {0.96, Units.degreesToRadians(15)},
+        {1.22, Units.degreesToRadians(20)},
+        {2.15, Units.degreesToRadians(27)},
+        {3.38, Units.degreesToRadians(34)},
+        {4.43, Units.degreesToRadians(39)},
+        {5.66, Units.degreesToRadians(39)},
+        {6.44, Units.degreesToRadians(44)}
+      };
     }
 
-    public final int LED_LENGTH = 8 + 21; // CANdle already has 8
-    RGBWColor PASSING_TRENCH = rgbwConverter(Color.kRed);
-    RGBWColor IS_BEHIND_HUB = rgbwConverter(Color.kRed);
+    public interface RPMInterpolation {
+      double[][] distanceRPMInterpolationValues = {
+        {0.96, 2800},
+        {1.22, 2600.0},
+        {2.15, 2805.0},
+        {3.38, 3075},
+        {4.43, 3350.0},
+        {5.66, 3650.0},
+        {6.44, 3800.0},
+        {8.23, 4500.0} // THIS POINT IS AN EXTRAPOLATION
+      };
+    }
 
-    // RGBWColor CLIMB_ALIGNING = rgbwConverter(Color.kYellow);
-    // RGBWColor CLIMB_ALIGNED = rgbwConverter(Color.kGreen);
-    // RGBWColor CLIMBING = rgbwConverter(Color.kRed);
+    public interface TOFInterpolation {
+      double[][] distanceTOFInterpolationValues = {
+        {0.96, 1.055},
+        {1.22, 0.965}, // seconds
+        {2.15, 1.01},
+        {3.38, 1.02},
+        {4.43, 1.165},
+        {5.50, 1.21},
+        {6.44, 1.255},
+        {6.6, 1.41},
+        {8.23, 1.71} // THIS POINT IS AN EXTRAPOLATION
+      };
+    }
 
-    RGBWColor TURRET_WRAPPING = rgbwConverter(Color.kRed);
-    // RGBWColor LEFT_WARNING = rgbwConverter(Color.kBlack); // TBD
-    // RGBWColor RIGHT_WARNING = rgbwConverter(Color.kBlack); // TBD
+    public interface FerryRPMInterpolation {
+      double[][] ferryDistanceRPMInterpolation = {
+        // Lab
+        {1, 2000},
+        {5.16, 3300.0},
+        {6.94, 3600.0},
+        {7.87, 3800.0},
+        {9.77, 4300.0}, // TODO: ADD DATA BACK IN COMP
+        {10.694, 4700.0}, // STARTING FROM HERE THE DATA IS EXTRAPOLATED!!!
+        {11.516, 4900.0}
+      };
+    }
 
-    RGBWColor SHOOT_IN_PLACE = rgbwConverter(Color.kPurple);
+    public interface FerryTOFInterpolation {
+      double[][] FerryTOFInterpolationInterpolation = {
+        {5.16, 1.16},
+        {6.94, 1.37},
+        {7.87, 1.57},
+        {9.77, 1.64},
+        {10.694, 1.765}, // extrapolated
+        {11.516, 1.838}, // extrapolated
+        {12.416, 1.914}, // extrapolated
+        {13.316, 1.988}, // extrapolated
+        {14.216, 2.060}, // extrapolated
+        {15.148, 2.131}, // extrapolated
+        {16.54, 2.234}, // extrapolated (field length)
+      };
+    }
 
-    RGBWColor SOTM_ON = rgbwConverter(Color.kGreen);
-    RGBWColor FOTM_ON = rgbwConverter(Color.kDarkBlue);
-    RGBWColor LEFT_CORNER = rgbwConverter(Color.kPurple);
-    RGBWColor RIGHT_CORNER = rgbwConverter(Color.kBlue);
+    public interface Shooter {
 
-    RGBWColor KB_DISTANCE = rgbwConverter(Color.kPink);
+      public final Current IS_SHOOTING_CURRENT = Amps.of(25.0);
 
-    // RGBWColor REVERSE = rgbwConverter(Color.kWhite);
-    RGBWColor STOP_ROLLERS = rgbwConverter(Color.kYellow);
+      public final double GEAR_RATIO = 1.0;
+      public final double FLYWHEEL_RADIUS = Units.inchesToMeters(3.965 / 2.0);
 
-    RGBWColor RESET_HEADING = rgbwConverter(Color.kYellow);
-    RGBWColor X_WHEELS = rgbwConverter(Color.kRed);
+      public interface RPM {
+        public final LoggedNetworkNumber MANUAL_OVERRIDE =
+            new LoggedNetworkNumber("/Tuning/InterpolationTesting/Shoot State Target RPM", 3863.0);
 
-    RGBWColor INTAKE_STOW = rgbwConverter(Color.kBrown); // broken
-    RGBWColor INTAKE_DEPLOYED = rgbwConverter(Color.kPurple); // broken
+        public final AngularVelocity REVERSE = RPM.zero();
+        public final AngularVelocity KB = RPM.of(2675.0);
+        public final AngularVelocity LEFT_CORNER = RPM.of(3650.0);
+        public final AngularVelocity RIGHT_CORNER = RPM.of(3650.0);
+      }
+    }
 
-    RGBWColor DISABLED_ALIGNED = rgbwConverter(Color.kGreen);
-    RGBWColor DISABLED = rgbwConverter(Color.kRed);
+    public interface Hood {
+      /**
+       * DISCLAIMER: THERE IS NO ABS ENCODER ON THE BOT RN The absolute encoder is mounted on a 11:1
+       * gear reduction relative to the hood mechanism. This means:
+       *
+       * <p>- The encoder rotates 11 times for every 1 full rotation of the hood. - The hood's
+       * physical range of motion is only 30 degrees.
+       *
+       * <p>Because 30° * 11 = 330°, the encoder will never exceed 360° over the entire hood travel.
+       * Therefore, the absolute encoder reading (0–330°) uniquely maps to the hood’s 0–30°
+       * mechanical range without any ambiguity.
+       */
+      public final double GEAR_RATIO = 125.4;
 
-    RGBWColor AUTON_ONE = rgbwConverter(Color.kBlue);
-    RGBWColor AUTON_TWO = rgbwConverter(Color.kOrange);
+      public final double ENCODER_TO_MECH = 11.0;
+      public final Voltage HOOD_HOMING_VOLTAGE = Volts.of(0.5);
 
-    RGBWColor LLDEAD = rgbwConverter(Color.kWhite);
+      public final Angle ENCODER_OFFSET = Rotations.of(0.795);
 
-    SolidColor RIGHT_DEAD_STRIP =
-        new SolidColor(Settings.LED.LED_LENGTH - 6, Settings.LED.LED_LENGTH - 2);
-    SolidColor BACK_DEAD_STRIP =
-        new SolidColor(Settings.LED.LED_LENGTH - 13, Settings.LED.LED_LENGTH - 9);
-    SolidColor LEFT_DEAD_STRIP =
-        new SolidColor(Settings.LED.LED_LENGTH - 20, Settings.LED.LED_LENGTH - 16);
-    SolidColor CANDLE_DEAD_STRIP = new SolidColor(0, 7);
+      public final Angle MAX_FROM_HORIZON = Degrees.of(45.0);
+      public final Angle MIN_FROM_HORIZON = Degrees.of(15.0);
+      public final Angle SOFT_LIMIT = Degrees.of(.25);
+      public final Angle FORWARD_SOFT_LIMIT = MAX_FROM_HORIZON.minus(SOFT_LIMIT);
+      public final Angle REVERSE_SOFT_LIMIT = MIN_FROM_HORIZON.plus(SOFT_LIMIT);
 
-    // RGBWColor.gradient(GradientType.kDiscontinuous, Color.kRed,
-    // Color.kWhite).scrollAtRelativeSpeed(Percent.per(Second).of(25));
+      public final Current STALL_CURRENT_LIMIT = Amps.of(0.55);
+      public final double STALL_DEBOUNCE = 0.5;
 
-    public final int DESIRED_TAGS_WHEN_DISABLED = 2;
+      public interface Angles {
+        public final LoggedNetworkNumber MANUAL_OVERRIDE_DEG =
+            new LoggedNetworkNumber(
+                "/Tuning/InterpolationTesting/Shoot State Target Angle (deg)", 44.0);
+        public final Angle MAX = FORWARD_SOFT_LIMIT;
+        public final Angle MIN = REVERSE_SOFT_LIMIT;
+        public final Angle FERRY_ANGLE = MAX; // Degrees.of(44.0);
 
-    public double APRIL_TAG_DISTANCE_THRESHOLD =
-        Units.feetToMeters(
-            2); // TODO: update because comparing Translation2d, so make sure it is 2 feet
+        public final Angle STOW = Degrees.of(21.0);
+        public final Angle KB = Degrees.of(20.0);
+        public final Angle LEFT_CORNER = Degrees.of(39.0);
+        public final Angle RIGHT_CORNER = Degrees.of(39.0);
+      }
+    }
+
+    public interface Turret {
+      // public final AngularVelocity MAX_VEL = new Angle(Units.degreesToRadians(600.0));
+      // public final Angle MAX_ACCEL = new Angle(Units.degreesToRadians(600.0));
+      public final Angle TOLERANCE = Degrees.of(2.0);
+      public final LoggedNetworkNumber SOTM_TOLERANCE_THRESHOLD_METERS =
+          new LoggedNetworkNumber(
+              "/Tuning/Superstructure/Turret/SOTM Tolerance Dist Threshold (Meters)", 1.75);
+      public final LoggedNetworkNumber SOTM_TOLERANCE_CLOSE_DEG =
+          new LoggedNetworkNumber("/Tuning/Superstructure/Turret/SOTM Tolerance Close (Deg)", 10.0);
+      public final LoggedNetworkNumber SOTM_TOLERANCE_FAR_DEG =
+          new LoggedNetworkNumber(
+              "/Tuning/Superstructure/Turret/SOTM Tolerance Far (Deg)", 6.0); // Degrees.of(10.0);
+      public final Angle FOTM_TOLERANCE = Degrees.of(10.0);
+
+      public final Angle KB = Degrees.of(0.0);
+      public final Angle LEFT_CORNER = Degrees.of(-233.0);
+      public final Angle RIGHT_CORNER = Degrees.of(53.0);
+
+      double RESOLUTION_OF_ABSOLUTE_ENCODER = 0.1;
+      double WRAP_DEBOUNCE = 0.5;
+      double SETPOINT_FILTER_THRESHOLD_DEG = 0.5;
+
+      Angle MAX_THEORETICAL_ROTATION = Degrees.of(612);
+      Angle MIN_THEORETICAL_ROTATION = Degrees.of(-612);
+
+      /* CONSTANTS */
+      public final double RANGE_CW = 90.0; // -360.0;
+      public final double RANGE_CCW = -360.0; // 85.0; // -397.0 is further
+
+      public final Angle GAIN_SWITCHING_THRESHOLD_START = Degrees.of(30);
+      public final Angle GAIN_SWITCHING_THRESHOLD_END = Degrees.of(3);
+
+      public final Translation2d TURRET_OFFSET =
+          new Translation2d(Units.inchesToMeters(-4.0), Units.inchesToMeters(8.0));
+      public final double TURRET_HEIGHT = Units.inchesToMeters(0.0);
+
+      public final double GEAR_RATIO_MOTOR_TO_MECH = (60.0 / 9.0) * (95.0 / 12.0); // 1425.0 / 36.0;
+
+      // public final LoggedNetworkNumber ARBITRARY_kA_TERM = new
+      // LoggedNetworkNumber("/Tuning/Superstructure/Turret/Gains/arbitrary kA", 1.5);
+
+      public interface BigGear {
+        public final int TEETH = 95;
+      }
+
+      public interface Encoder17t {
+        public final int TEETH = 17;
+        public final Angle OFFSET = Rotations.of(-0.185);
+      }
+
+      public interface Encoder18t {
+        public final int TEETH = 18;
+        public final Angle OFFSET = Rotations.of(-0.814);
+      }
+
+      public interface SoftwareLimit {
+        public final double FORWARD_MAX_ROTATIONS = 210.0 / 360.0;
+        public final double BACKWARDS_MAX_ROTATIONS = -210.0 / 360.0;
+      }
+    }
+
+    public interface SOTM {
+      public final int MAX_ITERATIONS = 10;
+      double TIME_TOLERANCE = 1e-3;
+      LoggedNetworkNumber UPDATE_DELAY =
+          new LoggedNetworkNumber("/Tuning/Superstructure/SOTM/update delay", 0.05);
+    }
+  }
+
+  public interface Spindexer {
+    double FORWARD_DUTY_CYCLE = 1.0;
+    double ANTI_POPCORN_DUTY_CYCLE = 0.2;
+    double REVERSE_DUTY_CYCLE = -1.0;
+    double STOP_SPEED = 0.0;
+    double REVERSE_TIME = 2.0;
+    double ANTI_POPCORN_FREQ = 100;
+    double ANTI_POPCORN_LENGTH = 10;
+
+    double RPM_TOLERANCE = 800.0;
+    double TOLERANCE_TO_START_INTAKE_ROLLERS_DURING_SCORING_ROUTINE = 1500.0;
+    double STALL_CURRENT_LIMIT = 40.0; // random number as of 3/9
+
+    double IS_EMPTY_AMPERAGE = 10; // TODO: update IS EMPTY VALUE
+
+    /* CONSTANTS */
+    double GEAR_RATIO = 11.04 / 1.0;
+  }
+
+  public interface Handoff {
+
+    public final double GEAR_RATIO = 3.0 / 1.0;
+
+    double HANDOFF_STOP = 0.0;
+    double HANDOFF_MAX = 4800.0;
+    double HANDOFF_REVERSE = -500.0;
+    double RPM_TOLERANCE = 2200.0;
+    double REVERSE_TIME = 2.0;
+    double RPM_SOTM_TOLERANCE = 700.0;
+    LoggedNetworkNumber HANDOFF_RPM =
+        new LoggedNetworkNumber("/Tuning/Handoff/Target RPM", HANDOFF_MAX);
+
+    double IS_EMPTY_AMPERAGE = 8; // TODO: update IS EMPTY VALUE
+
+    double FORWARD_DUTY_CYCLE = 1.0;
+    double REVERSE_DUTY_CYCLE = -1.0;
+
+    LoggedNetworkNumber HANDOFF_STALL_CURRENT_AMPS =
+        new LoggedNetworkNumber("/Tuning/Handoff/Stall Current Limit for Reverse", 30.0);
+    double HANDOFF_STALL_DEBOUNCE_SEC = 0.5;
   }
 }
