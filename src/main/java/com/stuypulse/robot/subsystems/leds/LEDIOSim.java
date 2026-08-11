@@ -1,10 +1,9 @@
 package com.stuypulse.robot.subsystems.leds;
 
-import com.ctre.phoenix6.controls.SolidColor;
+import com.ctre.phoenix6.signals.RGBWColor;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.util.Color;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -35,22 +34,16 @@ public class LEDIOSim implements LEDIO {
 
     @Override
     public void applyOutputs(LEDIOOutputs outputs) {
-        if (outputs.pattern instanceof SolidColor) { // should be extendable if animations are added. If so, then there should be a periodic method.
-            applySolidColor((SolidColor) outputs.pattern);
+        for (LEDPattern pattern : outputs.patterns) {
+            RGBWColor color = pattern.color();
+
+            int start = Math.max(pattern.start(), 0);
+            int end = Math.min(pattern.end(), buffer.getLength() - 1);
+
+            for (int i = start; i <= end; i++) {
+                buffer.setRGB(i, color.Red, color.Green, color.Blue);
+            }
         }
-    }
-
-    private void applySolidColor(SolidColor colorRequest) {
-        int start = Math.max(colorRequest.LEDStartIndex, LEDConstants.STRIP_START);
-        int end = Math.min(colorRequest.LEDEndIndex, LEDConstants.STRIP_START + buffer.getLength() - 1);
-
-        Color color = new Color(colorRequest.Color.Red / 255.0, colorRequest.Color.Green / 255.0, colorRequest.Color.Blue / 255.0);
-
-        for (int i = start; i <= end; i++) {
-            buffer.setLED(i, color);
-        }
-
-        led.setData(buffer);
     }
 
     @Override

@@ -4,7 +4,11 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Volts;
 
-import com.ctre.phoenix6.controls.ControlRequest;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.ctre.phoenix6.signals.RGBWColor;
+
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
@@ -23,18 +27,11 @@ public interface LEDIO {
     public boolean underVoltageFault = false;
   }
 
+  public record LEDPattern(int start, int end, RGBWColor color) {}
+
   public static class LEDIOOutputs {
     @AutoLogOutput(key = "LEDs/Pattern")
-    public ControlRequest pattern = LEDConstants.solidColorRequest.withColor(LEDConstants.DISABLED);
-
-    @AutoLogOutput(key = "LEDs/Left Limelight Dead")
-    public boolean leftLimelightDead = false;
-
-    @AutoLogOutput(key = "LEDs/Right Limelight Dead")
-    public boolean rightLimelightDead = false;
-
-    @AutoLogOutput(key = "LEDs/Back Limelight Dead")
-    public boolean backLimelightDead = false;
+    public final List<LEDPattern> patterns = new ArrayList<>();
   }
 
   public default void updateInputs(LEDIOInputs inputs) {}

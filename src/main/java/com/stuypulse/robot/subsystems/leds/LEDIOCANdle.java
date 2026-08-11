@@ -5,6 +5,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
 import com.ctre.phoenix6.configs.CANdleFeaturesConfigs;
 import com.ctre.phoenix6.configs.LEDConfigs;
+import com.ctre.phoenix6.controls.SolidColor;
 import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
 import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
@@ -77,15 +78,9 @@ public class LEDIOCANdle implements LEDIO {
 
     @Override
     public void applyOutputs(LEDIOOutputs outputs) {
-        leds.setControl(outputs.pattern);
-        if (outputs.leftLimelightDead) {
-            leds.setControl(LEDConstants.LEFT_DEAD_STRIP.withColor(LEDConstants.LLDEAD));
-        }
-        if (outputs.rightLimelightDead) {
-            leds.setControl(LEDConstants.RIGHT_DEAD_STRIP.withColor(LEDConstants.LLDEAD));
-        }
-        if (outputs.backLimelightDead) {
-            leds.setControl(LEDConstants.BACK_DEAD_STRIP.withColor(LEDConstants.LLDEAD));
+        for (LEDPattern pattern: outputs.patterns) {
+            SolidColor request = new SolidColor(pattern.start(), pattern.end()).withColor(pattern.color());
+            leds.setControl(request);
         }
     }
 }

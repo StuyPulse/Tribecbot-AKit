@@ -1,10 +1,10 @@
 package com.stuypulse.robot.subsystems.leds;
 
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.signals.RGBWColor;
 import com.stuypulse.robot.constants.Settings;
 
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDIOOutputs;
+import com.stuypulse.robot.subsystems.leds.LEDIO.LEDPattern;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -55,15 +55,13 @@ public class LED extends SubsystemBase {
             this.color = color;
         }
 
-        public ControlRequest getPattern() {
-            return LEDConstants.solidColorRequest.withColor(color);
+        public RGBWColor getColor() {
+            return color;
         }
     }
 
     @AutoLogOutput(key = "States/LEDs/Current")
     private LEDState state;
-    @AutoLogOutput(key = "States/LEDs/Previous")
-    private LEDState previousState;
 
     private boolean isLeftLimelightDead;
     private boolean isRightLimelightDead;
@@ -82,7 +80,6 @@ public class LED extends SubsystemBase {
         this.outputs = new LEDIOOutputs();
 
         this.state = LEDState.DISABLED;
-        this.previousState = LEDState.DISABLED;
     }
 
     public void changeState(LEDState updatedState) {
@@ -94,12 +91,25 @@ public class LED extends SubsystemBase {
     }
 
     private void applyState() {
-        if (previousState == state) {
-            return;
-        }
+        outputs.patterns.clear();
+        outputs.patterns.add(new LEDPattern(LEDConstants.STRIP_START, LEDConstants.LED_LENGTH, state.getColor()));
 
-        outputs.pattern = state.getPattern();
-        previousState = state;
+        // add limelight dead strips
+        if (isLeftLimelightDead) {
+            outputs.patterns.add(
+                new LEDPattern(LEDConstants.LEFT_DEAD_START, LEDConstants.LEFT_DEAD_END, LEDConstants.LLDEAD)
+            );
+        }
+        if (isRightLimelightDead) {
+            outputs.patterns.add(
+                new LEDPattern(LEDConstants.RIGHT_DEAD_START, LEDConstants.RIGHT_DEAD_END, LEDConstants.LLDEAD)
+            );
+        }
+        if (isBackLimelightDead) {
+            outputs.patterns.add(
+                new LEDPattern(LEDConstants.BACK_DEAD_START, LEDConstants.BACK_DEAD_END, LEDConstants.LLDEAD)
+            );
+        }
     }
 
     @Override
@@ -115,10 +125,6 @@ public class LED extends SubsystemBase {
             changeState(LEDState.DISABLED);
         }
         applyState();
-
-        outputs.leftLimelightDead = isLeftLimelightDead;
-        outputs.rightLimelightDead = isRightLimelightDead;
-        outputs.backLimelightDead = isBackLimelightDead;
 
         io.applyOutputs(outputs);
     }
