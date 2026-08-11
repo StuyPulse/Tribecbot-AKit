@@ -72,6 +72,14 @@ public class Intake extends SubsystemBase {
     STOP;
   }
 
+  public PivotState getPivotState() {
+    return pivotState;
+  }
+
+  public RollerState getRollerState() {
+    return rollerState;
+  }
+
   @Override
   public void periodic() {
     io.updateInputs(inputs);

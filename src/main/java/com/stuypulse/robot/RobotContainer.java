@@ -5,6 +5,8 @@
 
 package com.stuypulse.robot;
 
+import com.stuypulse.robot.commands.DriveCommands;
+import com.stuypulse.robot.commands.leds.LEDDefaultCommand;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
 import com.stuypulse.robot.subsystems.intake.Intake;
@@ -32,7 +34,7 @@ public class RobotContainer {
   private final Shooter shooter = Shooter.getInstance();
   private final Hood hood = Hood.getInstance();
   private final Turret turret = Turret.getInstance();
-  private final Drive drive = Drive.getInstance();
+  private final Drive swerve = Drive.getInstance();
   private final Intake intake = Intake.getInstance();
   private final Vision vision = Vision.getInstance();
   private final Superstructure superstructure = Superstructure.getInstance();
@@ -54,7 +56,14 @@ public class RobotContainer {
   /*** DEFAULTS ***/
   /****************/
 
-  private void configureDefaultCommands() {}
+  private void configureDefaultCommands() {
+    swerve.setDefaultCommand(DriveCommands.joystickDrive(
+        swerve,
+        () -> -driver.getLeftY(),
+        () -> -driver.getLeftX(),
+        () -> -driver.getRightX()));
+    LEDs.setDefaultCommand(new LEDDefaultCommand());
+  }
 
   /***************/
   /*** BUTTONS ***/
