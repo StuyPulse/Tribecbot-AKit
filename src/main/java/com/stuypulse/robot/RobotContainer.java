@@ -80,16 +80,4 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return autonChooser.get();
   }
-
-  public void periodicAfterScheduler() {
-    handoff.periodicAfterScheduler();
-    spindexer.periodicAfterScheduler();
-    intake.periodicAfterScheduler();
-    shooter.periodicAfterScheduler();
-    hood.periodicAfterScheduler();
-    turret.periodicAfterScheduler();
-    vision.periodicAfterScheduler();
-    superstructure.periodicAfterScheduler();
-    LEDs.periodicAfterScheduler();
-  }
 }
