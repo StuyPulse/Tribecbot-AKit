@@ -27,7 +27,7 @@ public class LEDIOCANdle implements LEDIO {
 
   private CANdleConfiguration candleConfigs;
   private ControlRequest ledPattern =
-      LEDConstants.LED.solidColorRequest.withColor(LEDConstants.LED.DISABLED);
+      LEDConstants.solidColorRequest.withColor(LEDConstants.DISABLED);
 
   public LEDIOCANdle() {
 
