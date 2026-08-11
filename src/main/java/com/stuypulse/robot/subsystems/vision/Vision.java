@@ -89,6 +89,7 @@ public class Vision extends SubsystemBase {
   private final VisionIOInputsAutoLogged[] inputs;
   private final VisionIOOutputs[] outputs;
   private final Alert[] disconnectedAlerts;
+  private int maxTagCount;
 
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
@@ -108,6 +109,8 @@ public class Vision extends SubsystemBase {
       disconnectedAlerts[i] =
           new Alert("Vision camera " + cameraNames[i] + " is disconnected.", AlertType.kWarning);
     }
+
+    maxTagCount = 0;
   }
 
   /**
@@ -119,8 +122,14 @@ public class Vision extends SubsystemBase {
     return inputs[cameraIndex].latestTargetObservation.tx();
   }
 
+  public int getMaxTagCount() {
+    return maxTagCount;
+  }
+
   @Override
   public void periodic() {
+    maxTagCount = 0;
+
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
       Logger.processInputs("Vision/" + cameraNames[i], inputs[i]);
@@ -153,6 +162,7 @@ public class Vision extends SubsystemBase {
 
       // Loop over pose observations
       for (var observation : inputs[cameraIndex].poseObservations) {
+        maxTagCount = Math.max(maxTagCount, observation.tagCount());
         // Check whether to reject pose
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
