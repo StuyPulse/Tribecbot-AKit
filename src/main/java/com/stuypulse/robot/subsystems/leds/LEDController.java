@@ -1,6 +1,7 @@
 package com.stuypulse.robot.subsystems.leds;
 
 import com.stuypulse.robot.Robot;
+import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDIOOutputs;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
@@ -27,7 +28,7 @@ public class LEDController extends SubsystemBase {
 
   // CANdle
 
-  public LEDController(LEDIO io) { // might have to be private
+  private LEDController(LEDIO io) {
     this.io = io;
     this.inputs = new LEDIOInputsAutoLogged();
     this.outputs = new LEDIOOutputs();
@@ -40,6 +41,10 @@ public class LEDController extends SubsystemBase {
   }
 
   public void periodicAfterScheduler() {
-    io.applyOutputs(outputs);
+    if (Settings.EnabledSubsystems.LEDs.get()) {
+      io.applyOutputs(outputs); 
+    } else {
+      io.clearAllAnimations();
+    }
   }
 }

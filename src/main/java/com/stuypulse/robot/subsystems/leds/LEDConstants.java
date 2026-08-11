@@ -12,8 +12,6 @@ public class LEDConstants {
 
     public SolidColor solidColorRequest =
         new SolidColor(0, LEDConstants.LED.LED_LENGTH - 1).withColor(new RGBWColor(Color.kRed));
-    public RainbowAnimation rainbowRequest =
-        new RainbowAnimation(0, LEDConstants.LED.LED_LENGTH - 1).withFrameRate(60).withSlot(0);
 
     public static RGBWColor rgbwConverter(Color color) {
       return new RGBWColor(color);
