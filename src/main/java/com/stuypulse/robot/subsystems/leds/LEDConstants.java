@@ -13,7 +13,8 @@ public interface LEDConstants {
     return new RGBWColor(color);
   }
 
-  public final int LED_LENGTH = 8 + 21; // CANdle already has 8
+  public final int STRIP_START = 8;               // CANdle already 
+  public final int LED_LENGTH = STRIP_START + 21; // has 8 LEDs
   RGBWColor PASSING_TRENCH = rgbwConverter(Color.kRed);
   RGBWColor IS_BEHIND_HUB = rgbwConverter(Color.kRed);
 

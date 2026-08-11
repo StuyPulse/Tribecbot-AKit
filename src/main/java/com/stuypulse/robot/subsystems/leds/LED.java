@@ -106,6 +106,8 @@ public class LED extends SubsystemBase {
     public void periodic() {
         io.updateInputs(inputs);
         Logger.processInputs("LEDs", inputs);
+
+        io.periodic();
     }
 
     public void periodicAfterScheduler() {
