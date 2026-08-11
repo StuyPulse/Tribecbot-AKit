@@ -11,6 +11,7 @@ import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import com.stuypulse.robot.subsystems.swerve.Drive;
+import com.stuypulse.robot.util.FullSubsystem;
 import com.stuypulse.robot.util.superstructure.InterpolationCalculator;
 import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -40,6 +41,7 @@ public class Robot extends LoggedRobot {
     TELEOP,
     TEST
   }
+
   private static OperationMode mode = OperationMode.DISABLED;
 
   public static boolean isBlue() {
@@ -110,7 +112,7 @@ public class Robot extends LoggedRobot {
       SOTMCalculator.updateFOTMSolution();
     }
 
-    robotContainer.periodicAfterScheduler();
+    FullSubsystem.runAllPeriodicAfterScheduler();
 
     Superstructure.getInstance().clearMemoized();
     Drive.getInstance().clearMemoized();

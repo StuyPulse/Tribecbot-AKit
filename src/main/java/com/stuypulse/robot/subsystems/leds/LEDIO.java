@@ -4,14 +4,12 @@ import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Celsius;
 import static edu.wpi.first.units.Units.Volts;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.ctre.phoenix6.signals.RGBWColor;
-
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
 import edu.wpi.first.units.measure.Voltage;
+import java.util.ArrayList;
+import java.util.List;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 
@@ -38,5 +36,6 @@ public interface LEDIO {
 
   public default void applyOutputs(LEDIOOutputs outputs) {}
 
-  default void periodic() {};
+  default void periodic() {}
+  ;
 }

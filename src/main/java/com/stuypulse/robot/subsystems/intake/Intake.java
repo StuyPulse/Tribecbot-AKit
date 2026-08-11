@@ -5,6 +5,8 @@ import static edu.wpi.first.units.Units.Amps;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.intake.IntakeIO.IntakeIOOutputs;
 import com.stuypulse.robot.util.DualDebouncer;
+import com.stuypulse.robot.util.FullSubsystem;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.units.measure.Angle;
@@ -13,11 +15,10 @@ import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Intake extends SubsystemBase {
+public class Intake extends FullSubsystem {
   private static final Intake instance;
 
   static {
@@ -130,6 +131,7 @@ public class Intake extends SubsystemBase {
     }
   }
 
+  @Override
   public void periodicAfterScheduler() {
     io.applyOutputs(outputs);
   }

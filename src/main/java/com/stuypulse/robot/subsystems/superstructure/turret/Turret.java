@@ -12,6 +12,7 @@ import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputs;
 import com.stuypulse.robot.subsystems.swerve.Drive;
+import com.stuypulse.robot.util.FullSubsystem;
 import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 import com.stuypulse.robot.util.superstructure.TurretAngleCalculator;
 import edu.wpi.first.math.filter.Debouncer;
@@ -23,12 +24,11 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Turret extends SubsystemBase {
+public class Turret extends FullSubsystem {
   private static final Turret instance;
 
   static {
@@ -174,6 +174,7 @@ public class Turret extends SubsystemBase {
     ;
   }
 
+  @Override
   public void periodicAfterScheduler() {
     if (zeroingEncoders && hasRefreshedEncoderMagnetOffsets) {
       double currentOffset17T = inputs.encoder17tMagnetOffset;
