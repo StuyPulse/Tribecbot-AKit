@@ -8,7 +8,7 @@ package com.stuypulse.robot;
 import com.stuypulse.robot.constants.Ports;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
 import com.stuypulse.robot.subsystems.intake.Intake;
-import com.stuypulse.robot.subsystems.leds.LEDController;
+import com.stuypulse.robot.subsystems.leds.LED;
 import com.stuypulse.robot.subsystems.spindexer.Spindexer;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.hood.Hood;
@@ -36,7 +36,7 @@ public class RobotContainer {
   private final Intake intake = Intake.getInstance();
   private final Vision vision = Vision.getInstance();
   private final Superstructure superstructure = Superstructure.getInstance();
-  private final LEDController LEDs = LEDController.getInstance();
+  private final LED LEDs = LED.getInstance();
 
   // Autons
   private static LoggedDashboardChooser<Command> autonChooser =
