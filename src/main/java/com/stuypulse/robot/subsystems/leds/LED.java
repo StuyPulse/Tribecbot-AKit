@@ -5,6 +5,8 @@ import com.stuypulse.robot.constants.Settings;
 
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDIOOutputs;
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDPattern;
+import com.stuypulse.robot.subsystems.vision.Vision;
+import com.stuypulse.robot.subsystems.vision.VisionConstants.Camera;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -63,9 +65,7 @@ public class LED extends SubsystemBase {
     @AutoLogOutput(key = "States/LEDs/Current")
     private LEDState state;
 
-    private boolean isLeftLimelightDead;
-    private boolean isRightLimelightDead;
-    private boolean isBackLimelightDead;
+    private Vision vision;
 
     // IO fields
     private final LEDIO io;
@@ -80,6 +80,7 @@ public class LED extends SubsystemBase {
         this.outputs = new LEDIOOutputs();
 
         this.state = LEDState.DISABLED;
+        this.vision = Vision.getInstance();
     }
 
     public void changeState(LEDState updatedState) {
@@ -95,17 +96,17 @@ public class LED extends SubsystemBase {
         outputs.patterns.add(new LEDPattern(LEDConstants.STRIP_START, LEDConstants.LED_LENGTH, state.getColor()));
 
         // add limelight dead strips
-        if (isLeftLimelightDead) {
+        if (vision.isCameraDead(Camera.LEFT)) {
             outputs.patterns.add(
                 new LEDPattern(LEDConstants.LEFT_DEAD_START, LEDConstants.LEFT_DEAD_END, LEDConstants.LLDEAD)
             );
         }
-        if (isRightLimelightDead) {
+        if (vision.isCameraDead(Camera.RIGHT)) {
             outputs.patterns.add(
                 new LEDPattern(LEDConstants.RIGHT_DEAD_START, LEDConstants.RIGHT_DEAD_END, LEDConstants.LLDEAD)
             );
         }
-        if (isBackLimelightDead) {
+        if (vision.isCameraDead(Camera.BACK)) {
             outputs.patterns.add(
                 new LEDPattern(LEDConstants.BACK_DEAD_START, LEDConstants.BACK_DEAD_END, LEDConstants.LLDEAD)
             );
