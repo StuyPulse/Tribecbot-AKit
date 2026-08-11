@@ -14,6 +14,8 @@ import com.stuypulse.robot.subsystems.superstructure.shooter.Shooter.ShooterStat
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret.TurretState;
 import com.stuypulse.robot.subsystems.swerve.Drive;
+import com.stuypulse.robot.util.FullSubsystem;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -21,11 +23,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import java.util.Optional;
 
-public class Superstructure extends SubsystemBase {
+public class Superstructure extends FullSubsystem {
 
   private static final Superstructure instance;
 
@@ -176,6 +177,7 @@ public class Superstructure extends SubsystemBase {
     return !shooter.isShooting();
   }
 
+  @Override
   public void periodicAfterScheduler() {
     if (state == SuperstructureState.SOTM && shouldStop() && DriverStation.isEnabled()) {
       sotmStoppedTimer.start();

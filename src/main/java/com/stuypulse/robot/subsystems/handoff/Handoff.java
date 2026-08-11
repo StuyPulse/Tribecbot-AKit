@@ -6,6 +6,8 @@ import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputMode;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputs;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+import com.stuypulse.robot.util.FullSubsystem;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Handoff extends SubsystemBase {
+public class Handoff extends FullSubsystem {
   private static final Handoff instance;
 
   static {
@@ -80,6 +82,7 @@ public class Handoff extends SubsystemBase {
     }
   }
 
+  @Override
   public void periodicAfterScheduler() {
     io.applyOutputs(outputs);
   }

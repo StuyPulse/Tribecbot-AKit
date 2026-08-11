@@ -3,12 +3,14 @@ package com.stuypulse.robot.subsystems.spindexer;
 import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.spindexer.SpindexerIO.SpindexerIOOutputs;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+import com.stuypulse.robot.util.FullSubsystem;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Spindexer extends SubsystemBase {
+public class Spindexer extends FullSubsystem {
   private static final Spindexer instance;
 
   static {
@@ -70,6 +72,7 @@ public class Spindexer extends SubsystemBase {
     }
   }
 
+  @Override
   public void periodicAfterScheduler() {
     io.applyOutputs(outputs);
   }
