@@ -39,7 +39,7 @@ public class TurretIOSim implements TurretIO {
 
     controller = new PositionVoltage(0).withEnableFOC(true);
 
-    turretMotor = new TalonFXSimulation(TurretIds.MOTOR, TurretSettings.GEAR_RATIO_MOTOR_TO_MECH, turretSim);
+    turretMotor = new TalonFXSimulation(TurretDeviceIds.MOTOR, TurretSettings.GEAR_RATIO_MOTOR_TO_MECH, turretSim);
     TurretMotorConfig.TURRET_CONFIG.configure(turretMotor);
 
     turretSimMotorPosition = turretMotor.getPosition();

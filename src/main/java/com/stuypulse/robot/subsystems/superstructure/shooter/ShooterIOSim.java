@@ -52,9 +52,9 @@ public class ShooterIOSim implements ShooterIO {
                 ShooterSettings.GEAR_RATIO));
 
     shooterLeaderMotor =
-        new TalonFXSimulation(ShooterIds.MOTOR_LEAD, ShooterSettings.GEAR_RATIO, flywheelSim);
+        new TalonFXSimulation(ShooterDeviceIds.MOTOR_LEAD, ShooterSettings.GEAR_RATIO, flywheelSim);
     shooterFollowerMotor =
-        new TalonFXSimulation(ShooterIds.MOTOR_FOLLOW, ShooterSettings.GEAR_RATIO, flywheelSim);
+        new TalonFXSimulation(ShooterDeviceIds.MOTOR_FOLLOW, ShooterSettings.GEAR_RATIO, flywheelSim);
 
     ShooterConfiguration.SHOOTER_CONFIG.configure(shooterLeaderMotor);
     ShooterConfiguration.SHOOTER_CONFIG.configure(shooterFollowerMotor);

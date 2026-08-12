@@ -36,15 +36,15 @@ public class TurretIOTalonFX implements TurretIO {
   private final StatusSignal<Angle> encoder18tPosition;
 
   public TurretIOTalonFX() {
-    turretMotor = new TalonFX(TurretIds.MOTOR, GlobalSettings.RIO);
+    turretMotor = new TalonFX(TurretDeviceIds.MOTOR, GlobalSettings.RIO);
     TurretMotorConfig.TURRET_CONFIG.configure(turretMotor);
 
     turretMotor.getClosedLoopError().setUpdateFrequency(Hertz.of(50));
 
     positionController = new PositionVoltage(0).withEnableFOC(true);
 
-    encoder17t = new CANcoder(TurretIds.ENCODER_17T, GlobalSettings.RIO);
-    encoder18t = new CANcoder(TurretIds.ENCODER_18T, GlobalSettings.RIO);
+    encoder17t = new CANcoder(TurretDeviceIds.ENCODER_17T, GlobalSettings.RIO);
+    encoder18t = new CANcoder(TurretDeviceIds.ENCODER_18T, GlobalSettings.RIO);
 
     encoder17tConfig =
         new CANCoderConfig()

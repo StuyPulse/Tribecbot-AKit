@@ -29,7 +29,7 @@ public class LEDIOCANdle implements LEDIO {
     private CANdleConfiguration candleConfigs;
 
     public LEDIOCANdle() {
-        leds = new CANdle(LEDIds.CANDLE_PORT, GlobalSettings.CANIVORE);
+        leds = new CANdle(LEDDeviceIds.CANDLE_PORT, GlobalSettings.CANIVORE);
         candleConfigs = new CANdleConfiguration()
                 .withLED(
                         new LEDConfigs()

@@ -34,8 +34,8 @@ public class ShooterIOTalonFX implements ShooterIO {
   private final StatusSignal<AngularVelocity> shooterFollowerVelocity;
 
   public ShooterIOTalonFX() {
-    shooterLeader = new TalonFX(ShooterIds.MOTOR_LEAD, GlobalSettings.RIO);
-    shooterFollower = new TalonFX(ShooterIds.MOTOR_FOLLOW, GlobalSettings.RIO);
+    shooterLeader = new TalonFX(ShooterDeviceIds.MOTOR_LEAD, GlobalSettings.RIO);
+    shooterFollower = new TalonFX(ShooterDeviceIds.MOTOR_FOLLOW, GlobalSettings.RIO);
 
     ShooterConfiguration.SHOOTER_CONFIG.configure(shooterLeader);
     ShooterConfiguration.SHOOTER_CONFIG.configure(shooterFollower);

@@ -47,7 +47,7 @@ public class HoodIOSim implements HoodIO {
                 0.001),
             Meters.of(HoodSettings.DRUM_RADIUS.in(Meters)));
 
-    hoodMotor = new TalonFXSimulation(HoodIds.MOTOR, 1.0, hoodSim);
+    hoodMotor = new TalonFXSimulation(HoodDeviceIds.MOTOR, 1.0, hoodSim);
     positionController = new PositionVoltage(0).withEnableFOC(true);
     homingController = new VoltageOut(0).withIgnoreSoftwareLimits(true);
 

@@ -82,9 +82,9 @@ public class IntakeIOSim implements IntakeIO {
                     1.0),
                 DCMotor.getKrakenX60Foc(2)));
 
-    this.pivotMotor = new TalonFXSimulation(IntakeIds.PIVOT, IntakeSettings.PIVOT_GEAR_RATIO, pivotSim);
-    this.rollerLeaderMotor = new TalonFXSimulation(IntakeIds.ROLLER_LEADER, 1.0, rollerSim);
-    this.rollerFollowerMotor = new TalonFXSimulation(IntakeIds.ROLLER_FOLLOWER, 1.0, rollerSim);
+    this.pivotMotor = new TalonFXSimulation(IntakeDeviceIds.PIVOT, IntakeSettings.PIVOT_GEAR_RATIO, pivotSim);
+    this.rollerLeaderMotor = new TalonFXSimulation(IntakeDeviceIds.ROLLER_LEADER, 1.0, rollerSim);
+    this.rollerFollowerMotor = new TalonFXSimulation(IntakeDeviceIds.ROLLER_FOLLOWER, 1.0, rollerSim);
 
     IntakeMotorConfig.PIVOT_CONFIG.configure(pivotMotor);
     IntakeMotorConfig.ROLLER_CONFIG.configure(rollerLeaderMotor);

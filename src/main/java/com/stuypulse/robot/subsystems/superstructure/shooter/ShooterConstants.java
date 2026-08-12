@@ -27,7 +27,7 @@ public interface ShooterConstants {
     final AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_LOW = RPM.of(250.0);
   }
 
-  public interface ShooterIds {
+  public interface ShooterDeviceIds {
     final int MOTOR_LEAD = 47;
     final int MOTOR_FOLLOW = 46;
   }

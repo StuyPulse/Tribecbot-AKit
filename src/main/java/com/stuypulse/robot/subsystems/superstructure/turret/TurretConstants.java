@@ -48,7 +48,7 @@ public interface TurretConstants {
         final double GEAR_RATIO_MOTOR_TO_MECH = (60.0 / 9.0) * (95.0 / 12.0);
     }
 
-    public interface TurretIds {
+    public interface TurretDeviceIds {
         final int MOTOR = 40;
         final int ENCODER_17T = 42;
         final int ENCODER_18T = 41;

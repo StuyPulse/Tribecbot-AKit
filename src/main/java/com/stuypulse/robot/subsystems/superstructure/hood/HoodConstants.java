@@ -56,7 +56,7 @@ public interface HoodConstants {
     final Distance DRUM_RADIUS = Meters.of(0.01);
   }
 
-  public interface HoodIds {
+  public interface HoodDeviceIds {
     final int MOTOR = 45;
     final int THROUGHBORE_ENCODER = 44;
   }

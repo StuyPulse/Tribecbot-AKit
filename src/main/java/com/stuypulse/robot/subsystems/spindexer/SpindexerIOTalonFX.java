@@ -34,8 +34,8 @@ public class SpindexerIOTalonFX implements SpindexerIO {
   private final StatusSignal<AngularVelocity> spindexerFollowerVelocity;
 
   public SpindexerIOTalonFX() {
-    spindexerLeaderMotor = new TalonFX(SpindexerIds.LEADER, GlobalSettings.CANIVORE);
-    spindexerFollowerMotor = new TalonFX(SpindexerIds.FOLLOWER, GlobalSettings.CANIVORE);
+    spindexerLeaderMotor = new TalonFX(SpindexerDeviceIds.LEADER, GlobalSettings.CANIVORE);
+    spindexerFollowerMotor = new TalonFX(SpindexerDeviceIds.FOLLOWER, GlobalSettings.CANIVORE);
 
     SpindexerMotorConfig.SPINDEXER_LEAD_CONFIG.configure(spindexerLeaderMotor);
     SpindexerMotorConfig.SPINDEXER_FOLLOW_CONFIG.configure(spindexerFollowerMotor);

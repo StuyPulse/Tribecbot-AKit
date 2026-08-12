@@ -86,7 +86,7 @@ public interface LEDConstants {
             2); // TODO: update because comparing Translation2d, so make sure it is 2 feet
   }
 
-  public interface LEDIds {
+  public interface LEDDeviceIds {
     final int LED_PORT = 1;
     final int CANDLE_PORT = 61;
   }

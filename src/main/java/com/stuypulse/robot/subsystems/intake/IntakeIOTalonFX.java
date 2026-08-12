@@ -48,9 +48,9 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<AngularVelocity> rollerFollowerVelocity;
 
   public IntakeIOTalonFX() {
-    this.pivotMotor = new TalonFX(IntakeIds.PIVOT, GlobalSettings.RIO);
-    this.rollerLeaderMotor = new TalonFX(IntakeIds.ROLLER_LEADER, GlobalSettings.RIO);
-    this.rollerFollowerMotor = new TalonFX(IntakeIds.ROLLER_FOLLOWER, GlobalSettings.RIO);
+    this.pivotMotor = new TalonFX(IntakeDeviceIds.PIVOT, GlobalSettings.RIO);
+    this.rollerLeaderMotor = new TalonFX(IntakeDeviceIds.ROLLER_LEADER, GlobalSettings.RIO);
+    this.rollerFollowerMotor = new TalonFX(IntakeDeviceIds.ROLLER_FOLLOWER, GlobalSettings.RIO);
 
     IntakeMotorConfig.PIVOT_CONFIG.configure(pivotMotor);
     IntakeMotorConfig.ROLLER_CONFIG.configure(rollerLeaderMotor);

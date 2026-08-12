@@ -21,7 +21,7 @@ public interface SpindexerConstants {
     final double GEAR_RATIO = 11.04 / 1.0;
   }
 
-  public interface SpindexerIds {
+  public interface SpindexerDeviceIds {
     final int LEADER = 30;
     final int FOLLOWER = 31;
   }

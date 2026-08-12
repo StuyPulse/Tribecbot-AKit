@@ -49,7 +49,7 @@ public interface IntakeConstants {
             SingleJointedArmSim.estimateMOI(ARM_MASS.in(Kilograms), ARM_LENGTH.in(Meters)));
   }
 
-  public interface IntakeIds {
+  public interface IntakeDeviceIds {
     final int PIVOT = 20;
     final int ROLLER_LEADER = 21;
     final int ROLLER_FOLLOWER = 22;

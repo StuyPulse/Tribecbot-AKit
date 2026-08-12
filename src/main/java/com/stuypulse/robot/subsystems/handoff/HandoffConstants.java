@@ -29,7 +29,7 @@ public interface HandoffConstants {
     final Time HANDOFF_STALL_DEBOUNCE = Seconds.of(0.5);
   }
 
-  public interface HandoffIds {
+  public interface HandoffDeviceIds {
     final int MOTOR_LEAD = 43;
     final int MOTOR_FOLLOW = 48;
   }
