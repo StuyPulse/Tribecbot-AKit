@@ -2,6 +2,7 @@ package com.stuypulse.robot.subsystems.handoff;
 
 import edu.wpi.first.units.measure.*;
 
+import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -31,8 +32,8 @@ public class HandoffIOTalonFX implements HandoffIO {
   private final StatusSignal<Voltage> motorFollowAppliedVoltage;
 
   public HandoffIOTalonFX() {
-    motorLead = new TalonFX(HandoffIds.MOTOR_LEAD);
-    motorFollow = new TalonFX(HandoffIds.MOTOR_FOLLOW);
+    motorLead = new TalonFX(HandoffIds.MOTOR_LEAD, GlobalSettings.RIO);
+    motorFollow = new TalonFX(HandoffIds.MOTOR_FOLLOW, GlobalSettings.RIO);
 
     HandoffMotorConfig.HANDOFF_CONFIG.configure(motorLead);
     HandoffMotorConfig.HANDOFF_CONFIG.configure(motorFollow);

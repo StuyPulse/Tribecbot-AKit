@@ -1,5 +1,6 @@
 package com.stuypulse.robot.subsystems.intake;
 
+import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
 
 import edu.wpi.first.units.measure.*;
@@ -47,9 +48,9 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<AngularVelocity> rollerFollowerVelocity;
 
   public IntakeIOTalonFX() {
-    this.pivotMotor = new TalonFX(IntakeIds.PIVOT);
-    this.rollerLeaderMotor = new TalonFX(IntakeIds.ROLLER_LEADER);
-    this.rollerFollowerMotor = new TalonFX(IntakeIds.ROLLER_FOLLOWER);
+    this.pivotMotor = new TalonFX(IntakeIds.PIVOT, GlobalSettings.RIO);
+    this.rollerLeaderMotor = new TalonFX(IntakeIds.ROLLER_LEADER, GlobalSettings.RIO);
+    this.rollerFollowerMotor = new TalonFX(IntakeIds.ROLLER_FOLLOWER, GlobalSettings.RIO);
 
     IntakeMotorConfig.PIVOT_CONFIG.configure(pivotMotor);
     IntakeMotorConfig.ROLLER_CONFIG.configure(rollerLeaderMotor);

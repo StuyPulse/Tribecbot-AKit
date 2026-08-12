@@ -25,7 +25,7 @@ public class HoodIOTalonFX implements HoodIO {
   private final StatusSignal<AngularVelocity> hoodMotorVelocity;
 
   public HoodIOTalonFX() {
-    hoodMotor = new TalonFX(HoodIds.MOTOR, GlobalSettings.CANIVORE);
+    hoodMotor = new TalonFX(HoodIds.MOTOR, GlobalSettings.RIO);
 
     HoodConfiguration.HOOD_CONFIG.configure(hoodMotor);
 
