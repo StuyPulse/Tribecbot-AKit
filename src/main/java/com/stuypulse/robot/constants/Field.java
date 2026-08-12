@@ -6,11 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 
 public interface Field {
-  public static final Field2d FIELD2D = new Field2d();
-
   public static final Distance TRENCH_HOOD_TOLERANCE = Inches.of(20);
 
   public static Distance WIDTH = Inches.of(317.00);
