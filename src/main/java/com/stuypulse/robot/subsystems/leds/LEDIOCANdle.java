@@ -1,5 +1,8 @@
 package com.stuypulse.robot.subsystems.leds;
 
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.leds.LEDConstants.Ids;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.CANdleConfiguration;
@@ -10,10 +13,8 @@ import com.ctre.phoenix6.hardware.CANdle;
 import com.ctre.phoenix6.signals.LossOfSignalBehaviorValue;
 import com.ctre.phoenix6.signals.StatusLedWhenActiveValue;
 import com.ctre.phoenix6.signals.StripTypeValue;
-import com.stuypulse.robot.constants.Ports;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
+
+import edu.wpi.first.units.measure.*;
 
 public class LEDIOCANdle implements LEDIO {
   private final CANdle leds;
@@ -28,7 +29,7 @@ public class LEDIOCANdle implements LEDIO {
   private CANdleConfiguration candleConfigs;
 
   public LEDIOCANdle() {
-    leds = new CANdle(Ports.LED.CANDLE_PORT, Ports.CANIVORE);
+    leds = new CANdle(Ids.CANDLE_PORT, GlobalSettings.CANIVORE);
     candleConfigs =
         new CANdleConfiguration()
             .withLED(

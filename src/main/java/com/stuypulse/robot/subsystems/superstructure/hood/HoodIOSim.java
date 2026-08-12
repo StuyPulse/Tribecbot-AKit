@@ -1,24 +1,20 @@
 package com.stuypulse.robot.subsystems.superstructure.hood;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
+
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.Angles;
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.MotorIds;
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.MotorConfig;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.stuypulse.robot.constants.Motors;
-import com.stuypulse.robot.constants.Ports;
-import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 public class HoodIOSim implements HoodIO {
@@ -27,9 +23,9 @@ public class HoodIOSim implements HoodIO {
   private static final double HOOD_ARM_LENGTH_METERS = 0.3;
 
   private static final double MIN_HEIGHT =
-      HOOD_ARM_LENGTH_METERS * Math.sin(Settings.Superstructure.Hood.Angles.MIN.in(Radians));
+      HOOD_ARM_LENGTH_METERS * Math.sin(Angles.MIN.in(Radians));
   private static final double MAX_HEIGHT =
-      HOOD_ARM_LENGTH_METERS * Math.sin(Settings.Superstructure.Hood.Angles.MAX.in(Radians));
+      HOOD_ARM_LENGTH_METERS * Math.sin(Angles.MAX.in(Radians));
 
   private static final double DRUM_RADIUS = 0.01;
 
@@ -59,11 +55,11 @@ public class HoodIOSim implements HoodIO {
                 0.001),
             Meters.of(DRUM_RADIUS));
 
-    hoodMotor = new TalonFXSimulation(Ports.Superstructure.Hood.MOTOR, 1.0, hoodSim);
+    hoodMotor = new TalonFXSimulation(MotorIds.MOTOR, 1.0, hoodSim);
     positionController = new PositionVoltage(0).withEnableFOC(true);
     homingController = new VoltageOut(0).withIgnoreSoftwareLimits(true);
 
-    hoodMotor.configure(Motors.Superstructure.Hood.HOOD_CONFIG);
+    MotorConfig.HOOD_CONFIG.configure(hoodMotor);
 
     hoodMotorPosition = hoodMotor.getPosition();
     hoodMotorSupplyCurrent = hoodMotor.getSupplyCurrent();

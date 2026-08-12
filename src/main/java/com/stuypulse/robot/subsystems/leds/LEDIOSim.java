@@ -1,5 +1,7 @@
 package com.stuypulse.robot.subsystems.leds;
 
+import com.stuypulse.robot.subsystems.leds.LEDConstants.Settings;
+
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.signals.RGBWColor;
@@ -13,7 +15,7 @@ public class LEDIOSim implements LEDIO {
 
   public LEDIOSim() {
     this.led = new AddressableLED(0); // dummy port
-    this.buffer = new AddressableLEDBuffer(LEDConstants.LED_LENGTH);
+    this.buffer = new AddressableLEDBuffer(Settings.LED_LENGTH);
 
     led.setLength(buffer.getLength());
     led.setData(buffer);
@@ -48,6 +50,6 @@ public class LEDIOSim implements LEDIO {
   @Override
   public void periodic() {
     // For the future if LED animations are added. This is only necessary in sim because CANdle has
-    // native animation support already.
+    // native animation support already, while the WPILib AddressableLED class does not.
   }
 }

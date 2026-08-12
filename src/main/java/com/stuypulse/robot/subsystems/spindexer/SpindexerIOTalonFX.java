@@ -1,18 +1,16 @@
 package com.stuypulse.robot.subsystems.spindexer;
 
+import com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.MotorIds;
+import com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.MotorConfig;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.stuypulse.robot.constants.Motors;
-import com.stuypulse.robot.constants.Ports;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
+
+import edu.wpi.first.units.measure.*;
 
 public class SpindexerIOTalonFX implements SpindexerIO {
   private final TalonFX spindexerLeaderMotor;
@@ -36,12 +34,11 @@ public class SpindexerIOTalonFX implements SpindexerIO {
   private final StatusSignal<AngularVelocity> spindexerFollowerVelocity;
 
   public SpindexerIOTalonFX() {
-    spindexerLeaderMotor = new TalonFX(Ports.Handoff.MOTOR_LEAD);
-    spindexerFollowerMotor = new TalonFX(Ports.Handoff.MOTOR_FOLLOW);
+    spindexerLeaderMotor = new TalonFX(MotorIds.LEADER);
+    spindexerFollowerMotor = new TalonFX(MotorIds.FOLLOWER);
 
-    Motors.Spindexer.SPINDEXER_CONFIG.configure(spindexerLeaderMotor);
-    Motors.Spindexer.SPINDEXER_CONFIG.configure(spindexerFollowerMotor);
-
+    MotorConfig.SPINDEXER_LEAD_CONFIG.configure(spindexerLeaderMotor);
+    MotorConfig.SPINDEXER_FOLLOW_CONFIG.configure(spindexerFollowerMotor);
     spindexerController = new DutyCycleOut(0);
     followerController =
         new Follower(spindexerLeaderMotor.getDeviceID(), MotorAlignmentValue.Aligned);

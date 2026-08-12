@@ -15,15 +15,14 @@ package com.stuypulse.robot.subsystems.vision;
 
 import static com.stuypulse.robot.subsystems.vision.VisionConstants.*;
 
-import com.stuypulse.robot.constants.Settings;
-import com.stuypulse.robot.constants.Settings.VisionMode;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.constants.GlobalSettings.VisionMode;
 import com.stuypulse.robot.subsystems.swerve.Drive;
 import com.stuypulse.robot.subsystems.vision.VisionConstants.Camera;
 import com.stuypulse.robot.subsystems.vision.VisionIO.MegaTagMode;
 import com.stuypulse.robot.subsystems.vision.VisionIO.PoseObservationType;
 import com.stuypulse.robot.subsystems.vision.VisionIO.VisionIOOutputs;
 import com.stuypulse.robot.util.FullSubsystem;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -47,9 +46,9 @@ public class Vision extends FullSubsystem {
   static {
     Drive drive = Drive.getInstance();
 
-    switch (Settings.currentMode) {
+    switch (GlobalSettings.currentMode) {
       case REAL -> {
-        if (Settings.currentVisionMode == VisionMode.LIMELIGHT) {
+        if (GlobalSettings.currentVisionMode == VisionMode.LIMELIGHT) {
           instance =
               new Vision(
                   drive,

@@ -6,12 +6,10 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.stuypulse.robot.constants.Motors;
-import com.stuypulse.robot.constants.Ports;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
+import com.stuypulse.robot.subsystems.handoff.HandoffConstants.MotorConfig;
+import com.stuypulse.robot.subsystems.handoff.HandoffConstants.MotorIds;
+
+import edu.wpi.first.units.measure.*;
 
 public class HandoffIOTalonFX implements HandoffIO {
   private final TalonFX motorLead;
@@ -33,14 +31,14 @@ public class HandoffIOTalonFX implements HandoffIO {
   private final StatusSignal<Voltage> motorFollowAppliedVoltage;
 
   public HandoffIOTalonFX() {
-    motorLead = new TalonFX(Ports.Handoff.MOTOR_LEAD);
-    motorFollow = new TalonFX(Ports.Handoff.MOTOR_FOLLOW);
+    motorLead = new TalonFX(MotorIds.MOTOR_LEAD);
+    motorFollow = new TalonFX(MotorIds.MOTOR_FOLLOW);
 
-    Motors.Handoff.HANDOFF_CONFIG.configure(motorLead);
-    Motors.Handoff.HANDOFF_CONFIG.configure(motorFollow);
+    MotorConfig.HANDOFF_CONFIG.configure(motorLead);
+    MotorConfig.HANDOFF_CONFIG.configure(motorFollow);
 
     controller = new DutyCycleOut(0).withEnableFOC(true);
-    follower = new Follower(Ports.Handoff.MOTOR_LEAD, MotorAlignmentValue.Opposed);
+    follower = new Follower(motorLead.getDeviceID(), MotorAlignmentValue.Opposed);
 
     motorFollow.setControl(follower);
 
