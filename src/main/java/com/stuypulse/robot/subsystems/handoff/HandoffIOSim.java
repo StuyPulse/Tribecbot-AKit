@@ -1,13 +1,14 @@
 package com.stuypulse.robot.subsystems.handoff;
 
+import static edu.wpi.first.units.Units.*;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.stuypulse.robot.constants.Motors;
-import com.stuypulse.robot.constants.Ports;
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -49,16 +50,16 @@ public class HandoffIOSim implements HandoffIO {
                 DCMotor.getKrakenX60Foc(2),
                 1));
 
-    motorLead = new TalonFXSimulation(Ports.Handoff.MOTOR_LEAD, 1, handoffSystem);
-    motorFollow = new TalonFXSimulation(Ports.Handoff.MOTOR_FOLLOW, 1, handoffSystem);
+    motorLead = new TalonFXSimulation(HandoffDeviceIds.MOTOR_LEAD, 1, handoffSystem);
+    motorFollow = new TalonFXSimulation(HandoffDeviceIds.MOTOR_FOLLOW, 1, handoffSystem);
 
-    motorLead.configure(Motors.Handoff.HANDOFF_CONFIG);
-    motorFollow.configure(Motors.Handoff.HANDOFF_CONFIG);
+    motorLead.configure(HandoffMotorConfigs.HANDOFF_CONFIG);
+    motorFollow.configure(HandoffMotorConfigs.HANDOFF_CONFIG);
 
     motorFollow.linkToReference(motorLead);
 
     controller = new DutyCycleOut(0).withEnableFOC(true);
-    follower = new Follower(Ports.Handoff.MOTOR_LEAD, MotorAlignmentValue.Opposed);
+    follower = new Follower(motorLead.getDeviceID(), MotorAlignmentValue.Opposed);
 
     motorFollow.setControl(follower);
 
@@ -77,7 +78,7 @@ public class HandoffIOSim implements HandoffIO {
 
   @Override
   public void updateInputs(HandoffIOInputs inputs) {
-    handoffSystem.update(Settings.DT);
+    handoffSystem.update(GlobalSettings.DT);
     motorLead.refresh();
     motorFollow.refresh();
 

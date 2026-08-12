@@ -5,9 +5,8 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.stuypulse.robot.constants.Motors;
-import com.stuypulse.robot.constants.Ports;
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.*;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -49,11 +48,11 @@ public class SpindexerIOSim implements SpindexerIO {
                 LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX44Foc(2), 0.01, 1),
                 DCMotor.getKrakenX44Foc(2)));
 
-    spindexerLeaderMotor = new TalonFXSimulation(Ports.Spindexer.LEADER, 1, spindexerSystem);
-    spindexerFollowerMotor = new TalonFXSimulation(Ports.Spindexer.FOLLOWER, 1, spindexerSystem);
+    spindexerLeaderMotor = new TalonFXSimulation(SpindexerDeviceIds.LEADER, 1, spindexerSystem);
+    spindexerFollowerMotor = new TalonFXSimulation(SpindexerDeviceIds.FOLLOWER, 1, spindexerSystem);
 
-    spindexerLeaderMotor.configure(Motors.Spindexer.SPINDEXER_CONFIG);
-    spindexerFollowerMotor.configure(Motors.Spindexer.SPINDEXER_CONFIG);
+    spindexerLeaderMotor.configure(SpindexerMotorConfigs.SPINDEXER_LEAD_CONFIG);
+    spindexerFollowerMotor.configure(SpindexerMotorConfigs.SPINDEXER_FOLLOW_CONFIG);
 
     spindexerFollowerMotor.linkToReference(spindexerLeaderMotor);
 
@@ -80,7 +79,7 @@ public class SpindexerIOSim implements SpindexerIO {
 
   @Override
   public void updateInputs(SpindexerIOInputs inputs) {
-    spindexerSystem.update(Settings.DT);
+    spindexerSystem.update(GlobalSettings.DT);
     spindexerLeaderMotor.refresh();
     spindexerFollowerMotor.refresh();
 

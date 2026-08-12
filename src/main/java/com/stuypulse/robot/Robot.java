@@ -7,7 +7,7 @@
 
 package com.stuypulse.robot;
 
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import com.stuypulse.robot.subsystems.swerve.Drive;
@@ -69,7 +69,7 @@ public class Robot extends LoggedRobot {
     //     });
 
     // Set up data receivers & replay source
-    switch (Settings.currentMode) {
+    switch (GlobalSettings.currentMode) {
       case REAL:
         // Running on a real robot, log to a USB stick ("/U/logs")
         Logger.addDataReceiver(new WPILOGWriter());

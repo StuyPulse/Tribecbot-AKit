@@ -6,13 +6,9 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.stuypulse.robot.constants.Motors;
-import com.stuypulse.robot.constants.Ports;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
+import edu.wpi.first.units.measure.*;
 
 public class ShooterIOTalonFX implements ShooterIO {
   private final TalonFX shooterLeader;
@@ -36,11 +32,11 @@ public class ShooterIOTalonFX implements ShooterIO {
   private final StatusSignal<AngularVelocity> shooterFollowerVelocity;
 
   public ShooterIOTalonFX() {
-    shooterLeader = new TalonFX(Ports.Superstructure.Shooter.MOTOR_LEAD, Ports.RIO);
-    shooterFollower = new TalonFX(Ports.Superstructure.Shooter.MOTOR_FOLLOW, Ports.RIO);
+    shooterLeader = new TalonFX(ShooterDeviceIds.MOTOR_LEAD, GlobalSettings.RIO);
+    shooterFollower = new TalonFX(ShooterDeviceIds.MOTOR_FOLLOW, GlobalSettings.RIO);
 
-    Motors.Superstructure.Shooter.SHOOTER_CONFIG.configure(shooterLeader);
-    Motors.Superstructure.Shooter.SHOOTER_CONFIG.configure(shooterFollower);
+    ShooterMotorConfigs.SHOOTER_CONFIG.configure(shooterLeader);
+    ShooterMotorConfigs.SHOOTER_CONFIG.configure(shooterFollower);
 
     shooterLeaderController = new VelocityTorqueCurrentFOC(0);
     shooterFollowerController =

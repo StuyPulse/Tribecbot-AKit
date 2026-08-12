@@ -1,8 +1,9 @@
 package com.stuypulse.robot.subsystems.intake;
 
-import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.*;
 
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
 import com.stuypulse.robot.subsystems.intake.IntakeIO.IntakeIOOutputs;
 import com.stuypulse.robot.util.DualDebouncer;
 import com.stuypulse.robot.util.FullSubsystem;
@@ -21,7 +22,7 @@ public class Intake extends FullSubsystem {
   private static final Intake instance;
 
   static {
-    switch (Settings.currentMode) {
+    switch (GlobalSettings.currentMode) {
       case REAL -> instance = new Intake(new IntakeIOTalonFX());
 
       case SIM -> instance = new Intake(new IntakeIOSim());
@@ -56,7 +57,7 @@ public class Intake extends FullSubsystem {
 
     this.pivotPositionDebouncer = new DualDebouncer(0.5, 0.1);
     this.pivotStallingDebouncer =
-        new Debouncer(Settings.Intake.PIVOT_STALL_DEBOUNCE, DebounceType.kBoth);
+        new Debouncer(IntakeSettings.PIVOT_STALL_DEBOUNCE.in(Seconds), DebounceType.kBoth);
   }
 
   public enum PivotState {
@@ -85,7 +86,7 @@ public class Intake extends FullSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Intake", inputs);
 
-    if (!Settings.EnabledSubsystems.INTAKE.get()) {
+    if (!GlobalSettings.EnabledSubsystems.INTAKE.get()) {
       stopPivot();
       stopRollers();
 
@@ -97,29 +98,29 @@ public class Intake extends FullSubsystem {
         if (isPivotBelowPushdownThreshold()) {
           Current pushdownCurrent =
               DriverStation.isTeleop()
-                  ? Settings.Intake.PUSHDOWN_CURRENT_TELEOP
-                  : Settings.Intake.PUSHDOWN_CURRENT_AUTON;
+                  ? IntakeSettings.PUSHDOWN_CURRENT_TELEOP
+                  : IntakeSettings.PUSHDOWN_CURRENT_AUTON;
 
           runPivotTorqueCurrent(pushdownCurrent);
         } else {
-          runPivotPosition(Settings.Intake.PIVOT_DEPLOY_ANGLE);
+          runPivotPosition(IntakeSettings.PIVOT_DEPLOY_ANGLE);
         }
       }
 
       case HOMING -> {
         if (pivotStalling()) {
-          io.seedPivotPosition(Settings.Intake.PIVOT_MIN_ANGLE);
+          io.seedPivotPosition(IntakeSettings.PIVOT_MIN_ANGLE);
           setPivotState(PivotState.DEPLOY);
         } else {
-          runPivotVoltage(Settings.Intake.HOMING_VOLTAGE);
+          runPivotVoltage(IntakeSettings.HOMING_VOLTAGE);
         }
       }
-      case DIGEST -> runPivotPosition(Settings.Intake.PIVOT_DIGEST_ANGLE);
-      case STOW -> runPivotPosition(Settings.Intake.PIVOT_STOW_ANGLE);
+      case DIGEST -> runPivotPosition(IntakeSettings.PIVOT_DIGEST_ANGLE);
+      case STOW -> runPivotPosition(IntakeSettings.PIVOT_STOW_ANGLE);
     }
 
     if (pivotState == PivotState.DEPLOY
-        && inputs.pivotMotorPosition.lte(Settings.Intake.THRESHOLD_TO_START_ROLLERS)) {
+        && inputs.pivotMotorPosition.lte(IntakeSettings.THRESHOLD_TO_START_ROLLERS)) {
       switch (rollerState) {
         case INTAKE -> runRollersDutyCycle(1.0);
         case OUTTAKE -> runRollersDutyCycle(-1.0);
@@ -137,12 +138,12 @@ public class Intake extends FullSubsystem {
 
   private boolean isPivotBelowPushdownThreshold() {
     return pivotPositionDebouncer.calculate(
-        inputs.pivotMotorPosition.lte(Settings.Intake.ANGLE_THRESHOLD_FOR_HOLDING_VOLTAGE));
+        inputs.pivotMotorPosition.lte(IntakeSettings.ANGLE_THRESHOLD_FOR_HOLDING_VOLTAGE));
   }
 
   private boolean pivotStalling() {
     return pivotStallingDebouncer.calculate(
-        inputs.pivotMotorStatorCurrent.abs(Amps) > Settings.Intake.PIVOT_STALL_CURRENT.in(Amps));
+        inputs.pivotMotorStatorCurrent.abs(Amps) > IntakeSettings.PIVOT_STALL_CURRENT.in(Amps));
   }
 
   private void setPivotState(PivotState state) {
@@ -246,7 +247,7 @@ public class Intake extends FullSubsystem {
   public Command seedPivotDeployed() {
     return runOnce(
             () -> {
-              io.seedPivotPosition(Settings.Intake.PIVOT_DEPLOY_ANGLE);
+              io.seedPivotPosition(IntakeSettings.PIVOT_DEPLOY_ANGLE);
               setPivotState(PivotState.DEPLOY);
             })
         .ignoringDisable(true)
@@ -256,7 +257,7 @@ public class Intake extends FullSubsystem {
   public Command seedPivotStowed() {
     return runOnce(
             () -> {
-              io.seedPivotPosition(Settings.Intake.PIVOT_STOW_ANGLE);
+              io.seedPivotPosition(IntakeSettings.PIVOT_STOW_ANGLE);
               setPivotState(PivotState.STOW);
             })
         .ignoringDisable(true)

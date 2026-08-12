@@ -8,6 +8,7 @@ package com.stuypulse.robot.constants;
 public interface DriverConstants {
 
   public interface Driver {
+    int DRIVER_INDEX = 1;
     double BUZZ_TIME = 1.0;
     double BUZZ_INTENSITY = 1.0;
 

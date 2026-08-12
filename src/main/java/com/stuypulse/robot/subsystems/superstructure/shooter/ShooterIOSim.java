@@ -1,13 +1,13 @@
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
+import static com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.stuypulse.robot.constants.Motors;
-import com.stuypulse.robot.constants.Ports;
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -22,8 +22,8 @@ import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 public class ShooterIOSim implements ShooterIO {
   private final SystemSim<FlywheelSim> flywheelSim;
 
-  private final TalonFXSimulation shooterLeaderSim;
-  private final TalonFXSimulation shooterFollowerSim;
+  private final TalonFXSimulation shooterLeaderMotor;
+  private final TalonFXSimulation shooterFollowerMotor;
 
   private final VelocityTorqueCurrentFOC shooterLeaderController;
   private final Follower shooterFollowerController;
@@ -47,52 +47,47 @@ public class ShooterIOSim implements ShooterIO {
         SystemSim.of(
             new FlywheelSim(
                 LinearSystemId.createFlywheelSystem(
-                    DCMotor.getKrakenX44(2), 0.05, Settings.Superstructure.Shooter.GEAR_RATIO),
+                    DCMotor.getKrakenX44(2), 0.05, ShooterSettings.GEAR_RATIO),
                 DCMotor.getKrakenX44(2),
-                Settings.Superstructure.Shooter.GEAR_RATIO));
+                ShooterSettings.GEAR_RATIO));
 
-    shooterLeaderSim =
+    shooterLeaderMotor =
+        new TalonFXSimulation(ShooterDeviceIds.MOTOR_LEAD, ShooterSettings.GEAR_RATIO, flywheelSim);
+    shooterFollowerMotor =
         new TalonFXSimulation(
-            Ports.Superstructure.Shooter.MOTOR_LEAD,
-            Settings.Superstructure.Shooter.GEAR_RATIO,
-            flywheelSim);
-    shooterFollowerSim =
-        new TalonFXSimulation(
-            Ports.Superstructure.Shooter.MOTOR_FOLLOW,
-            Settings.Superstructure.Shooter.GEAR_RATIO,
-            flywheelSim);
+            ShooterDeviceIds.MOTOR_FOLLOW, ShooterSettings.GEAR_RATIO, flywheelSim);
 
-    shooterLeaderSim.configure(Motors.Superstructure.Shooter.SHOOTER_CONFIG);
-    shooterFollowerSim.configure(Motors.Superstructure.Shooter.SHOOTER_CONFIG);
+    ShooterMotorConfigs.SHOOTER_CONFIG.configure(shooterLeaderMotor);
+    ShooterMotorConfigs.SHOOTER_CONFIG.configure(shooterFollowerMotor);
 
-    shooterFollowerSim.linkToReference(shooterLeaderSim);
+    shooterFollowerMotor.linkToReference(shooterLeaderMotor);
 
     shooterLeaderController = new VelocityTorqueCurrentFOC(0);
     shooterFollowerController =
-        new Follower(shooterLeaderSim.getDeviceID(), MotorAlignmentValue.Opposed);
+        new Follower(shooterLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed);
 
-    shooterFollowerSim.setControl(shooterFollowerController);
+    shooterFollowerMotor.setControl(shooterFollowerController);
 
-    shooterLeaderSimPosition = shooterLeaderSim.getPosition();
-    shooterLeaderSimSupplyCurrent = shooterLeaderSim.getSupplyCurrent();
-    shooterLeaderSimStatorCurrent = shooterLeaderSim.getStatorCurrent();
-    shooterLeaderSimTemperature = shooterLeaderSim.getDeviceTemp();
-    shooterLeaderSimAppliedVoltage = shooterLeaderSim.getMotorVoltage();
-    shooterLeaderSimVelocity = shooterLeaderSim.getVelocity();
+    shooterLeaderSimPosition = shooterLeaderMotor.getPosition();
+    shooterLeaderSimSupplyCurrent = shooterLeaderMotor.getSupplyCurrent();
+    shooterLeaderSimStatorCurrent = shooterLeaderMotor.getStatorCurrent();
+    shooterLeaderSimTemperature = shooterLeaderMotor.getDeviceTemp();
+    shooterLeaderSimAppliedVoltage = shooterLeaderMotor.getMotorVoltage();
+    shooterLeaderSimVelocity = shooterLeaderMotor.getVelocity();
 
-    shooterFollowerSimPosition = shooterFollowerSim.getPosition();
-    shooterFollowerSimSupplyCurrent = shooterFollowerSim.getSupplyCurrent();
-    shooterFollowerSimStatorCurrent = shooterFollowerSim.getStatorCurrent();
-    shooterFollowerSimTemperature = shooterFollowerSim.getDeviceTemp();
-    shooterFollowerSimAppliedVoltage = shooterFollowerSim.getMotorVoltage();
-    shooterFollowerSimVelocity = shooterFollowerSim.getVelocity();
+    shooterFollowerSimPosition = shooterFollowerMotor.getPosition();
+    shooterFollowerSimSupplyCurrent = shooterFollowerMotor.getSupplyCurrent();
+    shooterFollowerSimStatorCurrent = shooterFollowerMotor.getStatorCurrent();
+    shooterFollowerSimTemperature = shooterFollowerMotor.getDeviceTemp();
+    shooterFollowerSimAppliedVoltage = shooterFollowerMotor.getMotorVoltage();
+    shooterFollowerSimVelocity = shooterFollowerMotor.getVelocity();
   }
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
-    flywheelSim.update(Settings.DT);
-    shooterLeaderSim.refresh();
-    shooterFollowerSim.refresh();
+    flywheelSim.update(GlobalSettings.DT);
+    shooterLeaderMotor.refresh();
+    shooterFollowerMotor.refresh();
 
     BaseStatusSignal.refreshAll(
         shooterLeaderSimPosition,
@@ -126,14 +121,14 @@ public class ShooterIOSim implements ShooterIO {
   @Override
   public void applyOutputs(ShooterIOOutputs outputs) {
     switch (outputs.shooterMode) {
-      case VELOCITY -> shooterLeaderSim.setControl(
+      case VELOCITY -> shooterLeaderMotor.setControl(
           shooterLeaderController.withVelocity(outputs.shooterVelocity));
 
       case STOP -> {
-        shooterLeaderSim.stopMotor();
-        shooterFollowerSim.stopMotor();
+        shooterLeaderMotor.stopMotor();
+        shooterFollowerMotor.stopMotor();
 
-        shooterFollowerSim.setControl(shooterFollowerController);
+        shooterFollowerMotor.setControl(shooterFollowerController);
       }
     }
   }

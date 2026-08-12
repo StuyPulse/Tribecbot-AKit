@@ -1,8 +1,9 @@
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
-import static edu.wpi.first.units.Units.RPM;
+import static com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
+import static edu.wpi.first.units.Units.*;
 
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterIO.ShooterIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterIO.ShooterIOOutputs;
 import com.stuypulse.robot.util.FullSubsystem;
@@ -10,7 +11,7 @@ import com.stuypulse.robot.util.superstructure.InterpolationCalculator;
 import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.*;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -18,7 +19,7 @@ public class Shooter extends FullSubsystem {
   private static final Shooter instance;
 
   static {
-    switch (Settings.currentMode) {
+    switch (GlobalSettings.currentMode) {
       case REAL -> instance = new Shooter(new ShooterIOTalonFX());
 
       case SIM -> instance = new Shooter(new ShooterIOSim());
@@ -74,7 +75,7 @@ public class Shooter extends FullSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Shooter", inputs);
 
-    if (!Settings.EnabledSubsystems.SHOOTER.get()) {
+    if (!GlobalSettings.EnabledSubsystems.SHOOTER.get()) {
       stopShooter();
 
       return;
@@ -82,13 +83,12 @@ public class Shooter extends FullSubsystem {
 
     switch (state) {
       case STOP -> stopShooter();
-      case MANUAL_OVERRIDE -> runVelocity(
-          RPM.of(Settings.Superstructure.Shooter.RPM.MANUAL_OVERRIDE.get()));
+      case MANUAL_OVERRIDE -> runVelocity(RPM.of(ShooterRPMValues.MANUAL_OVERRIDE.get()));
       case FERRY -> runVelocity(InterpolationCalculator.getInterpolatedFerryRPM());
-      case REVERSE -> runVelocity(Settings.Superstructure.Shooter.RPM.REVERSE);
-      case KB -> runVelocity(Settings.Superstructure.Shooter.RPM.KB);
-      case LEFT_CORNER -> runVelocity(Settings.Superstructure.Shooter.RPM.LEFT_CORNER);
-      case RIGHT_CORNER -> runVelocity(Settings.Superstructure.Shooter.RPM.RIGHT_CORNER);
+      case REVERSE -> runVelocity(ShooterRPMValues.REVERSE);
+      case KB -> runVelocity(ShooterRPMValues.KB);
+      case LEFT_CORNER -> runVelocity(ShooterRPMValues.LEFT_CORNER);
+      case RIGHT_CORNER -> runVelocity(ShooterRPMValues.RIGHT_CORNER);
       case INTERPOLATION -> runVelocity(InterpolationCalculator.getInterpolatedShotRPM());
       case SOTM -> runVelocity(SOTMCalculator.calculateShooterRPMSOTM());
       case FOTM -> runVelocity(SOTMCalculator.calculateShooterRPMFOTM());
@@ -116,16 +116,16 @@ public class Shooter extends FullSubsystem {
 
     AngularVelocity toleranceHigh =
         switch (state) {
-          case SOTM -> Settings.Superstructure.SHOOTER_SOTM_TOLERANCE_RPM_HIGH;
-          case FOTM -> Settings.Superstructure.SHOOTER_FOTM_TOLERANCE_RPM_HIGH;
-          default -> Settings.Superstructure.SHOOTER_TOLERANCE_RPM_HIGH;
+          case SOTM -> ShooterSettings.SHOOTER_SOTM_TOLERANCE_RPM_HIGH;
+          case FOTM -> ShooterSettings.SHOOTER_FOTM_TOLERANCE_RPM_HIGH;
+          default -> ShooterSettings.SHOOTER_TOLERANCE_RPM_HIGH;
         };
 
     AngularVelocity toleranceLow =
         switch (state) {
-          case SOTM -> Settings.Superstructure.SHOOTER_SOTM_TOLERANCE_RPM_LOW;
-          case FOTM -> Settings.Superstructure.SHOOTER_FOTM_TOLERANCE_RPM_LOW;
-          default -> Settings.Superstructure.SHOOTER_TOLERANCE_RPM_LOW;
+          case SOTM -> ShooterSettings.SHOOTER_SOTM_TOLERANCE_RPM_LOW;
+          case FOTM -> ShooterSettings.SHOOTER_FOTM_TOLERANCE_RPM_LOW;
+          default -> ShooterSettings.SHOOTER_TOLERANCE_RPM_LOW;
         };
 
     atTolerance = error.lt(toleranceLow.unaryMinus()) && error.gt(toleranceHigh);
@@ -141,8 +141,7 @@ public class Shooter extends FullSubsystem {
 
   public boolean isShooting() {
     return currentlyShootingDebouncer.calculate(
-        inputs.shooterLeaderMotorStatorCurrent.gt(
-            Settings.Superstructure.Shooter.IS_SHOOTING_CURRENT));
+        inputs.shooterLeaderMotorStatorCurrent.gt(ShooterSettings.IS_SHOOTING_CURRENT));
   }
 
   public void setState(ShooterState state) {

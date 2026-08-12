@@ -7,8 +7,9 @@ package com.stuypulse.robot.util.superstructure;
 
 import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.constants.Field;
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.subsystems.superstructure.SuperstructureConstants.SOTM;
 import com.stuypulse.robot.subsystems.superstructure.hood.Hood;
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.HoodAngles;
 import com.stuypulse.robot.subsystems.superstructure.shooter.Shooter;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.swerve.Drive;
@@ -227,7 +228,7 @@ public class SOTMCalculator {
     That way, when we reach tolerance and fire at the future pose and rotation, the parameters will be correct.
     */
 
-    double t = Settings.Superstructure.SOTM.UPDATE_DELAY.getAsDouble();
+    double t = SOTM.UPDATE_DELAY.getAsDouble();
 
     Pose2d futureRobotPose =
         robotPose.exp(
@@ -295,8 +296,8 @@ public class SOTMCalculator {
             futureRobotPose.getRotation(),
             vTurretX,
             vTurretY,
-            Settings.Superstructure.SOTM.MAX_ITERATIONS,
-            Settings.Superstructure.SOTM.TIME_TOLERANCE);
+            SOTM.MAX_ITERATIONS,
+            SOTM.TIME_TOLERANCE);
 
     Logger.recordOutput(
         "Field/Hub Pose", Robot.isBlue() ? hubPose : Field.transformToOppositeAlliance(hubPose));
@@ -326,7 +327,7 @@ public class SOTMCalculator {
         ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeSpeeds, robotPose.getRotation());
 
     double omega = robotRelativeSpeeds.omegaRadiansPerSecond;
-    double t = Settings.Superstructure.SOTM.UPDATE_DELAY.getAsDouble();
+    double t = SOTM.UPDATE_DELAY.getAsDouble();
 
     Pose2d futureRobotPose =
         robotPose.exp(
@@ -350,8 +351,8 @@ public class SOTMCalculator {
             futureRobotPose.getRotation(),
             vTurretX,
             vTurretY,
-            Settings.Superstructure.SOTM.MAX_ITERATIONS,
-            Settings.Superstructure.SOTM.TIME_TOLERANCE);
+            SOTM.MAX_ITERATIONS,
+            SOTM.TIME_TOLERANCE);
 
     Logger.recordOutput(
         "Field/Ferry Pose",
@@ -391,7 +392,7 @@ public class SOTMCalculator {
     // TODO: don't forget to change this back to the solution!!
     // return ferrySol.targetHoodAngle();
     // return Rotation2d.fromDegrees(40);
-    return Settings.Superstructure.Hood.Angles.FERRY_ANGLE;
+    return HoodAngles.FERRY_ANGLE;
   }
 
   public static Angle calculateTurretAngleFOTM() {

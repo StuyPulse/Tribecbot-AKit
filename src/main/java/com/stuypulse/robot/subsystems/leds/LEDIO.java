@@ -1,13 +1,9 @@
 package com.stuypulse.robot.subsystems.leds;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Celsius;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.signals.RGBWColor;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.units.measure.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLog;

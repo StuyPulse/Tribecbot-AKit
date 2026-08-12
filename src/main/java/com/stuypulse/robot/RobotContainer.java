@@ -7,7 +7,7 @@ package com.stuypulse.robot;
 
 import com.stuypulse.robot.commands.DriveCommands;
 import com.stuypulse.robot.commands.leds.LEDDefaultCommand;
-import com.stuypulse.robot.constants.Ports;
+import com.stuypulse.robot.constants.DriverConstants;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
 import com.stuypulse.robot.subsystems.intake.Intake;
 import com.stuypulse.robot.subsystems.leds.LED;
@@ -26,7 +26,7 @@ public class RobotContainer {
 
   // Gamepads
   public static final CommandXboxController driver =
-      new CommandXboxController(Ports.Gamepad.DRIVER);
+      new CommandXboxController(DriverConstants.Driver.DRIVER_INDEX);
 
   // Subsystem
   private final Handoff handoff = Handoff.getInstance();

@@ -1,7 +1,8 @@
 package com.stuypulse.robot.subsystems.leds;
 
 import com.ctre.phoenix6.signals.RGBWColor;
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.leds.LEDConstants.*;
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDIOOutputs;
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDPattern;
 import com.stuypulse.robot.subsystems.vision.Vision;
@@ -14,7 +15,7 @@ public class LED extends FullSubsystem {
   private static final LED instance; // LED instance
 
   static {
-    switch (Settings.currentMode) {
+    switch (GlobalSettings.currentMode) {
       case REAL -> instance = new LED(new LEDIOCANdle());
 
       case SIM -> instance = new LED(new LEDIOSim());
@@ -28,24 +29,24 @@ public class LED extends FullSubsystem {
   }
 
   public enum LEDState {
-    PASSING_TRENCH(LEDConstants.PASSING_TRENCH),
-    IS_BEHIND_HUB(LEDConstants.IS_BEHIND_HUB),
-    TURRET_WRAPPING(LEDConstants.TURRET_WRAPPING),
-    SHOOT_IN_PLACE(LEDConstants.SHOOT_IN_PLACE),
-    SOTM_ON(LEDConstants.SOTM_ON),
-    FOTM_ON(LEDConstants.FOTM_ON),
-    LEFT_CORNER(LEDConstants.LEFT_CORNER),
-    RIGHT_CORNER(LEDConstants.RIGHT_CORNER),
-    KB_DISTANCE(LEDConstants.KB_DISTANCE),
-    STOP_ROLLERS(LEDConstants.STOP_ROLLERS),
-    RESET(LEDConstants.RESET_HEADING),
-    X_WHEELS(LEDConstants.X_WHEELS),
-    INTAKE_STOW(LEDConstants.INTAKE_STOW),
-    INTAKE_DEPLOYED(LEDConstants.INTAKE_DEPLOYED),
-    DISABLED_ALIGNED(LEDConstants.DISABLED_ALIGNED),
-    DISABLED(LEDConstants.DISABLED),
-    AUTON_COLOR_ONE(LEDConstants.AUTON_ONE),
-    AUTON_COLOR_TWO(LEDConstants.AUTON_TWO);
+    PASSING_TRENCH(LEDSettings.StateColors.PASSING_TRENCH),
+    IS_BEHIND_HUB(LEDSettings.StateColors.IS_BEHIND_HUB),
+    TURRET_WRAPPING(LEDSettings.StateColors.TURRET_WRAPPING),
+    SHOOT_IN_PLACE(LEDSettings.StateColors.SHOOT_IN_PLACE),
+    SOTM_ON(LEDSettings.StateColors.SOTM_ON),
+    FOTM_ON(LEDSettings.StateColors.FOTM_ON),
+    LEFT_CORNER(LEDSettings.StateColors.LEFT_CORNER),
+    RIGHT_CORNER(LEDSettings.StateColors.RIGHT_CORNER),
+    KB_DISTANCE(LEDSettings.StateColors.KB_DISTANCE),
+    STOP_ROLLERS(LEDSettings.StateColors.STOP_ROLLERS),
+    RESET(LEDSettings.StateColors.RESET_HEADING),
+    X_WHEELS(LEDSettings.StateColors.X_WHEELS),
+    INTAKE_STOW(LEDSettings.StateColors.INTAKE_STOW),
+    INTAKE_DEPLOYED(LEDSettings.StateColors.INTAKE_DEPLOYED),
+    DISABLED_ALIGNED(LEDSettings.StateColors.DISABLED_ALIGNED),
+    DISABLED(LEDSettings.StateColors.DISABLED),
+    AUTON_COLOR_ONE(LEDSettings.StateColors.AUTON_ONE),
+    AUTON_COLOR_TWO(LEDSettings.StateColors.AUTON_TWO);
 
     private final RGBWColor color;
 
@@ -90,23 +91,29 @@ public class LED extends FullSubsystem {
   private void applyState() {
     outputs.patterns.clear();
     outputs.patterns.add(
-        new LEDPattern(LEDConstants.STRIP_START, LEDConstants.LED_LENGTH, state.getColor()));
+        new LEDPattern(LEDSettings.STRIP_START, LEDSettings.LED_LENGTH, state.getColor()));
 
     // add limelight dead strips
     if (vision.isCameraDead(Camera.LEFT)) {
       outputs.patterns.add(
           new LEDPattern(
-              LEDConstants.LEFT_DEAD_START, LEDConstants.LEFT_DEAD_END, LEDConstants.LLDEAD));
+              LEDSettings.LEFT_DEAD_START,
+              LEDSettings.LEFT_DEAD_END,
+              LEDSettings.StateColors.LLDEAD));
     }
     if (vision.isCameraDead(Camera.RIGHT)) {
       outputs.patterns.add(
           new LEDPattern(
-              LEDConstants.RIGHT_DEAD_START, LEDConstants.RIGHT_DEAD_END, LEDConstants.LLDEAD));
+              LEDSettings.RIGHT_DEAD_START,
+              LEDSettings.RIGHT_DEAD_END,
+              LEDSettings.StateColors.LLDEAD));
     }
     if (vision.isCameraDead(Camera.BACK)) {
       outputs.patterns.add(
           new LEDPattern(
-              LEDConstants.BACK_DEAD_START, LEDConstants.BACK_DEAD_END, LEDConstants.LLDEAD));
+              LEDSettings.BACK_DEAD_START,
+              LEDSettings.BACK_DEAD_END,
+              LEDSettings.StateColors.LLDEAD));
     }
   }
 
@@ -120,7 +127,7 @@ public class LED extends FullSubsystem {
 
   @Override
   public void periodicAfterScheduler() {
-    if (!Settings.EnabledSubsystems.LEDs.get()) {
+    if (!GlobalSettings.EnabledSubsystems.LEDs.get()) {
       changeState(LEDState.DISABLED);
     }
     applyState();
