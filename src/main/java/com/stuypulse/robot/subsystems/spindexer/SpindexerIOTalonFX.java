@@ -1,15 +1,13 @@
 package com.stuypulse.robot.subsystems.spindexer;
 
-import com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.MotorIds;
-import com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.MotorConfig;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
+import com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.MotorConfig;
+import com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.MotorIds;
 import edu.wpi.first.units.measure.*;
 
 public class SpindexerIOTalonFX implements SpindexerIO {

@@ -6,13 +6,10 @@
 package com.stuypulse.robot.util.superstructure;
 
 import com.stuypulse.robot.Robot;
-
 import com.stuypulse.robot.constants.Field;
-
-import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.Angles;
 import com.stuypulse.robot.subsystems.superstructure.SuperstructureConstants.SOTM;
-
 import com.stuypulse.robot.subsystems.superstructure.hood.Hood;
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.Angles;
 import com.stuypulse.robot.subsystems.superstructure.shooter.Shooter;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.swerve.Drive;

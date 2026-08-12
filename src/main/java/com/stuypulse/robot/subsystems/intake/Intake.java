@@ -1,10 +1,9 @@
 package com.stuypulse.robot.subsystems.intake;
 
+import static com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
 import static edu.wpi.first.units.Units.*;
 
 import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.intake.IntakeConstants.Settings;
-
 import com.stuypulse.robot.subsystems.intake.IntakeIO.IntakeIOOutputs;
 import com.stuypulse.robot.util.DualDebouncer;
 import com.stuypulse.robot.util.FullSubsystem;
@@ -144,8 +143,7 @@ public class Intake extends FullSubsystem {
 
   private boolean pivotStalling() {
     return pivotStallingDebouncer.calculate(
-        inputs.pivotMotorStatorCurrent.abs(Amps)
-            > Settings.PIVOT_STALL_CURRENT.in(Amps));
+        inputs.pivotMotorStatorCurrent.abs(Amps) > Settings.PIVOT_STALL_CURRENT.in(Amps));
   }
 
   private void setPivotState(PivotState state) {

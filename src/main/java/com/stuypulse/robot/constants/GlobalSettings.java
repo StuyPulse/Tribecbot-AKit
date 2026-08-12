@@ -2,11 +2,10 @@ package com.stuypulse.robot.constants;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.ctre.phoenix6.CANBus;
 import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.RobotBase;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
-
-import com.ctre.phoenix6.CANBus;
 
 public interface GlobalSettings {
   final CANBus RIO = new CANBus("rio");

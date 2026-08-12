@@ -1,20 +1,19 @@
 package com.stuypulse.robot.subsystems.superstructure.hood;
 
 import static edu.wpi.first.units.Units.*;
-import edu.wpi.first.units.measure.*;
-
-import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.Angles;
-import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.MotorIds;
-import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.MotorConfig;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.Angles;
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.MotorConfig;
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.MotorIds;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 public class HoodIOSim implements HoodIO {

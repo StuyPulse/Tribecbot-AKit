@@ -1,10 +1,9 @@
 package com.stuypulse.robot.subsystems.leds;
 
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.leds.LEDConstants.Settings.StateColors;
-import com.stuypulse.robot.subsystems.leds.LEDConstants.Settings;
+import static com.stuypulse.robot.subsystems.leds.LEDConstants.Settings.*;
 
 import com.ctre.phoenix6.signals.RGBWColor;
+import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDIOOutputs;
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDPattern;
 import com.stuypulse.robot.subsystems.vision.Vision;
@@ -22,8 +21,7 @@ public class LED extends FullSubsystem {
 
       case SIM -> instance = new LED(new LEDIOSim());
 
-      default -> instance = new LED(new LEDIO() {
-      });
+      default -> instance = new LED(new LEDIO() {});
     }
   }
 
@@ -93,24 +91,17 @@ public class LED extends FullSubsystem {
 
   private void applyState() {
     outputs.patterns.clear();
-    outputs.patterns.add(
-        new LEDPattern(Settings.STRIP_START, Settings.LED_LENGTH, state.getColor()));
+    outputs.patterns.add(new LEDPattern(STRIP_START, LED_LENGTH, state.getColor()));
 
     // add limelight dead strips
     if (vision.isCameraDead(Camera.LEFT)) {
-      outputs.patterns.add(
-          new LEDPattern(
-              Settings.LEFT_DEAD_START, Settings.LEFT_DEAD_END, StateColors.LLDEAD));
+      outputs.patterns.add(new LEDPattern(LEFT_DEAD_START, LEFT_DEAD_END, StateColors.LLDEAD));
     }
     if (vision.isCameraDead(Camera.RIGHT)) {
-      outputs.patterns.add(
-          new LEDPattern(
-              Settings.RIGHT_DEAD_START, Settings.RIGHT_DEAD_END, StateColors.LLDEAD));
+      outputs.patterns.add(new LEDPattern(RIGHT_DEAD_START, RIGHT_DEAD_END, StateColors.LLDEAD));
     }
     if (vision.isCameraDead(Camera.BACK)) {
-      outputs.patterns.add(
-          new LEDPattern(
-              Settings.BACK_DEAD_START, Settings.BACK_DEAD_END, StateColors.LLDEAD));
+      outputs.patterns.add(new LEDPattern(BACK_DEAD_START, BACK_DEAD_END, StateColors.LLDEAD));
     }
   }
 

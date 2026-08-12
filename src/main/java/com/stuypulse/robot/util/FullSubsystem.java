@@ -32,7 +32,6 @@ public abstract class FullSubsystem extends SubsystemBase {
    * applying outputs.
    */
   public void periodicAfterScheduler() {}
-  ;
 
   /** Run the "after periodic" methods for all subsystems. */
   public static void runAllPeriodicAfterScheduler() {

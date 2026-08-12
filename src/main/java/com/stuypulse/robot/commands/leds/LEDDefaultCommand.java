@@ -1,7 +1,5 @@
 package com.stuypulse.robot.commands.leds;
 
-import com.stuypulse.robot.subsystems.leds.LEDConstants.Settings;
-
 import com.stuypulse.robot.Robot;
 import com.stuypulse.robot.Robot.OperationMode;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
@@ -9,6 +7,7 @@ import com.stuypulse.robot.subsystems.intake.Intake;
 import com.stuypulse.robot.subsystems.intake.Intake.PivotState;
 import com.stuypulse.robot.subsystems.leds.LED;
 import com.stuypulse.robot.subsystems.leds.LED.LEDState;
+import com.stuypulse.robot.subsystems.leds.LEDConstants.Settings;
 import com.stuypulse.robot.subsystems.spindexer.Spindexer;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;

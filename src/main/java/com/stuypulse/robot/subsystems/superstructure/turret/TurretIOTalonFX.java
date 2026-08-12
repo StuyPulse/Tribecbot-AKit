@@ -1,13 +1,6 @@
 package com.stuypulse.robot.subsystems.superstructure.turret;
 
 import static edu.wpi.first.units.Units.*;
-import edu.wpi.first.units.measure.*;
-
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.Encoder17t;
-import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.Encoder18t;
-import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.MotorIds;
-import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.MotorConfig;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -15,8 +8,13 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.Encoder17t;
+import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.Encoder18t;
+import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.MotorConfig;
+import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.MotorIds;
 import com.stuypulse.robot.util.config.CANCoderConfig;
+import edu.wpi.first.units.measure.*;
 
 public class TurretIOTalonFX implements TurretIO {
   private final TalonFX turretMotor;

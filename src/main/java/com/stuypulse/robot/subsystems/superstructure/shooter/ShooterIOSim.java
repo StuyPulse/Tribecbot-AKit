@@ -1,15 +1,13 @@
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.MotorConfig;
-import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.ShooterSettings;
-import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.MotorIds;
+import static com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -49,22 +47,14 @@ public class ShooterIOSim implements ShooterIO {
         SystemSim.of(
             new FlywheelSim(
                 LinearSystemId.createFlywheelSystem(
-                    DCMotor.getKrakenX44(2),
-                    0.05,
-                    ShooterSettings.GEAR_RATIO),
+                    DCMotor.getKrakenX44(2), 0.05, Settings.GEAR_RATIO),
                 DCMotor.getKrakenX44(2),
-                ShooterSettings.GEAR_RATIO));
+                Settings.GEAR_RATIO));
 
     shooterLeaderMotor =
-        new TalonFXSimulation(
-            MotorIds.MOTOR_LEAD,
-            ShooterSettings.GEAR_RATIO,
-            flywheelSim);
+        new TalonFXSimulation(MotorIds.MOTOR_LEAD, Settings.GEAR_RATIO, flywheelSim);
     shooterFollowerMotor =
-        new TalonFXSimulation(
-            MotorIds.MOTOR_FOLLOW,
-            ShooterSettings.GEAR_RATIO,
-            flywheelSim);
+        new TalonFXSimulation(MotorIds.MOTOR_FOLLOW, Settings.GEAR_RATIO, flywheelSim);
 
     MotorConfig.SHOOTER_CONFIG.configure(shooterLeaderMotor);
     MotorConfig.SHOOTER_CONFIG.configure(shooterFollowerMotor);

@@ -6,21 +6,19 @@
 package com.stuypulse.robot.util.superstructure;
 
 import static edu.wpi.first.units.Units.*;
-import edu.wpi.first.units.measure.*;
 
 import com.stuypulse.robot.constants.Field;
-
-import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.Angles;
 import com.stuypulse.robot.subsystems.superstructure.SuperstructureConstants.AngleInterpolation;
 import com.stuypulse.robot.subsystems.superstructure.SuperstructureConstants.FerryRPMInterpolation;
 import com.stuypulse.robot.subsystems.superstructure.SuperstructureConstants.FerryTOFInterpolation;
 import com.stuypulse.robot.subsystems.superstructure.SuperstructureConstants.RPMInterpolation;
 import com.stuypulse.robot.subsystems.superstructure.SuperstructureConstants.TOFInterpolation;
-
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.Angles;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.units.measure.*;
 import java.util.Optional;
 
 public class InterpolationCalculator {

@@ -1,12 +1,9 @@
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
+import static com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
 import static edu.wpi.first.units.Units.RPM;
 
 import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.superstructure.SuperstructureConstants.SuperstructureSettings;
-import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.ShooterSettings;
-import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.RPMValues;
-
 import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterIO.ShooterIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterIO.ShooterIOOutputs;
 import com.stuypulse.robot.util.FullSubsystem;
@@ -86,8 +83,7 @@ public class Shooter extends FullSubsystem {
 
     switch (state) {
       case STOP -> stopShooter();
-      case MANUAL_OVERRIDE -> runVelocity(
-          RPM.of(RPMValues.MANUAL_OVERRIDE.get()));
+      case MANUAL_OVERRIDE -> runVelocity(RPM.of(RPMValues.MANUAL_OVERRIDE.get()));
       case FERRY -> runVelocity(InterpolationCalculator.getInterpolatedFerryRPM());
       case REVERSE -> runVelocity(RPMValues.REVERSE);
       case KB -> runVelocity(RPMValues.KB);
@@ -120,16 +116,16 @@ public class Shooter extends FullSubsystem {
 
     AngularVelocity toleranceHigh =
         switch (state) {
-          case SOTM -> SuperstructureSettings.SHOOTER_SOTM_TOLERANCE_RPM_HIGH;
-          case FOTM -> SuperstructureSettings.SHOOTER_FOTM_TOLERANCE_RPM_HIGH;
-          default -> SuperstructureSettings.SHOOTER_TOLERANCE_RPM_HIGH;
+          case SOTM -> Settings.SHOOTER_SOTM_TOLERANCE_RPM_HIGH;
+          case FOTM -> Settings.SHOOTER_FOTM_TOLERANCE_RPM_HIGH;
+          default -> Settings.SHOOTER_TOLERANCE_RPM_HIGH;
         };
 
     AngularVelocity toleranceLow =
         switch (state) {
-          case SOTM -> SuperstructureSettings.SHOOTER_SOTM_TOLERANCE_RPM_LOW;
-          case FOTM -> SuperstructureSettings.SHOOTER_FOTM_TOLERANCE_RPM_LOW;
-          default -> SuperstructureSettings.SHOOTER_TOLERANCE_RPM_LOW;
+          case SOTM -> Settings.SHOOTER_SOTM_TOLERANCE_RPM_LOW;
+          case FOTM -> Settings.SHOOTER_FOTM_TOLERANCE_RPM_LOW;
+          default -> Settings.SHOOTER_TOLERANCE_RPM_LOW;
         };
 
     atTolerance = error.lt(toleranceLow.unaryMinus()) && error.gt(toleranceHigh);
@@ -145,8 +141,7 @@ public class Shooter extends FullSubsystem {
 
   public boolean isShooting() {
     return currentlyShootingDebouncer.calculate(
-        inputs.shooterLeaderMotorStatorCurrent.gt(
-            ShooterSettings.IS_SHOOTING_CURRENT));
+        inputs.shooterLeaderMotorStatorCurrent.gt(Settings.IS_SHOOTING_CURRENT));
   }
 
   public void setState(ShooterState state) {

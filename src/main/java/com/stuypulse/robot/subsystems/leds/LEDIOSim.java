@@ -1,10 +1,9 @@
 package com.stuypulse.robot.subsystems.leds;
 
-import com.stuypulse.robot.subsystems.leds.LEDConstants.Settings;
-
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.signals.RGBWColor;
+import com.stuypulse.robot.subsystems.leds.LEDConstants.Settings;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 

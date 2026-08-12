@@ -1,8 +1,8 @@
 package com.stuypulse.robot.subsystems.spindexer;
 
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.Settings;
+import static com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.*;
 
+import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.spindexer.SpindexerIO.SpindexerIOOutputs;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.util.FullSubsystem;

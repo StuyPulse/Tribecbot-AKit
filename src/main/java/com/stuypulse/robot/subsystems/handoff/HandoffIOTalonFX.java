@@ -8,7 +8,6 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.stuypulse.robot.subsystems.handoff.HandoffConstants.MotorConfig;
 import com.stuypulse.robot.subsystems.handoff.HandoffConstants.MotorIds;
-
 import edu.wpi.first.units.measure.*;
 
 public class HandoffIOTalonFX implements HandoffIO {

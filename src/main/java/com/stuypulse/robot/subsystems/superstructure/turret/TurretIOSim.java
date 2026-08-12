@@ -1,13 +1,10 @@
 package com.stuypulse.robot.subsystems.superstructure.turret;
 
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.TurretSettings;
-import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.MotorIds;
-import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.MotorConfig;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.*;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -43,10 +40,7 @@ public class TurretIOSim implements TurretIO {
     controller = new PositionVoltage(0).withEnableFOC(true);
 
     turretMotor =
-        new TalonFXSimulation(
-            MotorIds.MOTOR,
-            TurretSettings.GEAR_RATIO_MOTOR_TO_MECH,
-            turretSim);
+        new TalonFXSimulation(MotorIds.MOTOR, Settings.GEAR_RATIO_MOTOR_TO_MECH, turretSim);
     MotorConfig.TURRET_CONFIG.configure(turretMotor);
 
     turretSimMotorPosition = turretMotor.getPosition();

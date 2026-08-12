@@ -15,10 +15,6 @@ package com.stuypulse.robot.subsystems.swerve;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.stuypulse.robot.constants.Field;
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.constants.GlobalSettings.Mode;
-
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -26,7 +22,9 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
-import com.stuypulse.robot.generated.TunerConstants;
+import com.stuypulse.robot.constants.Field;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.constants.GlobalSettings.Mode;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.vision.Vision;
 import com.stuypulse.robot.util.FullSubsystem;
