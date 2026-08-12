@@ -1,9 +1,10 @@
 package com.stuypulse.robot.subsystems.handoff;
 
-import static com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
+
 import static edu.wpi.first.units.Units.*;
 
-import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputMode;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputs;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
@@ -48,7 +49,7 @@ public class Handoff extends FullSubsystem {
     setState(HandoffState.STOP);
 
     this.handoffStallingDebouncer =
-        new Debouncer(Settings.HANDOFF_STALL_DEBOUNCE.in(Seconds), DebounceType.kBoth);
+        new Debouncer(HandoffSettings.HANDOFF_STALL_DEBOUNCE.in(Seconds), DebounceType.kBoth);
   }
 
   public enum HandoffState {
@@ -75,8 +76,8 @@ public class Handoff extends FullSubsystem {
     }
 
     switch (state) {
-      case FORWARD -> runHandoffDutyCycle(Settings.FORWARD_DUTY_CYCLE);
-      case REVERSE -> runHandoffDutyCycle(Settings.REVERSE_DUTY_CYCLE);
+      case FORWARD -> runHandoffDutyCycle(HandoffSettings.FORWARD_DUTY_CYCLE);
+      case REVERSE -> runHandoffDutyCycle(HandoffSettings.REVERSE_DUTY_CYCLE);
       case STOP -> stopHandoff();
     }
   }
@@ -97,7 +98,7 @@ public class Handoff extends FullSubsystem {
 
   public boolean isHandoffStalling() {
     return handoffStallingDebouncer.calculate(
-        inputs.motorLeadSupplyCurrent.abs(Amps) > Settings.HANDOFF_STALL_CURRENT_AMPS.get());
+        inputs.motorLeadSupplyCurrent.abs(Amps) > HandoffSettings.HANDOFF_STALL_CURRENT_AMPS.get());
   }
 
   public void setState(HandoffState state) {

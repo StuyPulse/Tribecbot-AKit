@@ -1,14 +1,15 @@
 package com.stuypulse.robot.subsystems.handoff;
 
+import edu.wpi.first.units.measure.*;
+
+import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.stuypulse.robot.subsystems.handoff.HandoffConstants.MotorConfig;
-import com.stuypulse.robot.subsystems.handoff.HandoffConstants.MotorIds;
-import edu.wpi.first.units.measure.*;
 
 public class HandoffIOTalonFX implements HandoffIO {
   private final TalonFX motorLead;
@@ -30,11 +31,11 @@ public class HandoffIOTalonFX implements HandoffIO {
   private final StatusSignal<Voltage> motorFollowAppliedVoltage;
 
   public HandoffIOTalonFX() {
-    motorLead = new TalonFX(MotorIds.MOTOR_LEAD);
-    motorFollow = new TalonFX(MotorIds.MOTOR_FOLLOW);
+    motorLead = new TalonFX(HandoffIds.MOTOR_LEAD);
+    motorFollow = new TalonFX(HandoffIds.MOTOR_FOLLOW);
 
-    MotorConfig.HANDOFF_CONFIG.configure(motorLead);
-    MotorConfig.HANDOFF_CONFIG.configure(motorFollow);
+    HandoffMotorConfig.HANDOFF_CONFIG.configure(motorLead);
+    HandoffMotorConfig.HANDOFF_CONFIG.configure(motorFollow);
 
     controller = new DutyCycleOut(0).withEnableFOC(true);
     follower = new Follower(motorLead.getDeviceID(), MotorAlignmentValue.Opposed);

@@ -1,20 +1,16 @@
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Inches;
-import static edu.wpi.first.units.Units.RPM;
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.stuypulse.robot.util.config.TalonFXConfig;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Distance;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public interface ShooterConstants {
 
-  public interface Settings {
+  public interface ShooterSettings {
     final Current IS_SHOOTING_CURRENT = Amps.of(25.0);
 
     final double GEAR_RATIO = 1.0;
@@ -31,12 +27,12 @@ public interface ShooterConstants {
     final AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_LOW = RPM.of(250.0);
   }
 
-  public interface MotorIds {
+  public interface ShooterIds {
     final int MOTOR_LEAD = 47;
     final int MOTOR_FOLLOW = 46;
   }
 
-  public interface Gains {
+  public interface ShooterGains {
     // VTC PID
     final LoggedNetworkNumber kP = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kP", 10.5);
 
@@ -52,7 +48,7 @@ public interface ShooterConstants {
     final LoggedNetworkNumber kA = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kA", 0.0);
   }
 
-  public interface RPMValues {
+  public interface ShooterRPMValues {
     final LoggedNetworkNumber MANUAL_OVERRIDE =
         new LoggedNetworkNumber("/Tuning/InterpolationTesting/Shoot State Target RPM", 3863.0);
 
@@ -65,16 +61,16 @@ public interface ShooterConstants {
     final AngularVelocity RIGHT_CORNER = edu.wpi.first.units.Units.RPM.of(3650.0);
   }
 
-  public interface MotorConfig {
+  public interface ShooterConfiguration {
     final TalonFXConfig SHOOTER_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.CounterClockwise_Positive)
             .withNeutralMode(NeutralModeValue.Coast)
             .withSupplyCurrentLimitEnabled(false)
             .withStatorCurrentLimitEnabled(false)
-            .withPIDConstants(Gains.kP.get(), Gains.kI.get(), Gains.kD.get(), 0)
-            .withFFConstants(Gains.kS.get(), Gains.kV.get(), Gains.kA.get(), 0)
-            .withSensorToMechanismRatio(Settings.GEAR_RATIO)
+            .withPIDConstants(ShooterGains.kP.get(), ShooterGains.kI.get(), ShooterGains.kD.get(), 0)
+            .withFFConstants(ShooterGains.kS.get(), ShooterGains.kV.get(), ShooterGains.kA.get(), 0)
+            .withSensorToMechanismRatio(ShooterSettings.GEAR_RATIO)
             .withStatorCurrentLimitAmps(140.0)
             .withStatorCurrentLimitEnabled(false)
             .withSupplyCurrentLimitAmps(100.0)

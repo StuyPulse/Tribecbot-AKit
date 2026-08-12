@@ -1,6 +1,9 @@
 package com.stuypulse.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
+
+import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -11,14 +14,11 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.intake.IntakeConstants.MotorConfig;
-import com.stuypulse.robot.subsystems.intake.IntakeConstants.MotorIds;
-import com.stuypulse.robot.subsystems.intake.IntakeConstants.Settings;
+
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
@@ -63,15 +63,15 @@ public class IntakeIOSim implements IntakeIO {
             new SingleJointedArmSim(
                 LinearSystemId.createDCMotorSystem(
                     DCMotor.getKrakenX60Foc(1),
-                    Settings.PIVOT_MOI.in(KilogramSquareMeters),
-                    Settings.PIVOT_GEAR_RATIO),
+                    IntakeSettings.PIVOT_MOI.in(KilogramSquareMeters),
+                    IntakeSettings.PIVOT_GEAR_RATIO),
                 DCMotor.getKrakenX60Foc(1),
-                Settings.PIVOT_GEAR_RATIO,
-                Settings.ARM_LENGTH.in(Meters),
-                Settings.PIVOT_MIN_ANGLE.in(Radians),
-                Settings.PIVOT_MAX_ANGLE.in(Radians),
+                IntakeSettings.PIVOT_GEAR_RATIO,
+                IntakeSettings.ARM_LENGTH.in(Meters),
+                IntakeSettings.PIVOT_MIN_ANGLE.in(Radians),
+                IntakeSettings.PIVOT_MAX_ANGLE.in(Radians),
                 true,
-                Settings.PIVOT_MAX_ANGLE.in(Radians)));
+                IntakeSettings.PIVOT_MAX_ANGLE.in(Radians)));
 
     this.rollerSim =
         SystemSim.of(
@@ -82,13 +82,13 @@ public class IntakeIOSim implements IntakeIO {
                     1.0),
                 DCMotor.getKrakenX60Foc(2)));
 
-    this.pivotMotor = new TalonFXSimulation(MotorIds.PIVOT, Settings.PIVOT_GEAR_RATIO, pivotSim);
-    this.rollerLeaderMotor = new TalonFXSimulation(MotorIds.ROLLER_LEADER, 1.0, rollerSim);
-    this.rollerFollowerMotor = new TalonFXSimulation(MotorIds.ROLLER_FOLLOWER, 1.0, rollerSim);
+    this.pivotMotor = new TalonFXSimulation(IntakeIds.PIVOT, IntakeSettings.PIVOT_GEAR_RATIO, pivotSim);
+    this.rollerLeaderMotor = new TalonFXSimulation(IntakeIds.ROLLER_LEADER, 1.0, rollerSim);
+    this.rollerFollowerMotor = new TalonFXSimulation(IntakeIds.ROLLER_FOLLOWER, 1.0, rollerSim);
 
-    MotorConfig.PIVOT_CONFIG.configure(pivotMotor);
-    MotorConfig.ROLLER_CONFIG.configure(rollerLeaderMotor);
-    MotorConfig.ROLLER_CONFIG.configure(rollerFollowerMotor);
+    IntakeMotorConfig.PIVOT_CONFIG.configure(pivotMotor);
+    IntakeMotorConfig.ROLLER_CONFIG.configure(rollerLeaderMotor);
+    IntakeMotorConfig.ROLLER_CONFIG.configure(rollerFollowerMotor);
 
     this.rollerLeaderController = new DutyCycleOut(0).withEnableFOC(true);
     this.rollerFollowerController =

@@ -1,7 +1,8 @@
 package com.stuypulse.robot.subsystems.spindexer;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Volts;
+import com.stuypulse.robot.constants.GlobalSettings;
+
+import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -41,7 +42,7 @@ public class SpindexerIOSim implements SpindexerIO {
   @Override
   public void applyOutputs(SpindexerIOOutputs outputs) {
     spindexerLeaderSim.setInputVoltage(12 * outputs.spindexerLeaderDutyCycle);
-    spindexerLeaderSim.update(0.02);
+    spindexerLeaderSim.update(GlobalSettings.DT.in(Seconds));
 
     spindexerFollowerSim.setInputVoltage(12 * outputs.spindexerLeaderDutyCycle);
     spindexerLeaderSim.update(0.02);

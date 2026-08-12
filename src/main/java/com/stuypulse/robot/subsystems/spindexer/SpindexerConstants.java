@@ -5,7 +5,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.stuypulse.robot.util.config.TalonFXConfig;
 
 public interface SpindexerConstants {
-  public interface Settings {
+  public interface SpindexerSettings {
     final double FORWARD_DUTY_CYCLE = 1.0;
     final double ANTI_POPCORN_DUTY_CYCLE = 0.2;
     final double REVERSE_DUTY_CYCLE = -1.0;
@@ -21,12 +21,12 @@ public interface SpindexerConstants {
     final double GEAR_RATIO = 11.04 / 1.0;
   }
 
-  public interface MotorIds {
+  public interface SpindexerIds {
     final int LEADER = 30;
     final int FOLLOWER = 31;
   }
 
-  public interface Gains {
+  public interface SpindexerGains {
     double kP = 1.2;
     double kI = 0.0;
     double kD = 10.0;
@@ -36,7 +36,7 @@ public interface SpindexerConstants {
     double kA = 0.010876;
   }
 
-  public interface MotorConfig {
+  public interface SpindexerMotorConfig {
     final TalonFXConfig SPINDEXER_LEAD_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)
@@ -44,9 +44,9 @@ public interface SpindexerConstants {
             .withSupplyCurrentLimitAmps(45)
             .withStatorCurrentLimitEnabled(false)
             .withRampRate(0.25)
-            .withPIDConstants(Gains.kP, Gains.kI, Gains.kD, 0)
-            .withFFConstants(Gains.kS, Gains.kV, Gains.kA, 0)
-            .withSensorToMechanismRatio(Settings.GEAR_RATIO);
+            .withPIDConstants(SpindexerGains.kP, SpindexerGains.kI, SpindexerGains.kD, 0)
+            .withFFConstants(SpindexerGains.kS, SpindexerGains.kV, SpindexerGains.kA, 0)
+            .withSensorToMechanismRatio(SpindexerSettings.GEAR_RATIO);
 
     final TalonFXConfig SPINDEXER_FOLLOW_CONFIG =
         new TalonFXConfig()
@@ -55,8 +55,8 @@ public interface SpindexerConstants {
             .withSupplyCurrentLimitAmps(45)
             .withStatorCurrentLimitEnabled(false)
             .withRampRate(0.25)
-            .withPIDConstants(Gains.kP, Gains.kI, Gains.kD, 0)
-            .withFFConstants(Gains.kS, Gains.kV, Gains.kA, 0)
-            .withSensorToMechanismRatio(Settings.GEAR_RATIO);
+            .withPIDConstants(SpindexerGains.kP, SpindexerGains.kI, SpindexerGains.kD, 0)
+            .withFFConstants(SpindexerGains.kS, SpindexerGains.kV, SpindexerGains.kA, 0)
+            .withSensorToMechanismRatio(SpindexerSettings.GEAR_RATIO);
   }
 }

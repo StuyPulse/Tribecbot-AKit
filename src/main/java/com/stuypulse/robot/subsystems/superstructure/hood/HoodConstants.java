@@ -1,24 +1,17 @@
 package com.stuypulse.robot.subsystems.superstructure.hood;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
-import static edu.wpi.first.units.Units.Volts;
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import com.stuypulse.robot.util.config.TalonFXConfig;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Time;
-import edu.wpi.first.units.measure.Voltage;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public interface HoodConstants {
 
-  public interface Settings {
+  public interface HoodSettings {
     /*
      * DISCLAIMER: THERE IS NO ABS ENCODER ON THE BOT RN.
      *
@@ -55,14 +48,20 @@ public interface HoodConstants {
 
     final Angle HOOD_TOLERANCE = Degrees.of(0.5);
     final Angle HOOD_SOTM_TOLERANCE = Degrees.of(2.0);
+
+    // for sim
+    final Distance HOOD_ARM_LENGTH = Meters.of(0.3);
+    final Distance MIN_HEIGHT = HOOD_ARM_LENGTH.times(Math.sin(MIN_FROM_HORIZON.in(Radians)));
+    final Distance MAX_HEIGHT = HOOD_ARM_LENGTH.times(Math.sin(MAX_FROM_HORIZON.in(Radians)));
+    final Distance DRUM_RADIUS = Meters.of(0.01);
   }
 
-  public interface MotorIds {
+  public interface HoodIds {
     final int MOTOR = 45;
     final int THROUGHBORE_ENCODER = 44;
   }
 
-  public interface Gains {
+  public interface HoodGains {
     final double kP = 250.0;
     final double kI = 0.0;
     final double kD = 2.0;
@@ -72,13 +71,13 @@ public interface HoodConstants {
     final double kA = 0.0;
   }
 
-  public interface Angles {
+  public interface HoodAngles {
     final LoggedNetworkNumber MANUAL_OVERRIDE_DEG =
         new LoggedNetworkNumber(
             "/Tuning/InterpolationTesting/Shoot State Target Angle (deg)", 44.0);
 
-    final Angle MAX = Settings.FORWARD_SOFT_LIMIT;
-    final Angle MIN = Settings.REVERSE_SOFT_LIMIT;
+    final Angle MAX = HoodSettings.FORWARD_SOFT_LIMIT;
+    final Angle MIN = HoodSettings.REVERSE_SOFT_LIMIT;
     final Angle FERRY_ANGLE = MAX;
 
     final Angle STOW = Degrees.of(21.0);
@@ -87,7 +86,7 @@ public interface HoodConstants {
     final Angle RIGHT_CORNER = Degrees.of(39.0);
   }
 
-  public interface MotorConfig {
+  public interface HoodConfiguration {
     final TalonFXConfig HOOD_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)
@@ -95,14 +94,14 @@ public interface HoodConstants {
             .withSupplyCurrentLimitAmps(80.0)
             .withStatorCurrentLimitEnabled(false)
             .withRampRate(0.25)
-            .withPIDConstants(Gains.kP, Gains.kI, Gains.kD, 0)
-            .withFFConstants(Gains.kS, Gains.kV, Gains.kA, 0)
+            .withPIDConstants(HoodGains.kP, HoodGains.kI, HoodGains.kD, 0)
+            .withFFConstants(HoodGains.kS, HoodGains.kV, HoodGains.kA, 0)
             .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseClosedLoopSign, 0)
-            .withSensorToMechanismRatio(Settings.GEAR_RATIO)
+            .withSensorToMechanismRatio(HoodSettings.GEAR_RATIO)
             .withSoftLimits(
                 true,
                 true,
-                Settings.FORWARD_SOFT_LIMIT.in(Rotations),
-                Settings.REVERSE_SOFT_LIMIT.in(Rotations));
+                HoodSettings.FORWARD_SOFT_LIMIT.in(Rotations),
+                HoodSettings.REVERSE_SOFT_LIMIT.in(Rotations));
   }
 }

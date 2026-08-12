@@ -1,19 +1,15 @@
 package com.stuypulse.robot.subsystems.superstructure.hood;
 
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.*;
+
+import edu.wpi.first.units.measure.*;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.Angles;
-import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.MotorConfig;
-import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.MotorIds;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
 
 public class HoodIOTalonFX implements HoodIO {
   private final TalonFX hoodMotor;
@@ -29,11 +25,11 @@ public class HoodIOTalonFX implements HoodIO {
   private final StatusSignal<AngularVelocity> hoodMotorVelocity;
 
   public HoodIOTalonFX() {
-    hoodMotor = new TalonFX(MotorIds.MOTOR, GlobalSettings.CANIVORE);
+    hoodMotor = new TalonFX(HoodIds.MOTOR, GlobalSettings.CANIVORE);
 
-    MotorConfig.HOOD_CONFIG.configure(hoodMotor);
+    HoodConfiguration.HOOD_CONFIG.configure(hoodMotor);
 
-    seedHoodPosition(Angles.STOW);
+    seedHoodPosition(HoodAngles.STOW);
 
     positionController = new PositionVoltage(0).withEnableFOC(true);
     homingController = new VoltageOut(0).withIgnoreSoftwareLimits(true);

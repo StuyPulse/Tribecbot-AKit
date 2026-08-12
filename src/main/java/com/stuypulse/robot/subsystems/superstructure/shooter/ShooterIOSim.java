@@ -47,17 +47,17 @@ public class ShooterIOSim implements ShooterIO {
         SystemSim.of(
             new FlywheelSim(
                 LinearSystemId.createFlywheelSystem(
-                    DCMotor.getKrakenX44(2), 0.05, Settings.GEAR_RATIO),
+                    DCMotor.getKrakenX44(2), 0.05, ShooterSettings.GEAR_RATIO),
                 DCMotor.getKrakenX44(2),
-                Settings.GEAR_RATIO));
+                ShooterSettings.GEAR_RATIO));
 
     shooterLeaderMotor =
-        new TalonFXSimulation(MotorIds.MOTOR_LEAD, Settings.GEAR_RATIO, flywheelSim);
+        new TalonFXSimulation(ShooterIds.MOTOR_LEAD, ShooterSettings.GEAR_RATIO, flywheelSim);
     shooterFollowerMotor =
-        new TalonFXSimulation(MotorIds.MOTOR_FOLLOW, Settings.GEAR_RATIO, flywheelSim);
+        new TalonFXSimulation(ShooterIds.MOTOR_FOLLOW, ShooterSettings.GEAR_RATIO, flywheelSim);
 
-    MotorConfig.SHOOTER_CONFIG.configure(shooterLeaderMotor);
-    MotorConfig.SHOOTER_CONFIG.configure(shooterFollowerMotor);
+    ShooterConfiguration.SHOOTER_CONFIG.configure(shooterLeaderMotor);
+    ShooterConfiguration.SHOOTER_CONFIG.configure(shooterFollowerMotor);
 
     shooterLeaderController = new VelocityTorqueCurrentFOC(0);
     shooterFollowerController =

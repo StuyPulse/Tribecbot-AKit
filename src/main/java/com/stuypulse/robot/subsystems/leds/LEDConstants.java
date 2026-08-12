@@ -6,7 +6,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 
 public interface LEDConstants {
-  public interface Settings {
+  public interface LEDSettings {
     final int STRIP_START = 8; // CANdle already
     final int LED_LENGTH = STRIP_START + 21; // has 8 LEDs
 
@@ -86,7 +86,7 @@ public interface LEDConstants {
             2); // TODO: update because comparing Translation2d, so make sure it is 2 feet
   }
 
-  public interface Ids {
+  public interface LEDIds {
     final int LED_PORT = 1;
     final int CANDLE_PORT = 61;
   }

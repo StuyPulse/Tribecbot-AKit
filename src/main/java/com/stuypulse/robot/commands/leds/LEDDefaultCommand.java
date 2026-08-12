@@ -7,7 +7,7 @@ import com.stuypulse.robot.subsystems.intake.Intake;
 import com.stuypulse.robot.subsystems.intake.Intake.PivotState;
 import com.stuypulse.robot.subsystems.leds.LED;
 import com.stuypulse.robot.subsystems.leds.LED.LEDState;
-import com.stuypulse.robot.subsystems.leds.LEDConstants.Settings;
+import com.stuypulse.robot.subsystems.leds.LEDConstants.LEDSettings;
 import com.stuypulse.robot.subsystems.spindexer.Spindexer;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
@@ -53,7 +53,7 @@ public class LEDDefaultCommand extends InstantCommand {
   @Override
   public void initialize() {
     if (Robot.getOperationMode() == OperationMode.DISABLED) {
-      if (vision.getMaxTagCount() >= Settings.DESIRED_TAGS_WHEN_DISABLED) {
+      if (vision.getMaxTagCount() >= LEDSettings.DESIRED_TAGS_WHEN_DISABLED) {
         leds.changeState(LEDState.DISABLED_ALIGNED);
       } else {
         leds.changeState(LEDState.DISABLED);

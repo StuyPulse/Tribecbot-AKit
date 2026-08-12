@@ -1,15 +1,15 @@
 package com.stuypulse.robot.subsystems.handoff;
 
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.stuypulse.robot.util.config.TalonFXConfig;
-import edu.wpi.first.units.measure.*;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public interface HandoffConstants {
-  public interface Settings {
+  public interface HandoffSettings {
     final double GEAR_RATIO = 3.0 / 1.0;
 
     final double HANDOFF_STOP = 0.0;
@@ -29,12 +29,12 @@ public interface HandoffConstants {
     final Time HANDOFF_STALL_DEBOUNCE = Seconds.of(0.5);
   }
 
-  public interface MotorIds {
+  public interface HandoffIds {
     final int MOTOR_LEAD = 43;
     final int MOTOR_FOLLOW = 48;
   }
 
-  public interface MotorConfig {
+  public interface HandoffMotorConfig {
     final TalonFXConfig HANDOFF_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)

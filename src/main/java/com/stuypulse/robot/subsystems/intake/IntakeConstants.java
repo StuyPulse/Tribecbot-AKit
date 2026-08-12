@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public interface IntakeConstants {
-  public interface Settings {
+  public interface IntakeSettings {
     final Angle PIVOT_STOW_ANGLE = Degrees.of(71.0);
     final Angle PIVOT_DEPLOY_ANGLE = Degrees.of(-10.0);
     final Angle PIVOT_DIGEST_ANGLE = Degrees.of(30);
@@ -49,13 +49,13 @@ public interface IntakeConstants {
             SingleJointedArmSim.estimateMOI(ARM_MASS.in(Kilograms), ARM_LENGTH.in(Meters)));
   }
 
-  public interface MotorIds {
+  public interface IntakeIds {
     final int PIVOT = 20;
     final int ROLLER_LEADER = 21;
     final int ROLLER_FOLLOWER = 22;
   }
 
-  public interface Gains {
+  public interface IntakeGains {
     public interface Pivot {
       final LoggedNetworkNumber kP =
           new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kP", 125.0);
@@ -70,7 +70,7 @@ public interface IntakeConstants {
     }
   }
 
-  public interface MotorConfig {
+  public interface IntakeMotorConfig {
     final TalonFXConfig PIVOT_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)
@@ -78,12 +78,12 @@ public interface IntakeConstants {
             .withSupplyCurrentLimitAmps(10.0) // was 60 on practice day
             .withStatorCurrentLimitEnabled(false)
             .withRampRate(0.25)
-            .withPIDConstants(Gains.Pivot.kP.get(), Gains.Pivot.kI.get(), Gains.Pivot.kD.get(), 0)
+            .withPIDConstants(IntakeGains.Pivot.kP.get(), IntakeGains.Pivot.kI.get(), IntakeGains.Pivot.kD.get(), 0)
             .withFFConstants(
-                Gains.Pivot.kS.get(), Gains.Pivot.kV.get(), Gains.Pivot.kA.get(), Gains.Pivot.kG, 0)
+                IntakeGains.Pivot.kS.get(), IntakeGains.Pivot.kV.get(), IntakeGains.Pivot.kA.get(), IntakeGains.Pivot.kG, 0)
             .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign, 0)
             .withGravityType(GravityTypeValue.Arm_Cosine)
-            .withSensorToMechanismRatio(Settings.PIVOT_GEAR_RATIO);
+            .withSensorToMechanismRatio(IntakeSettings.PIVOT_GEAR_RATIO);
 
     final TalonFXConfig ROLLER_CONFIG =
         new TalonFXConfig()

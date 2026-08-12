@@ -2,8 +2,9 @@ package com.stuypulse.robot.subsystems.leds;
 
 import static edu.wpi.first.units.Units.*;
 
+import com.stuypulse.robot.subsystems.leds.LEDConstants.*;
+
 import com.ctre.phoenix6.signals.RGBWColor;
-import com.stuypulse.robot.subsystems.leds.LEDConstants.Settings;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
@@ -14,7 +15,7 @@ public class LEDIOSim implements LEDIO {
 
   public LEDIOSim() {
     this.led = new AddressableLED(0); // dummy port
-    this.buffer = new AddressableLEDBuffer(Settings.LED_LENGTH);
+    this.buffer = new AddressableLEDBuffer(LEDSettings.LED_LENGTH);
 
     led.setLength(buffer.getLength());
     led.setData(buffer);

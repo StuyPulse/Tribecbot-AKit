@@ -1,17 +1,16 @@
 package com.stuypulse.robot.subsystems.leds;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.Celsius;
-import static edu.wpi.first.units.Units.Volts;
-
-import com.ctre.phoenix6.signals.RGBWColor;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
 import java.util.ArrayList;
 import java.util.List;
+
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
+
+
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
+
+import com.ctre.phoenix6.signals.RGBWColor;
 
 public interface LEDIO {
   @AutoLog
