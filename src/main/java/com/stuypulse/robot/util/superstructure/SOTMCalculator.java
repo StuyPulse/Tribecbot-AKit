@@ -22,7 +22,6 @@ import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
@@ -34,13 +33,6 @@ public class SOTMCalculator {
 
   public static MoveSolution hubSol;
   public static MoveSolution ferrySol;
-
-  private static FieldObject2d hubPose2d;
-  private static FieldObject2d virtualHubPose2d;
-  private static FieldObject2d futureTurretPose2d;
-
-  private static FieldObject2d ferryPose2d;
-  private static FieldObject2d virtualFerryPose2d;
 
   public record MoveSolution(
       Angle targetHoodAngle,
@@ -65,14 +57,6 @@ public class SOTMCalculator {
             Shooter.getInstance().getShooterVelocity(),
             Field.getFerryZonePose(Drive.getInstance().getPose().getTranslation()),
             0.0);
-
-    hubPose2d = Field.FIELD2D.getObject("hubPose");
-    virtualHubPose2d = Field.FIELD2D.getObject("virtualHubPose");
-
-    ferryPose2d = Field.FIELD2D.getObject("ferryPose");
-    virtualFerryPose2d = Field.FIELD2D.getObject("virtualFerryPose");
-
-    futureTurretPose2d = Field.FIELD2D.getObject("futureTurretPose");
   }
 
   public static MoveSolution solveSOTM(
@@ -314,21 +298,17 @@ public class SOTMCalculator {
             Settings.Superstructure.SOTM.MAX_ITERATIONS,
             Settings.Superstructure.SOTM.TIME_TOLERANCE);
 
-    hubPose2d.setPose(Robot.isBlue() ? hubPose : Field.transformToOppositeAlliance(hubPose));
-    virtualHubPose2d.setPose(
-        (Robot.isBlue()
+    Logger.recordOutput(
+        "Field/Hub Pose", Robot.isBlue() ? hubPose : Field.transformToOppositeAlliance(hubPose));
+    Logger.recordOutput(
+        "Field/Future Turret Pose",
+        Robot.isBlue() ? futureTurretPose : Field.transformToOppositeAlliance(futureTurretPose));
+    Logger.recordOutput(
+        "Field/SOTM Virtual Pose",
+        Robot.isBlue()
             ? hubSol.virtualPose()
-            : Field.transformToOppositeAlliance(hubSol.virtualPose())));
-    futureTurretPose2d.setPose(
-        (Robot.isBlue() ? futureTurretPose : Field.transformToOppositeAlliance(futureTurretPose)));
+            : Field.transformToOppositeAlliance(hubSol.virtualPose()));
 
-    // SmartDashboard.putNumber("Superstructure/SOTM/calculated turret angle",
-    // hubSol.targetTurretAngle().getDegrees());
-    // SmartDashboard.putNumber("Superstructure/SOTM/calculated hood angle",
-    // hubSol.targetHoodAngle().getDegrees());
-    // SmartDashboard.putNumber("Superstructure/SOTM/calculated flight time", hubSol.flightTime());
-
-    Logger.recordOutput("Superstructure/SOTM/virtual pose", virtualHubPose2d.getPose());
     Logger.recordOutput(
         "Superstructure/SOTM/turret dist to virtual pose",
         futureTurretPose.getTranslation().getDistance(hubSol.virtualPose().getTranslation()));
@@ -373,13 +353,17 @@ public class SOTMCalculator {
             Settings.Superstructure.SOTM.MAX_ITERATIONS,
             Settings.Superstructure.SOTM.TIME_TOLERANCE);
 
-    ferryPose2d.setPose(Robot.isBlue() ? ferryPose : Field.transformToOppositeAlliance(ferryPose));
-    virtualFerryPose2d.setPose(
-        (Robot.isBlue()
+    Logger.recordOutput(
+        "Field/Ferry Pose",
+        Robot.isBlue() ? ferryPose : Field.transformToOppositeAlliance(ferryPose));
+    Logger.recordOutput(
+        "Field/FOTM Virtual Pose",
+        Robot.isBlue()
             ? ferrySol.virtualPose()
-            : Field.transformToOppositeAlliance(ferrySol.virtualPose())));
-    futureTurretPose2d.setPose(
-        (Robot.isBlue() ? futureTurretPose : Field.transformToOppositeAlliance(futureTurretPose)));
+            : Field.transformToOppositeAlliance(ferrySol.virtualPose()));
+    Logger.recordOutput(
+        "Field/Future Turret Pose",
+        Robot.isBlue() ? futureTurretPose : Field.transformToOppositeAlliance(futureTurretPose));
 
     // SmartDashboard.putNumber("Superstructure/FOTM/calculated turret angle",
     // ferrySol.targetTurretAngle().getDegrees());
