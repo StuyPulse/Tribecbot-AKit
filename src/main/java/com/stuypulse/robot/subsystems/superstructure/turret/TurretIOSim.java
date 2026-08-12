@@ -55,6 +55,9 @@ public class TurretIOSim implements TurretIO {
 
   @Override
   public void updateInputs(TurretIOInputs inputs) {
+    sim.update(Settings.DT);
+    simMotor.refresh();
+
     BaseStatusSignal.refreshAll(
         turretSimMotorPosition,
         turretSimMotorSupplyCurrent,

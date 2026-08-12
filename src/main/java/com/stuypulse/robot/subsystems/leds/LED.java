@@ -7,7 +7,6 @@ import com.stuypulse.robot.subsystems.leds.LEDIO.LEDPattern;
 import com.stuypulse.robot.subsystems.vision.Vision;
 import com.stuypulse.robot.subsystems.vision.VisionConstants.Camera;
 import com.stuypulse.robot.util.FullSubsystem;
-
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 

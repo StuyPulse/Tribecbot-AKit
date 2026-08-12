@@ -43,4 +43,9 @@ public class Ports {
     int ROLLER_LEADER = 21;
     int ROLLER_FOLLOWER = 22;
   }
+
+  public interface Spindexer {
+    int LEADER = 30;
+    int FOLLOWER = 31;
+  }
 }

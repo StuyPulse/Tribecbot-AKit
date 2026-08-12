@@ -49,8 +49,9 @@ public class HoodIOSim implements HoodIO {
     hoodSim =
         SystemSim.of(
             new ElevatorSim(
-                LinearSystemId.createElevatorSystem(DCMotor.getKrakenX60(1), 1.0, DRUM_RADIUS, 1.0),
-                DCMotor.getKrakenX60(1),
+                LinearSystemId.createElevatorSystem(
+                    DCMotor.getKrakenX60Foc(1), 1.0, DRUM_RADIUS, 1.0),
+                DCMotor.getKrakenX60Foc(1),
                 MIN_HEIGHT,
                 MAX_HEIGHT,
                 true,
@@ -75,6 +76,7 @@ public class HoodIOSim implements HoodIO {
 
   @Override
   public void updateInputs(HoodIOInputs inputs) {
+    hoodSim.update(Settings.DT);
     hoodMotor.refresh();
 
     BaseStatusSignal.refreshAll(

@@ -86,9 +86,11 @@ public class IntakeIOSim implements IntakeIO {
     this.rollerLeaderMotor = new TalonFXSimulation(Ports.Intake.ROLLER_LEADER, 1.0, rollerSim);
     this.rollerFollowerMotor = new TalonFXSimulation(Ports.Intake.ROLLER_FOLLOWER, 1.0, rollerSim);
 
-    Motors.Intake.PIVOT_CONFIG.configure(pivotMotor);
-    Motors.Intake.ROLLER_CONFIG.configure(rollerLeaderMotor);
-    Motors.Intake.ROLLER_CONFIG.configure(rollerFollowerMotor);
+    pivotMotor.configure(Motors.Intake.PIVOT_CONFIG);
+    rollerLeaderMotor.configure(Motors.Intake.ROLLER_CONFIG);
+    rollerFollowerMotor.configure(Motors.Intake.ROLLER_CONFIG);
+
+    rollerFollowerMotor.linkToReference(rollerLeaderMotor);
 
     this.rollerLeaderController = new DutyCycleOut(0).withEnableFOC(true);
     this.rollerFollowerController =
@@ -98,7 +100,6 @@ public class IntakeIOSim implements IntakeIO {
     this.pivotVoltageController = new VoltageOut(0).withEnableFOC(true);
 
     rollerFollowerMotor.setControl(rollerFollowerController);
-    pivotMotor.setControl(pivotPositionController);
 
     this.pivotPosition = pivotMotor.getPosition();
     this.pivotSupplyCurrent = pivotMotor.getSupplyCurrent();
@@ -124,6 +125,13 @@ public class IntakeIOSim implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
+    this.pivotSim.update(Settings.DT);
+    this.pivotMotor.refresh();
+
+    this.rollerSim.update(Settings.DT);
+    this.rollerLeaderMotor.refresh();
+    this.rollerFollowerMotor.refresh();
+
     BaseStatusSignal.refreshAll(
         pivotPosition,
         pivotSupplyCurrent,
@@ -164,13 +172,6 @@ public class IntakeIOSim implements IntakeIO {
     inputs.rollerFollowerMotorTemperature = rollerFollowerTemperature.getValue();
     inputs.rollerFollowerMotorAppliedVoltage = rollerFollowerAppliedVoltage.getValue();
     inputs.rollerFollowerMotorVelocity = rollerFollowerVelocity.getValue();
-
-    this.pivotSim.update(Settings.DT);
-    this.pivotMotor.refresh();
-
-    this.rollerSim.update(Settings.DT);
-    this.rollerLeaderMotor.refresh();
-    this.rollerFollowerMotor.refresh();
   }
 
   @Override

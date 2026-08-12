@@ -1,51 +1,121 @@
 package com.stuypulse.robot.subsystems.handoff;
 
-import static edu.wpi.first.units.Units.Amps;
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.Volts;
-
+import com.ctre.phoenix6.BaseStatusSignal;
+import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.stuypulse.robot.constants.Motors;
+import com.stuypulse.robot.constants.Ports;
+import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
+import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Current;
+import edu.wpi.first.units.measure.Temperature;
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 public class HandoffIOSim implements HandoffIO {
 
-  private final DCMotorSim motorLeaderSim;
-  private final DCMotorSim motorFollowerSim;
+  private final SystemSim<FlywheelSim> handoffSystem;
+
+  private final TalonFXSimulation motorLead;
+  private final TalonFXSimulation motorFollow;
+
+  private final DutyCycleOut controller;
+  private final Follower follower;
+
+  private final StatusSignal<Current> motorLeadSupplyCurrent;
+  private final StatusSignal<Current> motorLeadStatorCurrent;
+  private final StatusSignal<Temperature> motorLeadTemperature;
+  private final StatusSignal<AngularVelocity> motorLeadVelocity;
+  private final StatusSignal<Voltage> motorLeadAppliedVoltage;
+
+  private final StatusSignal<Current> motorFollowSupplyCurrent;
+  private final StatusSignal<Current> motorFollowStatorCurrent;
+  private final StatusSignal<Temperature> motorFollowTemperature;
+  private final StatusSignal<AngularVelocity> motorFollowVelocity;
+  private final StatusSignal<Voltage> motorFollowAppliedVoltage;
 
   public HandoffIOSim() {
 
-    motorLeaderSim =
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 1, 0.01),
-            DCMotor.getKrakenX60(1));
+    handoffSystem =
+        SystemSim.of(
+            new FlywheelSim(
+                LinearSystemId.createFlywheelSystem(DCMotor.getKrakenX60Foc(2), 0.01, 1),
+                DCMotor.getKrakenX60Foc(2),
+                1));
 
-    motorFollowerSim =
-        new DCMotorSim(
-            LinearSystemId.createDCMotorSystem(DCMotor.getKrakenX60(1), 1, 0.01),
-            DCMotor.getKrakenX60(1));
+    motorLead = new TalonFXSimulation(Ports.Handoff.MOTOR_LEAD, 1, handoffSystem);
+    motorFollow = new TalonFXSimulation(Ports.Handoff.MOTOR_FOLLOW, 1, handoffSystem);
+
+    motorLead.configure(Motors.Handoff.HANDOFF_CONFIG);
+    motorFollow.configure(Motors.Handoff.HANDOFF_CONFIG);
+
+    motorFollow.linkToReference(motorLead);
+
+    controller = new DutyCycleOut(0).withEnableFOC(true);
+    follower = new Follower(Ports.Handoff.MOTOR_LEAD, MotorAlignmentValue.Opposed);
+
+    motorFollow.setControl(follower);
+
+    motorLeadSupplyCurrent = motorLead.getSupplyCurrent();
+    motorLeadStatorCurrent = motorLead.getStatorCurrent();
+    motorLeadTemperature = motorLead.getDeviceTemp();
+    motorLeadVelocity = motorLead.getVelocity();
+    motorLeadAppliedVoltage = motorLead.getMotorVoltage();
+
+    motorFollowSupplyCurrent = motorLead.getSupplyCurrent();
+    motorFollowStatorCurrent = motorLead.getStatorCurrent();
+    motorFollowTemperature = motorLead.getDeviceTemp();
+    motorFollowVelocity = motorLead.getVelocity();
+    motorFollowAppliedVoltage = motorLead.getMotorVoltage();
   }
 
   @Override
   public void updateInputs(HandoffIOInputs inputs) {
-    inputs.motorLeadSupplyCurrent = Amps.of(motorLeaderSim.getCurrentDrawAmps());
-    inputs.motorLeadStatorCurrent = Amps.of(motorLeaderSim.getCurrentDrawAmps());
-    inputs.motorLeadVelocity = RadiansPerSecond.of(motorLeaderSim.getAngularVelocityRadPerSec());
-    inputs.motorLeadAppliedVoltage = Volts.of(motorLeaderSim.getInputVoltage());
+    handoffSystem.update(Settings.DT);
+    motorLead.refresh();
+    motorFollow.refresh();
 
-    inputs.motorFollowSupplyCurrent = Amps.of(motorFollowerSim.getCurrentDrawAmps());
-    inputs.motorFollowStatorCurrent = Amps.of(motorFollowerSim.getCurrentDrawAmps());
-    inputs.motorFollowVelocity =
-        RadiansPerSecond.of(motorFollowerSim.getAngularVelocityRadPerSec());
-    inputs.motorFollowAppliedVoltage = Volts.of(motorFollowerSim.getInputVoltage());
+    BaseStatusSignal.refreshAll(
+        motorLeadSupplyCurrent,
+        motorLeadStatorCurrent,
+        motorLeadTemperature,
+        motorLeadVelocity,
+        motorLeadAppliedVoltage,
+        motorFollowSupplyCurrent,
+        motorFollowStatorCurrent,
+        motorFollowTemperature,
+        motorFollowVelocity,
+        motorFollowAppliedVoltage);
+
+    inputs.motorLeadSupplyCurrent = motorLeadSupplyCurrent.getValue();
+    inputs.motorLeadStatorCurrent = motorLeadStatorCurrent.getValue();
+    inputs.motorLeadTemperature = motorLeadTemperature.getValue();
+    inputs.motorLeadVelocity = motorLeadVelocity.getValue();
+    inputs.motorLeadAppliedVoltage = motorLeadAppliedVoltage.getValue();
+
+    inputs.motorFollowSupplyCurrent = motorFollowSupplyCurrent.getValue();
+    inputs.motorFollowStatorCurrent = motorFollowStatorCurrent.getValue();
+    inputs.motorFollowTemperature = motorFollowTemperature.getValue();
+    inputs.motorFollowVelocity = motorFollowVelocity.getValue();
+    inputs.motorFollowAppliedVoltage = motorFollowAppliedVoltage.getValue();
   }
 
   @Override
   public void applyOutputs(HandoffIOOutputs outputs) {
-    motorLeaderSim.setInputVoltage(12 * outputs.handoffDutyCycle);
-    motorLeaderSim.update(0.02);
+    switch (outputs.handoffMode) {
+      case DUTY_CYCLE -> motorLead.setControl(controller.withOutput(outputs.handoffDutyCycle));
+      case STOP -> {
+        motorLead.stopMotor();
+        motorFollow.stopMotor();
 
-    motorFollowerSim.setInputVoltage(12 * outputs.handoffDutyCycle);
-    motorFollowerSim.update(0.02);
+        motorFollow.setControl(follower);
+      }
+    }
   }
 }

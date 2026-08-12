@@ -65,6 +65,8 @@ public class ShooterIOSim implements ShooterIO {
     shooterLeaderSim.configure(Motors.Superstructure.Shooter.SHOOTER_CONFIG);
     shooterFollowerSim.configure(Motors.Superstructure.Shooter.SHOOTER_CONFIG);
 
+    shooterFollowerSim.linkToReference(shooterLeaderSim);
+
     shooterLeaderController = new VelocityTorqueCurrentFOC(0);
     shooterFollowerController =
         new Follower(shooterLeaderSim.getDeviceID(), MotorAlignmentValue.Opposed);
@@ -88,6 +90,7 @@ public class ShooterIOSim implements ShooterIO {
 
   @Override
   public void updateInputs(ShooterIOInputs inputs) {
+    flywheelSim.update(Settings.DT);
     shooterLeaderSim.refresh();
     shooterFollowerSim.refresh();
 
@@ -122,6 +125,16 @@ public class ShooterIOSim implements ShooterIO {
 
   @Override
   public void applyOutputs(ShooterIOOutputs outputs) {
-    shooterLeaderSim.setControl(shooterLeaderController.withVelocity(outputs.shooterVelocity));
+    switch (outputs.shooterMode) {
+      case VELOCITY -> shooterLeaderSim.setControl(
+          shooterLeaderController.withVelocity(outputs.shooterVelocity));
+
+      case STOP -> {
+        shooterLeaderSim.stopMotor();
+        shooterFollowerSim.stopMotor();
+
+        shooterFollowerSim.setControl(shooterFollowerController);
+      }
+    }
   }
 }
