@@ -1,12 +1,14 @@
 package com.stuypulse.robot.subsystems.spindexer;
 
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.GlobalSettings;
+import static com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.*;
+
 import com.stuypulse.robot.subsystems.spindexer.SpindexerIO.SpindexerIOOutputs;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.util.FullSubsystem;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -14,7 +16,7 @@ public class Spindexer extends FullSubsystem {
   private static final Spindexer instance;
 
   static {
-    switch (Settings.currentMode) {
+    switch (GlobalSettings.currentMode) {
       case REAL -> instance = new Spindexer(new SpindexerIOTalonFX());
 
       case SIM -> instance = new Spindexer(new SpindexerIOSim());
@@ -53,7 +55,7 @@ public class Spindexer extends FullSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Spindexer", inputs);
 
-    if (!Settings.EnabledSubsystems.SPINDEXER.get()) {
+    if (!GlobalSettings.EnabledSubsystems.SPINDEXER.get()) {
       stop();
 
       return;
@@ -66,8 +68,8 @@ public class Spindexer extends FullSubsystem {
     }
 
     switch (state) {
-      case FORWARD -> runDutyCycle(Settings.Spindexer.FORWARD_DUTY_CYCLE);
-      case REVERSE -> runDutyCycle(Settings.Spindexer.REVERSE_DUTY_CYCLE);
+      case FORWARD -> runDutyCycle(SpindexerSettings.FORWARD_DUTY_CYCLE);
+      case REVERSE -> runDutyCycle(SpindexerSettings.REVERSE_DUTY_CYCLE);
       case STOP -> stop();
     }
   }

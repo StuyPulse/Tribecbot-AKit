@@ -1,8 +1,11 @@
 package com.stuypulse.robot.subsystems.superstructure.hood;
 
-import static edu.wpi.first.units.Units.Degrees;
+import static com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.*;
 
-import com.stuypulse.robot.constants.Settings;
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
+
+import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.superstructure.hood.HoodIO.HoodIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.hood.HoodIO.HoodIOOutputs;
 import com.stuypulse.robot.util.FullSubsystem;
@@ -10,8 +13,6 @@ import com.stuypulse.robot.util.superstructure.InterpolationCalculator;
 import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -21,7 +22,7 @@ public class Hood extends FullSubsystem {
   private static final Hood instance;
 
   static {
-    switch (Settings.currentMode) {
+    switch (GlobalSettings.currentMode) {
       case REAL -> instance = new Hood(new HoodIOTalonFX());
 
       case SIM -> instance = new Hood(new HoodIOSim());
@@ -55,8 +56,7 @@ public class Hood extends FullSubsystem {
 
     setState(HoodState.STOW);
 
-    hoodStallingDebouncer =
-        new Debouncer(Settings.Superstructure.Hood.STALL_DEBOUNCE, DebounceType.kBoth);
+    hoodStallingDebouncer = new Debouncer(HoodSettings.STALL_DEBOUNCE.in(Seconds), DebounceType.kBoth);
     hoodAtToleranceDebouncer = new Debouncer(0.05, DebounceType.kBoth);
 
     this.atTolerance = false;
@@ -83,7 +83,7 @@ public class Hood extends FullSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Hood", inputs);
 
-    if (!Settings.EnabledSubsystems.HOOD.get()) {
+    if (!GlobalSettings.EnabledSubsystems.HOOD.get()) {
       stopHood();
 
       return;
@@ -92,29 +92,28 @@ public class Hood extends FullSubsystem {
     switch (state) {
       case HOMING_UPPER -> {
         if (isStalling()) {
-          io.seedHoodPosition(Settings.Superstructure.Hood.MAX_FROM_HORIZON);
+          io.seedHoodPosition(HoodSettings.MAX_FROM_HORIZON);
           setState(HoodState.STOW);
         } else {
-          runVoltage(Settings.Superstructure.Hood.HOOD_HOMING_VOLTAGE);
+          runVoltage(HoodSettings.HOOD_HOMING_VOLTAGE);
         }
       }
 
       case HOMING_LOWER -> {
         if (isStalling()) {
-          io.seedHoodPosition(Settings.Superstructure.Hood.MIN_FROM_HORIZON);
+          io.seedHoodPosition(HoodSettings.MIN_FROM_HORIZON);
           setState(HoodState.STOW);
         } else {
-          runVoltage(Settings.Superstructure.Hood.HOOD_HOMING_VOLTAGE.unaryMinus());
+          runVoltage(HoodSettings.HOOD_HOMING_VOLTAGE.unaryMinus());
         }
       }
 
-      case STOW -> runPosition(Settings.Superstructure.Hood.Angles.STOW);
+      case STOW -> runPosition(HoodAngles.STOW);
       case FERRY -> runPosition(InterpolationCalculator.getInterpolatedFerryAngle());
-      case MANUAL_OVERRIDE -> runPosition(
-          Degrees.of(Settings.Superstructure.Hood.Angles.MANUAL_OVERRIDE_DEG.get()));
-      case KB -> runPosition(Settings.Superstructure.Hood.Angles.KB);
-      case LEFT_CORNER -> runPosition(Settings.Superstructure.Hood.Angles.LEFT_CORNER);
-      case RIGHT_CORNER -> runPosition(Settings.Superstructure.Hood.Angles.RIGHT_CORNER);
+      case MANUAL_OVERRIDE -> runPosition(Degrees.of(HoodAngles.MANUAL_OVERRIDE_DEG.get()));
+      case KB -> runPosition(HoodAngles.KB);
+      case LEFT_CORNER -> runPosition(HoodAngles.LEFT_CORNER);
+      case RIGHT_CORNER -> runPosition(HoodAngles.RIGHT_CORNER);
       case INTERPOLATION -> runPosition(InterpolationCalculator.getInterpolatedShotAngle());
       case SOTM -> runPosition(SOTMCalculator.calculateHoodAngleSOTM());
       case FOTM -> runPosition(SOTMCalculator.calculateHoodAngleFOTM());
@@ -151,9 +150,9 @@ public class Hood extends FullSubsystem {
     Angle error = inputs.hoodMotorPosition.minus(position);
 
     if (state == HoodState.SOTM || state == HoodState.FOTM) {
-      atTolerance = error.abs(Degrees) < Settings.Superstructure.HOOD_SOTM_TOLERANCE.in(Degrees);
+      atTolerance = error.abs(Degrees) < HoodSettings.HOOD_SOTM_TOLERANCE.in(Degrees);
     } else {
-      atTolerance = error.abs(Degrees) < Settings.Superstructure.HOOD_TOLERANCE.in(Degrees);
+      atTolerance = error.abs(Degrees) < HoodSettings.HOOD_TOLERANCE.in(Degrees);
     }
   }
 
@@ -163,15 +162,15 @@ public class Hood extends FullSubsystem {
   }
 
   private void hoodAnalogToInput(CommandXboxController gamepad) {
-    double hoodMin = Settings.Superstructure.Hood.Angles.MIN.in(Degrees);
-    double hoodMax = Settings.Superstructure.Hood.Angles.MAX.in(Degrees);
+    double hoodMin = HoodSettings.HOOD_TOLERANCE.in(Degrees);
+    double hoodMax = HoodSettings.HOOD_SOTM_TOLERANCE.in(Degrees);
 
     this.driverInput = Degrees.of(hoodMin + (gamepad.getLeftX() + 1.0) * ((hoodMax - hoodMin) / 2));
   }
 
   private boolean isStalling() {
     return hoodStallingDebouncer.calculate(
-        inputs.hoodMotorStatorCurrent.gt(Settings.Superstructure.Hood.STALL_CURRENT_LIMIT));
+        inputs.hoodMotorStatorCurrent.gt(HoodSettings.STALL_CURRENT_LIMIT));
   }
 
   public void setState(HoodState state) {
@@ -193,12 +192,12 @@ public class Hood extends FullSubsystem {
   }
 
   public Command seedRelativeEncoderAtUpperHardstop() {
-    return runOnce(() -> io.seedHoodPosition(Settings.Superstructure.Hood.MAX_FROM_HORIZON))
+    return runOnce(() -> io.seedHoodPosition(HoodSettings.MAX_FROM_HORIZON))
         .withName("Hood Seed Relative Encoder at Upper Hardstop");
   }
 
   public Command seedRelativeEncoderAtLowerHardstop() {
-    return runOnce(() -> io.seedHoodPosition(Settings.Superstructure.Hood.MIN_FROM_HORIZON))
+    return runOnce(() -> io.seedHoodPosition(HoodSettings.MIN_FROM_HORIZON))
         .withName("Hood Seed Relative Encoder at Lower Hardstop");
   }
 }

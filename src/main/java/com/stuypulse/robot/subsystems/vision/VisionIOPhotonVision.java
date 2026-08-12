@@ -13,7 +13,7 @@
 
 package com.stuypulse.robot.subsystems.vision;
 
-import static com.stuypulse.robot.subsystems.vision.VisionConstants.aprilTagLayout;
+import static com.stuypulse.robot.subsystems.vision.VisionConstants.*;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -90,7 +90,7 @@ public class VisionIOPhotonVision implements VisionIO {
         var target = result.targets.get(0);
 
         // Calculate robot pose
-        var tagPose = aprilTagLayout.getTagPose(target.fiducialId);
+        var tagPose = VisionSettings.APRIL_TAG_LAYOUT.getTagPose(target.fiducialId);
         if (tagPose.isPresent()) {
           Transform3d fieldToTarget =
               new Transform3d(tagPose.get().getTranslation(), tagPose.get().getRotation());

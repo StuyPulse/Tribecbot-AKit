@@ -1,5 +1,10 @@
 package com.stuypulse.robot.subsystems.intake;
 
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
+
+import edu.wpi.first.units.measure.*;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -9,9 +14,6 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.stuypulse.robot.constants.Motors;
-import com.stuypulse.robot.constants.Ports;
-import edu.wpi.first.units.measure.*;
 
 public class IntakeIOTalonFX implements IntakeIO {
   private final TalonFX pivotMotor;
@@ -46,13 +48,13 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<AngularVelocity> rollerFollowerVelocity;
 
   public IntakeIOTalonFX() {
-    this.pivotMotor = new TalonFX(Ports.Intake.PIVOT);
-    this.rollerLeaderMotor = new TalonFX(Ports.Intake.ROLLER_LEADER);
-    this.rollerFollowerMotor = new TalonFX(Ports.Intake.ROLLER_FOLLOWER);
+    this.pivotMotor = new TalonFX(IntakeDeviceIds.PIVOT, GlobalSettings.RIO);
+    this.rollerLeaderMotor = new TalonFX(IntakeDeviceIds.ROLLER_LEADER, GlobalSettings.RIO);
+    this.rollerFollowerMotor = new TalonFX(IntakeDeviceIds.ROLLER_FOLLOWER, GlobalSettings.RIO);
 
-    Motors.Intake.PIVOT_CONFIG.configure(pivotMotor);
-    Motors.Intake.ROLLER_CONFIG.configure(rollerLeaderMotor);
-    Motors.Intake.ROLLER_CONFIG.configure(rollerFollowerMotor);
+    IntakeMotorConfigs.PIVOT_CONFIG.configure(pivotMotor);
+    IntakeMotorConfigs.ROLLER_CONFIG.configure(rollerLeaderMotor);
+    IntakeMotorConfigs.ROLLER_CONFIG.configure(rollerFollowerMotor);
 
     this.rollerLeaderController = new DutyCycleOut(0).withEnableFOC(true);
     this.rollerFollowerController =

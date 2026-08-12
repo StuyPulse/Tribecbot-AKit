@@ -5,23 +5,19 @@
 /***************************************************************/
 package com.stuypulse.robot.util.superstructure;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Radians;
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
+
+import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.*;
 
 import com.stuypulse.robot.Robot;
-import com.stuypulse.robot.constants.Settings;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Angle;
 
 public class TurretAngleCalculator {
-
-  private static final double MAX_ANGLE_DEGREES =
-      Settings.Superstructure.Turret.MAX_THEORETICAL_ROTATION.in(Degrees);
-  private static final double MIN_ANGLE_DEGREES =
-      Settings.Superstructure.Turret.MIN_THEORETICAL_ROTATION.in(Degrees);
-  private static final double RESOLUTION =
-      Settings.Superstructure.Turret.RESOLUTION_OF_ABSOLUTE_ENCODER;
+  private static final double MAX_ANGLE_DEGREES = TurretSettings.MAX_THEORETICAL_ROTATION.in(Degrees);
+  private static final double MIN_ANGLE_DEGREES = TurretSettings.MIN_THEORETICAL_ROTATION.in(Degrees);
+  private static final double RESOLUTION = TurretSettings.RESOLUTION_OF_ABSOLUTE_ENCODER;
   private static final int NUM_POINTS =
       (int) ((MAX_ANGLE_DEGREES - MIN_ANGLE_DEGREES) / RESOLUTION);
   private static int leastDistanceIndex = 0;
@@ -32,7 +28,7 @@ public class TurretAngleCalculator {
 
   private static double[] generateEncoderValues(int teeth) {
     double[] values = new double[NUM_POINTS];
-    double gearRatio = 1.0 * Settings.Superstructure.Turret.BigGear.TEETH / teeth;
+    double gearRatio = 1.0 * TurretBigGear.TEETH / teeth;
     int i = 0;
 
     for (double angle = MIN_ANGLE_DEGREES; angle < MAX_ANGLE_DEGREES; angle += RESOLUTION) {

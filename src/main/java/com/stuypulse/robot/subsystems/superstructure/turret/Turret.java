@@ -1,14 +1,14 @@
 package com.stuypulse.robot.subsystems.superstructure.turret;
 
-import static edu.wpi.first.units.Units.Degrees;
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.Seconds;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.*;
+
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
 
 import com.stuypulse.robot.RobotContainer;
 import com.stuypulse.robot.constants.DriverConstants;
 import com.stuypulse.robot.constants.Field;
-import com.stuypulse.robot.constants.Gains;
-import com.stuypulse.robot.constants.Settings;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputs;
 import com.stuypulse.robot.subsystems.swerve.Drive;
@@ -21,7 +21,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -32,7 +31,7 @@ public class Turret extends FullSubsystem {
   private static final Turret instance;
 
   static {
-    switch (Settings.currentMode) {
+    switch (GlobalSettings.currentMode) {
       case REAL -> instance = new Turret(new TurretIOTalonFX());
 
       case SIM -> instance = new Turret(new TurretIOSim());
@@ -132,10 +131,10 @@ public class Turret extends FullSubsystem {
       delta += 360;
     }
 
-    if (current + delta > Settings.Superstructure.Turret.RANGE_CW) {
+    if (current + delta > TurretSettings.RANGE_CW) {
       return delta - 360;
     }
-    if (current + delta < Settings.Superstructure.Turret.RANGE_CCW) {
+    if (current + delta < TurretSettings.RANGE_CCW) {
       return delta + 360;
     }
 
@@ -153,7 +152,7 @@ public class Turret extends FullSubsystem {
     io.updateInputs(inputs);
     Logger.processInputs("Turret", inputs);
 
-    if (!Settings.EnabledSubsystems.TURRET.get()) {
+    if (!GlobalSettings.EnabledSubsystems.TURRET.get()) {
       stopTurret();
 
       return;
@@ -166,9 +165,9 @@ public class Turret extends FullSubsystem {
       case SOTM -> runPosition(SOTMCalculator.calculateTurretAngleSOTM());
       case FOTM -> runPosition(SOTMCalculator.calculateTurretAngleFOTM());
       case FERRY -> runPosition(getFerryAngle());
-      case LEFT_CORNER -> runPosition(Settings.Superstructure.Turret.LEFT_CORNER);
-      case RIGHT_CORNER -> runPosition(Settings.Superstructure.Turret.RIGHT_CORNER);
-      case KB -> runPosition(Settings.Superstructure.Turret.KB);
+      case LEFT_CORNER -> runPosition(TurretAngles.LEFT_CORNER);
+      case RIGHT_CORNER -> runPosition(TurretAngles.RIGHT_CORNER);
+      case KB -> runPosition(TurretAngles.KB);
       case TESTING -> runPosition(driverInput);
     }
     ;
@@ -205,8 +204,7 @@ public class Turret extends FullSubsystem {
   }
 
   public Pose2d getTurretPose() {
-    Transform2d turretTransform =
-        new Transform2d(Settings.Superstructure.Turret.TURRET_OFFSET, getTurretYaw());
+    Transform2d turretTransform = new Transform2d(TurretSettings.TURRET_OFFSET, getTurretYaw());
 
     return Drive.getInstance().getPose().transformBy(turretTransform);
   }
@@ -251,8 +249,7 @@ public class Turret extends FullSubsystem {
 
     double delta = actualTargetAngle - prevActualTargetAngle;
 
-    boolean deltaIsSignificant =
-        Math.abs(delta) >= Settings.Superstructure.Turret.SETPOINT_FILTER_THRESHOLD_DEG;
+    boolean deltaIsSignificant = Math.abs(delta) >= TurretSettings.SETPOINT_FILTER_THRESHOLD_DEG;
 
     boolean driverIsMoving =
         Math.abs(RobotContainer.driver.getLeftX()) > DriverConstants.Driver.Drive.DEADBAND
@@ -266,11 +263,11 @@ public class Turret extends FullSubsystem {
     if (isWrapping) {
       isWrapping =
           Math.abs(getWrappedTargetAngle(position) - currentAngle)
-              > Settings.Superstructure.Turret.GAIN_SWITCHING_THRESHOLD_END.in(Degrees);
+              > TurretSettings.GAIN_SWITCHING_THRESHOLD_END.in(Degrees);
     } else {
       isWrapping =
           Math.abs(getWrappedTargetAngle(position) - currentAngle)
-              > Settings.Superstructure.Turret.GAIN_SWITCHING_THRESHOLD_START.in(Degrees);
+              > TurretSettings.GAIN_SWITCHING_THRESHOLD_START.in(Degrees);
     }
 
     int slot = 0;
@@ -280,13 +277,12 @@ public class Turret extends FullSubsystem {
     }
 
     double omega = Drive.getInstance().getChassisSpeeds().omegaRadiansPerSecond;
-    double omegaFF = Gains.Superstructure.Turret.kOmega.get() * omega;
-    double setpointVelocityRPS = delta / (360 * Settings.DT.in(Seconds));
+    double omegaFF = TurretGains.kOmega.get() * omega;
+    double setpointVelocityRPS = delta / (360 * GlobalSettings.DT.in(Seconds));
 
     // the component of the turret's setpoint velocity that comes from robot translation
     double translationalComponentVelocityRPS = setpointVelocityRPS - omega / (2 * Math.PI);
-    double translationFF =
-        Gains.Superstructure.Turret.kTranslation.get() * translationalComponentVelocityRPS;
+    double translationFF = TurretGains.kTranslation.get() * translationalComponentVelocityRPS;
 
     outputs.turretMode = TurretIOOutputMode.POSITION;
     outputs.turretPosition = Degrees.of(prevActualTargetAngle);
@@ -301,17 +297,15 @@ public class Turret extends FullSubsystem {
           case SOTM -> getTurretPose()
                       .getTranslation()
                       .getDistance(Field.HUB_CENTER.getTranslation())
-                  > Settings.Superstructure.Turret.SOTM_TOLERANCE_THRESHOLD_METERS.get()
-              ? Degrees.of(Settings.Superstructure.Turret.SOTM_TOLERANCE_CLOSE_DEG.get())
-              : Degrees.of(Settings.Superstructure.Turret.SOTM_TOLERANCE_FAR_DEG.get());
-          case FOTM -> Settings.Superstructure.Turret.FOTM_TOLERANCE;
-          default -> Settings.Superstructure.Turret.TOLERANCE;
+                  > TurretSettings.SOTM_TOLERANCE_THRESHOLD_METERS.get()
+              ? Degrees.of(TurretSettings.SOTM_TOLERANCE_CLOSE_DEG.get())
+              : Degrees.of(TurretSettings.SOTM_TOLERANCE_FAR_DEG.get());
+          case FOTM -> TurretSettings.FOTM_TOLERANCE;
+          default -> TurretSettings.TOLERANCE;
         };
 
     atTolerance = error.abs(Degrees) < tolerance.in(Degrees);
-    lagging =
-        error.abs(Degrees)
-            >= Settings.Superstructure.Turret.GAIN_SWITCHING_THRESHOLD_START.in(Degrees);
+    lagging = error.abs(Degrees) >= TurretSettings.GAIN_SWITCHING_THRESHOLD_START.in(Degrees);
   }
 
   private void setDriverInput(CommandXboxController gamepad) {

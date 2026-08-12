@@ -23,9 +23,8 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import com.stuypulse.robot.constants.Field;
-import com.stuypulse.robot.constants.Settings;
-import com.stuypulse.robot.constants.Settings.Mode;
-import com.stuypulse.robot.generated.TunerConstants;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.constants.GlobalSettings.Mode;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.vision.Vision;
 import com.stuypulse.robot.util.FullSubsystem;
@@ -76,7 +75,7 @@ public class Drive extends FullSubsystem implements Vision.VisionConsumer {
   private Optional<Boolean> isBtwnOppHubAndWall = Optional.empty();
 
   static {
-    switch (Settings.currentMode) {
+    switch (GlobalSettings.currentMode) {
       case REAL -> {
         instance =
             new Drive(
@@ -490,7 +489,7 @@ public class Drive extends FullSubsystem implements Vision.VisionConsumer {
     }
 
     // Update gyro alert
-    gyroDisconnectedAlert.set(!gyroInputs.connected && Settings.currentMode != Mode.SIM);
+    gyroDisconnectedAlert.set(!gyroInputs.connected && GlobalSettings.currentMode != Mode.SIM);
   }
 
   /**

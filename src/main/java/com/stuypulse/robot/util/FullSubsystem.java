@@ -28,10 +28,10 @@ public abstract class FullSubsystem extends SubsystemBase {
   }
 
   /**
-   * This method is called periodically after the command scheduler, and should be overriden 
-   * for applying outputs.
+   * This method is called periodically after the command scheduler, and should be overriden for
+   * applying outputs.
    */
-  public void periodicAfterScheduler() {};
+  public void periodicAfterScheduler() {}
 
   /** Run the "after periodic" methods for all subsystems. */
   public static void runAllPeriodicAfterScheduler() {

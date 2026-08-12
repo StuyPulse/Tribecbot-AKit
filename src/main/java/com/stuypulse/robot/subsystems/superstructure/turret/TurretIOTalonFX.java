@@ -1,7 +1,10 @@
 package com.stuypulse.robot.subsystems.superstructure.turret;
 
-import static edu.wpi.first.units.Units.Hertz;
-import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
+
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -9,15 +12,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.stuypulse.robot.constants.Motors;
-import com.stuypulse.robot.constants.Motors.CANCoderConfig;
-import com.stuypulse.robot.constants.Ports;
-import com.stuypulse.robot.constants.Settings;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Temperature;
-import edu.wpi.first.units.measure.Voltage;
+import com.stuypulse.robot.util.config.CANCoderConfig;
 
 public class TurretIOTalonFX implements TurretIO {
   private final TalonFX turretMotor;
@@ -41,25 +36,25 @@ public class TurretIOTalonFX implements TurretIO {
   private final StatusSignal<Angle> encoder18tPosition;
 
   public TurretIOTalonFX() {
-    turretMotor = new TalonFX(Ports.Superstructure.Turret.MOTOR, Ports.RIO);
-    Motors.Superstructure.Turret.TURRET_CONFIG.configure(turretMotor);
+    turretMotor = new TalonFX(TurretDeviceIds.MOTOR, GlobalSettings.RIO);
+    TurretMotorConfigs.TURRET_CONFIG.configure(turretMotor);
 
     turretMotor.getClosedLoopError().setUpdateFrequency(Hertz.of(50));
 
     positionController = new PositionVoltage(0).withEnableFOC(true);
 
-    encoder17t = new CANcoder(Ports.Superstructure.Turret.ENCODER17T, Ports.RIO);
-    encoder18t = new CANcoder(Ports.Superstructure.Turret.ENCODER18T, Ports.RIO);
+    encoder17t = new CANcoder(TurretDeviceIds.ENCODER_17T, GlobalSettings.RIO);
+    encoder18t = new CANcoder(TurretDeviceIds.ENCODER_18T, GlobalSettings.RIO);
 
     encoder17tConfig =
         new CANCoderConfig()
             .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-            .withMagnetOffset(Settings.Superstructure.Turret.Encoder17t.OFFSET.in(Rotations))
+            .withMagnetOffset(TurretEncoder17t.OFFSET.in(Rotations))
             .withAbsoluteSensorDiscontinuityPoint(1.0);
     encoder18tConfig =
         new CANCoderConfig()
             .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-            .withMagnetOffset(Settings.Superstructure.Turret.Encoder18t.OFFSET.in(Rotations))
+            .withMagnetOffset(TurretEncoder18t.OFFSET.in(Rotations))
             .withAbsoluteSensorDiscontinuityPoint(1.0);
 
     turretMotorPosition = turretMotor.getPosition();
