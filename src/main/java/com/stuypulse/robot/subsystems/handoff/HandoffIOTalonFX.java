@@ -35,8 +35,8 @@ public class HandoffIOTalonFX implements HandoffIO {
     motorLead = new TalonFX(HandoffDeviceIds.MOTOR_LEAD, GlobalSettings.RIO);
     motorFollow = new TalonFX(HandoffDeviceIds.MOTOR_FOLLOW, GlobalSettings.RIO);
 
-    HandoffMotorConfig.HANDOFF_CONFIG.configure(motorLead);
-    HandoffMotorConfig.HANDOFF_CONFIG.configure(motorFollow);
+    HandoffMotorConfigs.HANDOFF_CONFIG.configure(motorLead);
+    HandoffMotorConfigs.HANDOFF_CONFIG.configure(motorFollow);
 
     controller = new DutyCycleOut(0).withEnableFOC(true);
     follower = new Follower(motorLead.getDeviceID(), MotorAlignmentValue.Opposed);

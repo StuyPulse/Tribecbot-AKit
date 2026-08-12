@@ -37,7 +37,7 @@ public class TurretIOTalonFX implements TurretIO {
 
   public TurretIOTalonFX() {
     turretMotor = new TalonFX(TurretDeviceIds.MOTOR, GlobalSettings.RIO);
-    TurretMotorConfig.TURRET_CONFIG.configure(turretMotor);
+    TurretMotorConfigs.TURRET_CONFIG.configure(turretMotor);
 
     turretMotor.getClosedLoopError().setUpdateFrequency(Hertz.of(50));
 

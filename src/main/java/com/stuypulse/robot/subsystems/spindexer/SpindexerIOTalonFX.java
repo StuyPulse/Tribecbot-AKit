@@ -37,8 +37,8 @@ public class SpindexerIOTalonFX implements SpindexerIO {
     spindexerLeaderMotor = new TalonFX(SpindexerDeviceIds.LEADER, GlobalSettings.CANIVORE);
     spindexerFollowerMotor = new TalonFX(SpindexerDeviceIds.FOLLOWER, GlobalSettings.CANIVORE);
 
-    SpindexerMotorConfig.SPINDEXER_LEAD_CONFIG.configure(spindexerLeaderMotor);
-    SpindexerMotorConfig.SPINDEXER_FOLLOW_CONFIG.configure(spindexerFollowerMotor);
+    SpindexerMotorConfigs.SPINDEXER_LEAD_CONFIG.configure(spindexerLeaderMotor);
+    SpindexerMotorConfigs.SPINDEXER_FOLLOW_CONFIG.configure(spindexerFollowerMotor);
     spindexerController = new DutyCycleOut(0);
     followerController =
         new Follower(spindexerLeaderMotor.getDeviceID(), MotorAlignmentValue.Aligned);

@@ -70,7 +70,7 @@ public interface IntakeConstants {
     }
   }
 
-  public interface IntakeMotorConfig {
+  public interface IntakeMotorConfigs {
     final TalonFXConfig PIVOT_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)

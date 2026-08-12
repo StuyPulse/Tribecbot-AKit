@@ -34,7 +34,7 @@ public interface HandoffConstants {
     final int MOTOR_FOLLOW = 48;
   }
 
-  public interface HandoffMotorConfig {
+  public interface HandoffMotorConfigs {
     final TalonFXConfig HANDOFF_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)

@@ -52,9 +52,9 @@ public class IntakeIOTalonFX implements IntakeIO {
     this.rollerLeaderMotor = new TalonFX(IntakeDeviceIds.ROLLER_LEADER, GlobalSettings.RIO);
     this.rollerFollowerMotor = new TalonFX(IntakeDeviceIds.ROLLER_FOLLOWER, GlobalSettings.RIO);
 
-    IntakeMotorConfig.PIVOT_CONFIG.configure(pivotMotor);
-    IntakeMotorConfig.ROLLER_CONFIG.configure(rollerLeaderMotor);
-    IntakeMotorConfig.ROLLER_CONFIG.configure(rollerFollowerMotor);
+    IntakeMotorConfigs.PIVOT_CONFIG.configure(pivotMotor);
+    IntakeMotorConfigs.ROLLER_CONFIG.configure(rollerLeaderMotor);
+    IntakeMotorConfigs.ROLLER_CONFIG.configure(rollerFollowerMotor);
 
     this.rollerLeaderController = new DutyCycleOut(0).withEnableFOC(true);
     this.rollerFollowerController =

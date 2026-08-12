@@ -51,7 +51,7 @@ public class HoodIOSim implements HoodIO {
     positionController = new PositionVoltage(0).withEnableFOC(true);
     homingController = new VoltageOut(0).withIgnoreSoftwareLimits(true);
 
-    HoodConfiguration.HOOD_CONFIG.configure(hoodMotor);
+    HoodMotorConfigs.HOOD_CONFIG.configure(hoodMotor);
 
     hoodMotorPosition = hoodMotor.getPosition();
     hoodMotorSupplyCurrent = hoodMotor.getSupplyCurrent();

@@ -86,9 +86,9 @@ public class IntakeIOSim implements IntakeIO {
     this.rollerLeaderMotor = new TalonFXSimulation(IntakeDeviceIds.ROLLER_LEADER, 1.0, rollerSim);
     this.rollerFollowerMotor = new TalonFXSimulation(IntakeDeviceIds.ROLLER_FOLLOWER, 1.0, rollerSim);
 
-    IntakeMotorConfig.PIVOT_CONFIG.configure(pivotMotor);
-    IntakeMotorConfig.ROLLER_CONFIG.configure(rollerLeaderMotor);
-    IntakeMotorConfig.ROLLER_CONFIG.configure(rollerFollowerMotor);
+    IntakeMotorConfigs.PIVOT_CONFIG.configure(pivotMotor);
+    IntakeMotorConfigs.ROLLER_CONFIG.configure(rollerLeaderMotor);
+    IntakeMotorConfigs.ROLLER_CONFIG.configure(rollerFollowerMotor);
 
     this.rollerLeaderController = new DutyCycleOut(0).withEnableFOC(true);
     this.rollerFollowerController =

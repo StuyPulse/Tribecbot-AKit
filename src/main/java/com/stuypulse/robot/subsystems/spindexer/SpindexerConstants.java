@@ -36,7 +36,7 @@ public interface SpindexerConstants {
     double kA = 0.010876;
   }
 
-  public interface SpindexerMotorConfig {
+  public interface SpindexerMotorConfigs {
     final TalonFXConfig SPINDEXER_LEAD_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)

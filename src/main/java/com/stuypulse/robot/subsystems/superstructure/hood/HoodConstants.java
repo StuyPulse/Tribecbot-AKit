@@ -86,7 +86,7 @@ public interface HoodConstants {
     final Angle RIGHT_CORNER = Degrees.of(39.0);
   }
 
-  public interface HoodConfiguration {
+  public interface HoodMotorConfigs {
     final TalonFXConfig HOOD_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.Clockwise_Positive)

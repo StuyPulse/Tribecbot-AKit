@@ -37,8 +37,8 @@ public class ShooterIOTalonFX implements ShooterIO {
     shooterLeader = new TalonFX(ShooterDeviceIds.MOTOR_LEAD, GlobalSettings.RIO);
     shooterFollower = new TalonFX(ShooterDeviceIds.MOTOR_FOLLOW, GlobalSettings.RIO);
 
-    ShooterConfiguration.SHOOTER_CONFIG.configure(shooterLeader);
-    ShooterConfiguration.SHOOTER_CONFIG.configure(shooterFollower);
+    ShooterMotorConfigs.SHOOTER_CONFIG.configure(shooterLeader);
+    ShooterMotorConfigs.SHOOTER_CONFIG.configure(shooterFollower);
 
     shooterLeaderController = new VelocityTorqueCurrentFOC(0);
     shooterFollowerController =

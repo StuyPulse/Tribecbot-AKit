@@ -100,12 +100,12 @@ public interface TurretConstants {
         final Angle OFFSET = Rotations.of(-0.814);
     }
 
-    public interface TurretSoftwareLimit {
+    public interface TurretSoftwareLimits {
         final double FORWARD_MAX_ROTATIONS = 210.0 / 360.0;
         final double BACKWARDS_MAX_ROTATIONS = -210.0 / 360.0;
     }
 
-    public interface TurretMotorConfig {
+    public interface TurretMotorConfigs {
         final TalonFXConfig TURRET_CONFIG = new TalonFXConfig()
                 .withInvertedValue(InvertedValue.Clockwise_Positive)
                 .withNeutralMode(NeutralModeValue.Brake)
@@ -125,7 +125,7 @@ public interface TurretConstants {
                 .withSoftLimits(
                         false,
                         false,
-                        TurretSoftwareLimit.FORWARD_MAX_ROTATIONS,
-                        TurretSoftwareLimit.BACKWARDS_MAX_ROTATIONS);
+                        TurretSoftwareLimits.FORWARD_MAX_ROTATIONS,
+                        TurretSoftwareLimits.BACKWARDS_MAX_ROTATIONS);
     }
 }

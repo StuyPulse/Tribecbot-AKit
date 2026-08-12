@@ -61,7 +61,7 @@ public interface ShooterConstants {
     final AngularVelocity RIGHT_CORNER = edu.wpi.first.units.Units.RPM.of(3650.0);
   }
 
-  public interface ShooterConfiguration {
+  public interface ShooterMotorConfigs {
     final TalonFXConfig SHOOTER_CONFIG =
         new TalonFXConfig()
             .withInvertedValue(InvertedValue.CounterClockwise_Positive)
