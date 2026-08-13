@@ -31,7 +31,7 @@ public class Turret extends FullSubsystem {
 
   static {
     switch (GlobalSettings.currentMode) {
-      case REAL -> instance = new Turret(new TurretIOTalonFX());
+      case REAL -> instance = new Turret(new TurretIOReal());
 
       case SIM -> instance = new Turret(new TurretIOSim());
 

@@ -22,7 +22,7 @@ public class Hood extends FullSubsystem {
 
   static {
     switch (GlobalSettings.currentMode) {
-      case REAL -> instance = new Hood(new HoodIOTalonFX());
+      case REAL -> instance = new Hood(new HoodIOReal());
 
       case SIM -> instance = new Hood(new HoodIOSim());
 
