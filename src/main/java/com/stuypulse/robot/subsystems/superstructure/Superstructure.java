@@ -1,6 +1,5 @@
 package com.stuypulse.robot.subsystems.superstructure;
 
-import com.stuypulse.robot.commands.DriveCommands;
 import com.stuypulse.robot.constants.DriverConstants.Driver;
 import com.stuypulse.robot.constants.DriverConstants.Driver.Turn;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
@@ -272,12 +271,11 @@ public class Superstructure extends FullSubsystem {
             Drive.getInstance())
         .until(
             () -> {
-              Translation2d driverInputAsVelocity =
-                  DriveCommands.getLinearVelocityFromJoysticks(
-                      -driver.getLeftY(), -driver.getLeftX());
+              double driverInputMagnitude =
+                  new Translation2d(-driver.getLeftY(), -driver.getLeftX()).getNorm();
 
               return cachedStateIdleDebouncer.calculate(
-                  driverInputAsVelocity.getNorm() <= Driver.Drive.DEADBAND
+                  driverInputMagnitude <= Driver.Drive.DEADBAND
                       && Math.abs(driver.getRightX()) <= Turn.DEADBAND);
             })
         .withName("Superstructure Cache State");

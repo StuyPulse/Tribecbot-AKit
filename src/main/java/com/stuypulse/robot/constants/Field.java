@@ -24,6 +24,12 @@ public interface Field {
 
   public static final Distance HUB_RADIUS = Inches.of(41.7 / 2.0);
 
+  public static final Pose2d KB_POSE =
+      new Pose2d(
+          HUB_CENTER.getMeasureX().minus(HUB_RADIUS).minus(Inches.of(23.5)),
+          Field.WIDTH.div(2).minus(Inches.of(6.5)),
+          Rotation2d.kZero);
+
   public static final Distance OPPONENT_HUB_DS_X =
       LENGTH.minus(HUB_FAR_LEFT_CORNER.getMeasureX()).plus(HUB_RADIUS.times(2));
 

@@ -25,6 +25,8 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.constants.GlobalSettings.Mode;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.vision.Vision;
 import com.stuypulse.robot.util.FullSubsystem;
@@ -122,6 +124,15 @@ public class Drive extends FullSubsystem implements Vision.VisionConsumer {
 
   public static SwerveDriveSimulation getDriveSimulation() {
     return driveSimulation;
+  }
+
+  public boolean canShootIntoHub() {
+    Superstructure superstructure = Superstructure.getInstance();
+    SuperstructureState state = superstructure.getState();
+    return !isOutsideAllianceZone()
+        || (state == SuperstructureState.KB
+            || state == SuperstructureState.LEFT_CORNER
+            || state == SuperstructureState.RIGHT_CORNER);
   }
 
   public boolean isUnderTrench() {
@@ -611,6 +622,11 @@ public class Drive extends FullSubsystem implements Vision.VisionConsumer {
   public void resetOdometry(Pose2d pose) {
     resetSimulationPoseCallBack.accept(pose);
     poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+  }
+
+  public void resetHeading(Rotation2d heading) {
+    resetSimulationPoseCallBack.accept(new Pose2d(getPose().getTranslation(), heading));
+    poseEstimator.resetRotation(heading);
   }
 
   /** Adds a new timestamped vision measurement. */

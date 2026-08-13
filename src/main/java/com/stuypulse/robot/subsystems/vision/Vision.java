@@ -25,6 +25,8 @@ import com.stuypulse.robot.subsystems.vision.VisionIO.VisionIOOutputs;
 import com.stuypulse.robot.util.FullSubsystem;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -106,6 +108,9 @@ public class Vision extends FullSubsystem {
   private final Alert[] disconnectedAlerts;
   private int maxTagCount;
 
+  private final Debouncer hasDataDebouncer;
+  private boolean hasData;
+
   public Vision(VisionConsumer consumer, VisionIO... io) {
     this.consumer = consumer;
     this.io = io;
@@ -128,6 +133,9 @@ public class Vision extends FullSubsystem {
     }
 
     maxTagCount = 0;
+
+    hasDataDebouncer =
+        new Debouncer(VisionConstants.VisionSettings.BUZZ_DEBOUNCE, DebounceType.kBoth);
   }
 
   /**
@@ -147,9 +155,15 @@ public class Vision extends FullSubsystem {
     return !inputs[camera.ordinal()].connected;
   }
 
+  public boolean hasData() {
+    return hasDataDebouncer.calculate(hasData);
+  }
+
   @Override
   public void periodic() {
     maxTagCount = 0;
+
+    hasData = false;
 
     for (int i = 0; i < io.length; i++) {
       io[i].updateInputs(inputs[i]);
@@ -211,6 +225,8 @@ public class Vision extends FullSubsystem {
         if (rejectPose) {
           continue;
         }
+
+        hasData = true;
 
         // Calculate standard deviations
         double stdDevFactor =
@@ -290,6 +306,7 @@ public class Vision extends FullSubsystem {
                 output.megaTagMode = mode;
               }
             })
+        .withName("Vision Set MegaTag Mode")
         .ignoringDisable(true);
   }
 
@@ -300,6 +317,7 @@ public class Vision extends FullSubsystem {
                 output.pipeline = pipeline;
               }
             })
+        .withName("Vision Set Pipeline")
         .ignoringDisable(true);
   }
 
@@ -310,6 +328,22 @@ public class Vision extends FullSubsystem {
                 output.aprilTagIDWhitelist = whitelist;
               }
             })
+        .withName("Vision Set AprilTag Whitelist")
         .ignoringDisable(true);
+  }
+
+  public Command setIMUMode(int imuMode) {
+    return runOnce(
+            () -> {
+              for (VisionIOOutputs output : outputs) {
+                output.imuMode = imuMode;
+              }
+            })
+        .withName("Vision Set IMU Mode")
+        .ignoringDisable(true);
+  }
+
+  public Command resetIMU() {
+    return setIMUMode(VisionSettings.RESET_IMU_INDEX).withName("Vision Reset IMU");
   }
 }

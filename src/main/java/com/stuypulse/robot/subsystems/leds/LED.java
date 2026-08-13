@@ -8,6 +8,7 @@ import com.stuypulse.robot.subsystems.leds.LEDIO.LEDPattern;
 import com.stuypulse.robot.subsystems.vision.Vision;
 import com.stuypulse.robot.subsystems.vision.VisionConstants.Camera;
 import com.stuypulse.robot.util.FullSubsystem;
+import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -39,7 +40,8 @@ public class LED extends FullSubsystem {
     RIGHT_CORNER(LEDSettings.StateColors.RIGHT_CORNER),
     KB_DISTANCE(LEDSettings.StateColors.KB_DISTANCE),
     STOP_ROLLERS(LEDSettings.StateColors.STOP_ROLLERS),
-    RESET(LEDSettings.StateColors.RESET_HEADING),
+    ROLLERS_REVERSE(LEDSettings.StateColors.ROLLERS_REVERSE),
+    RESET_HEADING(LEDSettings.StateColors.RESET_HEADING),
     X_WHEELS(LEDSettings.StateColors.X_WHEELS),
     INTAKE_STOW(LEDSettings.StateColors.INTAKE_STOW),
     INTAKE_DEPLOYED(LEDSettings.StateColors.INTAKE_DEPLOYED),
@@ -133,5 +135,9 @@ public class LED extends FullSubsystem {
     applyState();
 
     io.applyOutputs(outputs);
+  }
+
+  public Command setState(LEDState state) {
+    return run(() -> changeState(state));
   }
 }
