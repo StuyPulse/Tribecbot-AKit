@@ -1,11 +1,11 @@
 package com.stuypulse.robot.subsystems.handoff;
 
 import static edu.wpi.first.units.Units.*;
-import edu.wpi.first.units.measure.*;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.stuypulse.robot.util.config.TalonFXConfig;
+import edu.wpi.first.units.measure.*;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public interface HandoffConstants {

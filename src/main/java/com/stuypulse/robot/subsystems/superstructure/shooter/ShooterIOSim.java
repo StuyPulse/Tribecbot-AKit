@@ -54,10 +54,13 @@ public class ShooterIOSim implements ShooterIO {
     shooterLeaderMotor =
         new TalonFXSimulation(ShooterDeviceIds.MOTOR_LEAD, ShooterSettings.GEAR_RATIO, flywheelSim);
     shooterFollowerMotor =
-        new TalonFXSimulation(ShooterDeviceIds.MOTOR_FOLLOW, ShooterSettings.GEAR_RATIO, flywheelSim);
+        new TalonFXSimulation(
+            ShooterDeviceIds.MOTOR_FOLLOW, ShooterSettings.GEAR_RATIO, flywheelSim);
 
     ShooterMotorConfigs.SHOOTER_CONFIG.configure(shooterLeaderMotor);
     ShooterMotorConfigs.SHOOTER_CONFIG.configure(shooterFollowerMotor);
+
+    shooterFollowerMotor.linkToReference(shooterLeaderMotor);
 
     shooterLeaderController = new VelocityTorqueCurrentFOC(0);
     shooterFollowerController =
@@ -117,6 +120,16 @@ public class ShooterIOSim implements ShooterIO {
 
   @Override
   public void applyOutputs(ShooterIOOutputs outputs) {
-    shooterLeaderMotor.setControl(shooterLeaderController.withVelocity(outputs.shooterVelocity));
+    switch (outputs.shooterMode) {
+      case VELOCITY -> shooterLeaderMotor.setControl(
+          shooterLeaderController.withVelocity(outputs.shooterVelocity));
+
+      case STOP -> {
+        shooterLeaderMotor.stopMotor();
+        shooterFollowerMotor.stopMotor();
+
+        shooterFollowerMotor.setControl(shooterFollowerController);
+      }
+    }
   }
 }

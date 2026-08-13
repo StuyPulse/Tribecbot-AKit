@@ -15,10 +15,10 @@ package com.stuypulse.robot.commands;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.DriverConstants.DriveConstraints;
 import com.stuypulse.robot.constants.DriverConstants.Driver;
 import com.stuypulse.robot.constants.DriverConstants.Driver.Turn;
+import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import com.stuypulse.robot.subsystems.swerve.Drive;
@@ -56,30 +56,36 @@ public class DriveCommands {
     Drive drive = Drive.getInstance();
 
     return Commands.runOnce(() -> drive.resetOdometry(Field.KB_POSE), drive)
-      .withName("Swerve Reset Pose KB Shot");
+        .withName("Swerve Reset Pose KB Shot");
   }
-  
+
   public static Command buzzController(CommandXboxController driver) {
-    return Commands.run(() -> {
-      driver.getHID().setRumble(RumbleType.kBothRumble, Driver.BUZZ_INTENSITY);
-    }).withName("Buzz Controller");
+    return Commands.run(
+            () -> {
+              driver.getHID().setRumble(RumbleType.kBothRumble, Driver.BUZZ_INTENSITY);
+            })
+        .withName("Buzz Controller");
   }
 
   public static Command resetHeading() {
     Drive drive = Drive.getInstance();
 
-    return Commands.runOnce(() -> {
-      drive.resetHeading(Rotation2d.kZero);
-    }, 
-    drive).withName("Reset Heading");
+    return Commands.runOnce(
+            () -> {
+              drive.resetHeading(Rotation2d.kZero);
+            },
+            drive)
+        .withName("Reset Heading");
   }
 
   public static Command xMode() {
     Drive drive = Drive.getInstance();
 
-    return Commands.run(() -> {
-      drive.stopWithX();
-    }).withName("Swerve X Mode");
+    return Commands.run(
+            () -> {
+              drive.stopWithX();
+            })
+        .withName("Swerve X Mode");
   }
 
   /**

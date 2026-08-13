@@ -1,10 +1,5 @@
 package com.stuypulse.robot.subsystems.intake;
 
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
-
-import edu.wpi.first.units.measure.*;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -14,6 +9,9 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
+import edu.wpi.first.units.measure.*;
 
 public class IntakeIOTalonFX implements IntakeIO {
   private final TalonFX pivotMotor;

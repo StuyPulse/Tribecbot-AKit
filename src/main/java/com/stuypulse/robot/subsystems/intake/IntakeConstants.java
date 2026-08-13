@@ -78,9 +78,17 @@ public interface IntakeConstants {
             .withSupplyCurrentLimitAmps(10.0) // was 60 on practice day
             .withStatorCurrentLimitEnabled(false)
             .withRampRate(0.25)
-            .withPIDConstants(IntakeGains.Pivot.kP.get(), IntakeGains.Pivot.kI.get(), IntakeGains.Pivot.kD.get(), 0)
+            .withPIDConstants(
+                IntakeGains.Pivot.kP.get(),
+                IntakeGains.Pivot.kI.get(),
+                IntakeGains.Pivot.kD.get(),
+                0)
             .withFFConstants(
-                IntakeGains.Pivot.kS.get(), IntakeGains.Pivot.kV.get(), IntakeGains.Pivot.kA.get(), IntakeGains.Pivot.kG, 0)
+                IntakeGains.Pivot.kS.get(),
+                IntakeGains.Pivot.kV.get(),
+                IntakeGains.Pivot.kA.get(),
+                IntakeGains.Pivot.kG,
+                0)
             .withStaticFeedforwardSign(StaticFeedforwardSignValue.UseVelocitySign, 0)
             .withGravityType(GravityTypeValue.Arm_Cosine)
             .withSensorToMechanismRatio(IntakeSettings.PIVOT_GEAR_RATIO);

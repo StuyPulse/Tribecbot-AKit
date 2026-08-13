@@ -125,11 +125,14 @@ public class Drive extends FullSubsystem implements Vision.VisionConsumer {
   public static SwerveDriveSimulation getDriveSimulation() {
     return driveSimulation;
   }
-  
+
   public boolean canShootIntoHub() {
     Superstructure superstructure = Superstructure.getInstance();
     SuperstructureState state = superstructure.getState();
-    return !isOutsideAllianceZone() || (state == SuperstructureState.KB || state == SuperstructureState.LEFT_CORNER || state == SuperstructureState.RIGHT_CORNER);
+    return !isOutsideAllianceZone()
+        || (state == SuperstructureState.KB
+            || state == SuperstructureState.LEFT_CORNER
+            || state == SuperstructureState.RIGHT_CORNER);
   }
 
   public boolean isUnderTrench() {

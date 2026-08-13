@@ -1,15 +1,13 @@
 package com.stuypulse.robot.subsystems.superstructure.hood;
 
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.*;
-
-import edu.wpi.first.units.measure.*;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.*;
+import edu.wpi.first.units.measure.*;
 
 public class HoodIOTalonFX implements HoodIO {
   private final TalonFX hoodMotor;

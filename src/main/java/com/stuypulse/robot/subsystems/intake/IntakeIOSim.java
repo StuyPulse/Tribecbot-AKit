@@ -1,9 +1,6 @@
 package com.stuypulse.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
-import edu.wpi.first.units.measure.*;
-
-import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -14,11 +11,12 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.stuypulse.robot.constants.GlobalSettings;
-
+import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
@@ -82,13 +80,17 @@ public class IntakeIOSim implements IntakeIO {
                     1.0),
                 DCMotor.getKrakenX60Foc(2)));
 
-    this.pivotMotor = new TalonFXSimulation(IntakeDeviceIds.PIVOT, IntakeSettings.PIVOT_GEAR_RATIO, pivotSim);
+    this.pivotMotor =
+        new TalonFXSimulation(IntakeDeviceIds.PIVOT, IntakeSettings.PIVOT_GEAR_RATIO, pivotSim);
     this.rollerLeaderMotor = new TalonFXSimulation(IntakeDeviceIds.ROLLER_LEADER, 1.0, rollerSim);
-    this.rollerFollowerMotor = new TalonFXSimulation(IntakeDeviceIds.ROLLER_FOLLOWER, 1.0, rollerSim);
+    this.rollerFollowerMotor =
+        new TalonFXSimulation(IntakeDeviceIds.ROLLER_FOLLOWER, 1.0, rollerSim);
 
-    IntakeMotorConfigs.PIVOT_CONFIG.configure(pivotMotor);
-    IntakeMotorConfigs.ROLLER_CONFIG.configure(rollerLeaderMotor);
-    IntakeMotorConfigs.ROLLER_CONFIG.configure(rollerFollowerMotor);
+    pivotMotor.configure(IntakeMotorConfigs.PIVOT_CONFIG);
+    rollerLeaderMotor.configure(IntakeMotorConfigs.ROLLER_CONFIG);
+    rollerFollowerMotor.configure(IntakeMotorConfigs.ROLLER_CONFIG);
+
+    rollerFollowerMotor.linkToReference(rollerLeaderMotor);
 
     this.rollerLeaderController = new DutyCycleOut(0).withEnableFOC(true);
     this.rollerFollowerController =
@@ -98,7 +100,6 @@ public class IntakeIOSim implements IntakeIO {
     this.pivotVoltageController = new VoltageOut(0).withEnableFOC(true);
 
     rollerFollowerMotor.setControl(rollerFollowerController);
-    pivotMotor.setControl(pivotPositionController);
 
     this.pivotPosition = pivotMotor.getPosition();
     this.pivotSupplyCurrent = pivotMotor.getSupplyCurrent();
@@ -124,6 +125,13 @@ public class IntakeIOSim implements IntakeIO {
 
   @Override
   public void updateInputs(IntakeIOInputs inputs) {
+    this.pivotSim.update(GlobalSettings.DT);
+    this.pivotMotor.refresh();
+
+    this.rollerSim.update(GlobalSettings.DT);
+    this.rollerLeaderMotor.refresh();
+    this.rollerFollowerMotor.refresh();
+
     BaseStatusSignal.refreshAll(
         pivotPosition,
         pivotSupplyCurrent,
@@ -164,13 +172,6 @@ public class IntakeIOSim implements IntakeIO {
     inputs.rollerFollowerMotorTemperature = rollerFollowerTemperature.getValue();
     inputs.rollerFollowerMotorAppliedVoltage = rollerFollowerAppliedVoltage.getValue();
     inputs.rollerFollowerMotorVelocity = rollerFollowerVelocity.getValue();
-
-    this.pivotSim.update(GlobalSettings.DT);
-    this.pivotMotor.refresh();
-
-    this.rollerSim.update(GlobalSettings.DT);
-    this.rollerLeaderMotor.refresh();
-    this.rollerFollowerMotor.refresh();
   }
 
   @Override

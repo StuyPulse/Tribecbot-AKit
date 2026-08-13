@@ -1,10 +1,9 @@
 package com.stuypulse.robot.subsystems.handoff;
 
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
-
 import static edu.wpi.first.units.Units.*;
 
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputMode;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputs;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;

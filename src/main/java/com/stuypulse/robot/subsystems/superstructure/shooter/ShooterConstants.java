@@ -1,11 +1,11 @@
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
 import static edu.wpi.first.units.Units.*;
-import edu.wpi.first.units.measure.*;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.stuypulse.robot.util.config.TalonFXConfig;
+import edu.wpi.first.units.measure.*;
 import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public interface ShooterConstants {
@@ -68,7 +68,8 @@ public interface ShooterConstants {
             .withNeutralMode(NeutralModeValue.Coast)
             .withSupplyCurrentLimitEnabled(false)
             .withStatorCurrentLimitEnabled(false)
-            .withPIDConstants(ShooterGains.kP.get(), ShooterGains.kI.get(), ShooterGains.kD.get(), 0)
+            .withPIDConstants(
+                ShooterGains.kP.get(), ShooterGains.kI.get(), ShooterGains.kD.get(), 0)
             .withFFConstants(ShooterGains.kS.get(), ShooterGains.kV.get(), ShooterGains.kA.get(), 0)
             .withSensorToMechanismRatio(ShooterSettings.GEAR_RATIO)
             .withStatorCurrentLimitAmps(140.0)

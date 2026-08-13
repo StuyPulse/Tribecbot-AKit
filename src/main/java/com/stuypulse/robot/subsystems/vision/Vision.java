@@ -62,7 +62,9 @@ public class Vision extends FullSubsystem {
               new Vision(
                   drive,
                   Arrays.stream(CamerasList.CAMERAS)
-                      .map((camera) -> new VisionIOPhotonVision(camera.name(), camera.robotToCamera()))
+                      .map(
+                          (camera) ->
+                              new VisionIOPhotonVision(camera.name(), camera.robotToCamera()))
                       .toArray(VisionIO[]::new));
         }
       }
@@ -74,7 +76,12 @@ public class Vision extends FullSubsystem {
             new Vision(
                 drive,
                 Arrays.stream(CamerasList.CAMERAS)
-                    .map((camera) -> new VisionIOPhotonVisionSim(camera.name(), camera.robotToCamera(), driveSimulation::getSimulatedDriveTrainPose))
+                    .map(
+                        (camera) ->
+                            new VisionIOPhotonVisionSim(
+                                camera.name(),
+                                camera.robotToCamera(),
+                                driveSimulation::getSimulatedDriveTrainPose))
                     .toArray(VisionIO[]::new));
       }
 
@@ -120,12 +127,15 @@ public class Vision extends FullSubsystem {
     this.disconnectedAlerts = new Alert[io.length];
     for (int i = 0; i < inputs.length; i++) {
       disconnectedAlerts[i] =
-          new Alert("Vision camera " + CamerasList.CAMERAS[i].name() + " is disconnected.", AlertType.kWarning);
+          new Alert(
+              "Vision camera " + CamerasList.CAMERAS[i].name() + " is disconnected.",
+              AlertType.kWarning);
     }
 
     maxTagCount = 0;
 
-    hasDataDebouncer = new Debouncer(VisionConstants.VisionSettings.BUZZ_DEBOUNCE, DebounceType.kBoth);
+    hasDataDebouncer =
+        new Debouncer(VisionConstants.VisionSettings.BUZZ_DEBOUNCE, DebounceType.kBoth);
   }
 
   /**
@@ -192,7 +202,8 @@ public class Vision extends FullSubsystem {
         boolean rejectPose =
             observation.tagCount() == 0 // Must have at least one tag
                 || (observation.tagCount() == 1
-                    && observation.ambiguity() > VisionSettings.MAX_AMBIGUITY) // Cannot be high ambiguity
+                    && observation.ambiguity()
+                        > VisionSettings.MAX_AMBIGUITY) // Cannot be high ambiguity
                 || Math.abs(observation.pose().getZ())
                     > VisionSettings.MAX_Z_ERROR // Must have realistic Z coordinate
 
@@ -271,8 +282,10 @@ public class Vision extends FullSubsystem {
   @Override
   public void periodicAfterScheduler() {
     for (int i = 0; i < io.length; i++) {
-      Logger.recordOutput("Vision/" + CamerasList.CAMERAS[i].name() + "/MegaTagMode", outputs[i].megaTagMode);
-      Logger.recordOutput("Vision/" + CamerasList.CAMERAS[i].name() + "/Pipeline", outputs[i].pipeline);
+      Logger.recordOutput(
+          "Vision/" + CamerasList.CAMERAS[i].name() + "/MegaTagMode", outputs[i].megaTagMode);
+      Logger.recordOutput(
+          "Vision/" + CamerasList.CAMERAS[i].name() + "/Pipeline", outputs[i].pipeline);
 
       io[i].applyOutputs(outputs[i]);
     }
@@ -322,7 +335,7 @@ public class Vision extends FullSubsystem {
   public Command setIMUMode(int imuMode) {
     return runOnce(
             () -> {
-              for (VisionIOOutputs output: outputs) {
+              for (VisionIOOutputs output : outputs) {
                 output.imuMode = imuMode;
               }
             })
@@ -331,7 +344,6 @@ public class Vision extends FullSubsystem {
   }
 
   public Command resetIMU() {
-    return setIMUMode(VisionSettings.RESET_IMU_INDEX)
-      .withName("Vision Reset IMU");
+    return setIMUMode(VisionSettings.RESET_IMU_INDEX).withName("Vision Reset IMU");
   }
 }
