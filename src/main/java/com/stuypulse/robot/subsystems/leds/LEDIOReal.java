@@ -14,7 +14,7 @@ import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.leds.LEDConstants.*;
 import edu.wpi.first.units.measure.*;
 
-public class LEDIOCANdle implements LEDIO {
+public class LEDIOReal implements LEDIO {
   private final CANdle leds;
 
   private StatusSignal<Voltage> supplyVoltage;
@@ -26,7 +26,7 @@ public class LEDIOCANdle implements LEDIO {
 
   private CANdleConfiguration candleConfigs;
 
-  public LEDIOCANdle() {
+  public LEDIOReal() {
     leds = new CANdle(LEDDeviceIds.CANDLE_PORT, GlobalSettings.CANIVORE);
     candleConfigs =
         new CANdleConfiguration()

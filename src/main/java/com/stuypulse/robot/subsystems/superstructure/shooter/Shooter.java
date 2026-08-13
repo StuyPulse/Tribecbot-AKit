@@ -20,7 +20,7 @@ public class Shooter extends FullSubsystem {
 
   static {
     switch (GlobalSettings.currentMode) {
-      case REAL -> instance = new Shooter(new ShooterIOTalonFX());
+      case REAL -> instance = new Shooter(new ShooterIOReal());
 
       case SIM -> instance = new Shooter(new ShooterIOSim());
 

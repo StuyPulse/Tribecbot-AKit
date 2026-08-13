@@ -19,7 +19,7 @@ public class Handoff extends FullSubsystem {
 
   static {
     switch (GlobalSettings.currentMode) {
-      case REAL -> instance = new Handoff(new HandoffIOTalonFX());
+      case REAL -> instance = new Handoff(new HandoffIOReal());
 
       case SIM -> instance = new Handoff(new HandoffIOSim());
 

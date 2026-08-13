@@ -9,7 +9,7 @@ import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.*;
 import edu.wpi.first.units.measure.*;
 
-public class HoodIOTalonFX implements HoodIO {
+public class HoodIOReal implements HoodIO {
   private final TalonFX hoodMotor;
 
   private final PositionVoltage positionController;
@@ -22,7 +22,7 @@ public class HoodIOTalonFX implements HoodIO {
   private final StatusSignal<Voltage> hoodMotorAppliedVoltage;
   private final StatusSignal<AngularVelocity> hoodMotorVelocity;
 
-  public HoodIOTalonFX() {
+  public HoodIOReal() {
     hoodMotor = new TalonFX(HoodDeviceIds.MOTOR, GlobalSettings.RIO);
 
     HoodMotorConfigs.HOOD_CONFIG.configure(hoodMotor);

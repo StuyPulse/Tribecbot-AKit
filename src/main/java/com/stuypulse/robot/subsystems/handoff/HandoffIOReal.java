@@ -10,7 +10,7 @@ import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
 import edu.wpi.first.units.measure.*;
 
-public class HandoffIOTalonFX implements HandoffIO {
+public class HandoffIOReal implements HandoffIO {
   private final TalonFX motorLead;
   private final TalonFX motorFollow;
 
@@ -29,7 +29,7 @@ public class HandoffIOTalonFX implements HandoffIO {
   private final StatusSignal<AngularVelocity> motorFollowVelocity;
   private final StatusSignal<Voltage> motorFollowAppliedVoltage;
 
-  public HandoffIOTalonFX() {
+  public HandoffIOReal() {
     motorLead = new TalonFX(HandoffDeviceIds.MOTOR_LEAD, GlobalSettings.RIO);
     motorFollow = new TalonFX(HandoffDeviceIds.MOTOR_FOLLOW, GlobalSettings.RIO);
 

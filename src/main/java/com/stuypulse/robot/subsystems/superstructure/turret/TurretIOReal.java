@@ -13,7 +13,7 @@ import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.*;
 import com.stuypulse.robot.util.config.CANCoderConfig;
 import edu.wpi.first.units.measure.*;
 
-public class TurretIOTalonFX implements TurretIO {
+public class TurretIOReal implements TurretIO {
   private final TalonFX turretMotor;
 
   private final CANcoder encoder17t;
@@ -34,7 +34,7 @@ public class TurretIOTalonFX implements TurretIO {
   private final StatusSignal<Angle> encoder17tPosition;
   private final StatusSignal<Angle> encoder18tPosition;
 
-  public TurretIOTalonFX() {
+  public TurretIOReal() {
     turretMotor = new TalonFX(TurretDeviceIds.MOTOR, GlobalSettings.RIO);
     TurretMotorConfigs.TURRET_CONFIG.configure(turretMotor);
 

@@ -81,11 +81,11 @@ public class Drive extends FullSubsystem implements Vision.VisionConsumer {
       case REAL -> {
         instance =
             new Drive(
-                new GyroIOPigeon2(),
-                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                new ModuleIOTalonFX(TunerConstants.BackRight),
+                new GyroIOReal(),
+                new ModuleIOReal(TunerConstants.FrontLeft),
+                new ModuleIOReal(TunerConstants.FrontRight),
+                new ModuleIOReal(TunerConstants.BackLeft),
+                new ModuleIOReal(TunerConstants.BackRight),
                 (robotPose) -> {});
       }
 
