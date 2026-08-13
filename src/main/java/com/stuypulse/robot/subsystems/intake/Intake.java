@@ -182,6 +182,10 @@ public class Intake extends FullSubsystem {
     outputs.rollerTargetDutyCycle = dutyCycle;
   }
 
+  public Command setPivotStateCommand(PivotState state) {
+    return runOnce(() -> setPivotState(state));
+  }
+
   public Command deploy() {
     return runOnce(
             () -> {
