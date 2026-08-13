@@ -22,6 +22,8 @@ import com.stuypulse.robot.subsystems.superstructure.shooter.Shooter;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.swerve.Drive;
 import com.stuypulse.robot.subsystems.vision.Vision;
+import com.stuypulse.robot.util.superstructure.InterpolationCalculator;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -256,5 +258,11 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return autonChooser.get();
+  }
+
+  public void clearMemoized() {
+    superstructure.clearMemoized();
+    swerve.clearMemoized();
+    InterpolationCalculator.clearMemoized();
   }
 }
