@@ -10,7 +10,7 @@ import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
 import edu.wpi.first.units.measure.*;
 
-public class ShooterIOTalonFX implements ShooterIO {
+public class ShooterIOReal implements ShooterIO {
   private final TalonFX shooterLeader;
   private final TalonFX shooterFollower;
 
@@ -31,7 +31,7 @@ public class ShooterIOTalonFX implements ShooterIO {
   private final StatusSignal<Voltage> shooterFollowerAppliedVoltage;
   private final StatusSignal<AngularVelocity> shooterFollowerVelocity;
 
-  public ShooterIOTalonFX() {
+  public ShooterIOReal() {
     shooterLeader = new TalonFX(ShooterDeviceIds.MOTOR_LEAD, GlobalSettings.RIO);
     shooterFollower = new TalonFX(ShooterDeviceIds.MOTOR_FOLLOW, GlobalSettings.RIO);
 

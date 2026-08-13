@@ -16,7 +16,7 @@ public class LED extends FullSubsystem {
 
   static {
     switch (GlobalSettings.currentMode) {
-      case REAL -> instance = new LED(new LEDIOCANdle());
+      case REAL -> instance = new LED(new LEDIOReal());
 
       case SIM -> instance = new LED(new LEDIOSim());
 

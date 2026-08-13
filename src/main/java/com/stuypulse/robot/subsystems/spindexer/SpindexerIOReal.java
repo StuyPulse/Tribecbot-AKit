@@ -10,7 +10,7 @@ import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.spindexer.SpindexerConstants.*;
 import edu.wpi.first.units.measure.*;
 
-public class SpindexerIOTalonFX implements SpindexerIO {
+public class SpindexerIOReal implements SpindexerIO {
   private final TalonFX spindexerLeaderMotor;
   private final TalonFX spindexerFollowerMotor;
 
@@ -31,7 +31,7 @@ public class SpindexerIOTalonFX implements SpindexerIO {
   private final StatusSignal<Voltage> spindexerFollowerAppliedVoltage;
   private final StatusSignal<AngularVelocity> spindexerFollowerVelocity;
 
-  public SpindexerIOTalonFX() {
+  public SpindexerIOReal() {
     spindexerLeaderMotor = new TalonFX(SpindexerDeviceIds.LEADER, GlobalSettings.CANIVORE);
     spindexerFollowerMotor = new TalonFX(SpindexerDeviceIds.FOLLOWER, GlobalSettings.CANIVORE);
 

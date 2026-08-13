@@ -13,7 +13,7 @@ import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
 import edu.wpi.first.units.measure.*;
 
-public class IntakeIOTalonFX implements IntakeIO {
+public class IntakeIOReal implements IntakeIO {
   private final TalonFX pivotMotor;
   private final TalonFX rollerLeaderMotor;
   private final TalonFX rollerFollowerMotor;
@@ -45,7 +45,7 @@ public class IntakeIOTalonFX implements IntakeIO {
   private final StatusSignal<Voltage> rollerFollowerAppliedVoltage;
   private final StatusSignal<AngularVelocity> rollerFollowerVelocity;
 
-  public IntakeIOTalonFX() {
+  public IntakeIOReal() {
     this.pivotMotor = new TalonFX(IntakeDeviceIds.PIVOT, GlobalSettings.RIO);
     this.rollerLeaderMotor = new TalonFX(IntakeDeviceIds.ROLLER_LEADER, GlobalSettings.RIO);
     this.rollerFollowerMotor = new TalonFX(IntakeDeviceIds.ROLLER_FOLLOWER, GlobalSettings.RIO);

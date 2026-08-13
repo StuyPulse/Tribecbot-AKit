@@ -23,7 +23,7 @@ public class Intake extends FullSubsystem {
 
   static {
     switch (GlobalSettings.currentMode) {
-      case REAL -> instance = new Intake(new IntakeIOTalonFX());
+      case REAL -> instance = new Intake(new IntakeIOReal());
 
       case SIM -> instance = new Intake(new IntakeIOSim());
 

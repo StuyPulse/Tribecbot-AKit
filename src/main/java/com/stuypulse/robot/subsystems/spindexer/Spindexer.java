@@ -15,7 +15,7 @@ public class Spindexer extends FullSubsystem {
 
   static {
     switch (GlobalSettings.currentMode) {
-      case REAL -> instance = new Spindexer(new SpindexerIOTalonFX());
+      case REAL -> instance = new Spindexer(new SpindexerIOReal());
 
       case SIM -> instance = new Spindexer(new SpindexerIOSim());
 
