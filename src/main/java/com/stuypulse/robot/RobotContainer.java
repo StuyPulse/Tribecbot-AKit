@@ -57,9 +57,7 @@ public class RobotContainer {
   /****************/
 
   private void configureDefaultCommands() {
-    swerve.setDefaultCommand(
-        DriveCommands.joystickDrive(
-            swerve, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+    swerve.setDefaultCommand(DriveCommands.joystickDrive(driver));
     LEDs.setDefaultCommand(new LEDDefaultCommand());
   }
 

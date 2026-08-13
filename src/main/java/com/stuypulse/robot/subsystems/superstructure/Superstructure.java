@@ -1,39 +1,28 @@
 package com.stuypulse.robot.subsystems.superstructure;
 
-import java.util.Optional;
-
-import com.stuypulse.robot.commands.DriveCommands;
 import com.stuypulse.robot.constants.DriverConstants.Driver;
 import com.stuypulse.robot.constants.DriverConstants.Driver.Turn;
-
 import com.stuypulse.robot.subsystems.handoff.Handoff;
 import com.stuypulse.robot.subsystems.handoff.Handoff.HandoffState;
-
 import com.stuypulse.robot.subsystems.spindexer.Spindexer;
 import com.stuypulse.robot.subsystems.spindexer.Spindexer.SpindexerState;
-
 import com.stuypulse.robot.subsystems.superstructure.hood.Hood;
 import com.stuypulse.robot.subsystems.superstructure.hood.Hood.HoodState;
-
 import com.stuypulse.robot.subsystems.superstructure.shooter.Shooter;
 import com.stuypulse.robot.subsystems.superstructure.shooter.Shooter.ShooterState;
-
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret.TurretState;
 import com.stuypulse.robot.subsystems.swerve.Drive;
-
 import com.stuypulse.robot.util.FullSubsystem;
-
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
-
 import edu.wpi.first.math.geometry.Translation2d;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import java.util.Optional;
 
 public class Superstructure extends FullSubsystem {
 
@@ -282,12 +271,11 @@ public class Superstructure extends FullSubsystem {
             Drive.getInstance())
         .until(
             () -> {
-              Translation2d driverInputAsVelocity =
-                  DriveCommands.getLinearVelocityFromJoysticks(
-                      -driver.getLeftY(), -driver.getLeftX());
+              double driverInputMagnitude =
+                  new Translation2d(-driver.getLeftY(), -driver.getLeftX()).getNorm();
 
               return cachedStateIdleDebouncer.calculate(
-                  driverInputAsVelocity.getNorm() <= Driver.Drive.DEADBAND
+                  driverInputMagnitude <= Driver.Drive.DEADBAND
                       && Math.abs(driver.getRightX()) <= Turn.DEADBAND);
             })
         .withName("Superstructure Cache State");
