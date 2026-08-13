@@ -5,6 +5,7 @@ import com.stuypulse.robot.Robot.OperationMode;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
 import com.stuypulse.robot.subsystems.intake.Intake;
 import com.stuypulse.robot.subsystems.intake.Intake.PivotState;
+import com.stuypulse.robot.subsystems.intake.Intake.RollerState;
 import com.stuypulse.robot.subsystems.leds.LED;
 import com.stuypulse.robot.subsystems.leds.LED.LEDState;
 import com.stuypulse.robot.subsystems.leds.LEDConstants.LEDSettings;
@@ -16,9 +17,10 @@ import com.stuypulse.robot.subsystems.superstructure.shooter.Shooter;
 import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.swerve.Drive;
 import com.stuypulse.robot.subsystems.vision.Vision;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-public class LEDDefaultCommand extends InstantCommand {
+import edu.wpi.first.wpilibj2.command.Command;
+
+public class LEDDefaultCommand extends Command {
   private final LED leds;
   private final Drive swerve;
   private final Handoff handoff;
@@ -51,7 +53,7 @@ public class LEDDefaultCommand extends InstantCommand {
   }
 
   @Override
-  public void initialize() {
+  public void execute() {
     if (Robot.getOperationMode() == OperationMode.DISABLED) {
       if (vision.getMaxTagCount() >= LEDSettings.DESIRED_TAGS_WHEN_DISABLED) {
         leds.changeState(LEDState.DISABLED_ALIGNED);
@@ -80,6 +82,8 @@ public class LEDDefaultCommand extends InstantCommand {
       leds.changeState(LEDState.INTAKE_STOW);
     } else if (intake.getPivotState() == PivotState.DEPLOY) {
       leds.changeState(LEDState.INTAKE_DEPLOYED);
+    } else if (intake.getRollerState() == RollerState.OUTTAKE) {
+        leds.changeState(LEDState.ROLLERS_REVERSE);
     }
   }
 }

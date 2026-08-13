@@ -23,7 +23,6 @@ import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.swerve.Drive;
 import com.stuypulse.robot.subsystems.vision.Vision;
 import com.stuypulse.robot.util.superstructure.InterpolationCalculator;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
@@ -102,7 +101,6 @@ public class RobotContainer {
     // Intake Deploy
     driver
         .rightTrigger()
-        // .onTrue(new LEDApplyPattern(Settings.LED.INTAKE_DEPLOYED))
         .onTrue(intake.deploy());
 
     // Reset Heading
@@ -110,26 +108,25 @@ public class RobotContainer {
         .povUp()
         .onTrue(DriveCommands.resetHeading())
         .onTrue(vision.resetIMU())
-        // .onTrue(new LEDApplyPattern(Settings.LED.RESET_HEADING))
+        .onTrue(LEDs.setState(LEDState.RESET_HEADING))
         .onFalse(vision.setIMUMode(0));
 
     // Stop Rollers
     driver
         .leftBumper()
-        // .onTrue(new LEDApplyPattern(Settings.LED.STOP_ROLLERS))
+        .onTrue(LEDs.setState(LEDState.STOP_ROLLERS).withTimeout(2.0)) // This is done in the binding instead of the default command 
+                                                                            //so that it doesn't persist/get overriden by the deploy state  
         .onTrue(intake.deploy().andThen(intake.stopRollersCommand()));
 
     // Outtake
     driver
         .rightBumper()
-        // .whileTrue(new LEDApplyPattern(Settings.LED.REVERSE))
         .whileTrue(intake.outtake())
         .onFalse(intake.runRollers());
 
     // SOTM (BR)
     driver
         .start()
-        // .onTrue(new LEDApplyPattern(Settings.LED.SOTM_ON))
         .onTrue(
             new WaitUntilCommand(() -> spindexer.getState() == SpindexerState.FORWARD)
                 .andThen(new WaitCommand(0.75).andThen(intake.deploy())))
@@ -158,7 +155,6 @@ public class RobotContainer {
     // FOTM (BL)
     driver
         .back()
-        // .onTrue(new LEDApplyPattern(Settings.LED.FOTM_ON))
         .onTrue(intake.runRollers())
         .onTrue(
             new ConditionalCommand(
@@ -173,8 +169,9 @@ public class RobotContainer {
                     DriveCommands.driveFOTM(driver)),
                 () -> superstructure.getState() == SuperstructureState.FOTM));
 
-    driver.povDown().whileTrue(DriveCommands.xMode());
-    // .onTrue(new LEDApplyPattern(Settings.LED.X_WHEELS));
+    driver.povDown()
+        .whileTrue(DriveCommands.xMode())
+        .whileTrue(LEDs.setState(LEDState.X_WHEELS));    
 
     // Reset (TL)
     driver
@@ -184,7 +181,7 @@ public class RobotContainer {
                 .stow()
                 .alongWith(handoff.stopHandoffCommand())
                 .alongWith(spindexer.stopSpindexer()))
-        .onTrue(LEDs.setState(LEDState.RESET).repeatedly().withTimeout(2.0));
+        .onTrue(LEDs.setState(LEDState.RESET_HEADING).withTimeout(2.0));
 
     // Manual Left Corner Scoring
     driver
@@ -208,7 +205,6 @@ public class RobotContainer {
     // Manual Right Corner Scoring
     driver
         .b()
-        // .whileTrue(new LEDApplyPattern(Settings.LED.RIGHT_CORNER))
         .whileTrue(DriveCommands.xMode())
         .onTrue(intake.runRollers())
         // .onTrue(new SwerveResetPoseRightCorner())
@@ -229,7 +225,6 @@ public class RobotContainer {
     // Manual KB Distance Scoring
     driver
         .a()
-        // .whileTrue(new LEDApplyPattern(Settings.LED.KB_DISTANCE))
         .whileTrue(DriveCommands.xMode())
         .onTrue(intake.runRollers())
         .onTrue(DriveCommands.resetPoseKBShot())

@@ -38,8 +38,8 @@ public interface LEDConstants {
 
       final RGBWColor KB_DISTANCE = rgbwConverter(Color.kPink);
 
-      // RGBWColor REVERSE = rgbwConverter(Color.kWhite);
       final RGBWColor STOP_ROLLERS = rgbwConverter(Color.kYellow);
+      final RGBWColor ROLLERS_REVERSE = rgbwConverter(Color.kYellowGreen);
 
       final RGBWColor RESET_HEADING = rgbwConverter(Color.kYellow);
       final RGBWColor X_WHEELS = rgbwConverter(Color.kRed);
