@@ -15,6 +15,7 @@ package com.stuypulse.robot.commands;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
+import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.DriverConstants.DriveConstraints;
 import com.stuypulse.robot.constants.DriverConstants.Driver;
 import com.stuypulse.robot.constants.DriverConstants.Driver.Turn;
@@ -32,6 +33,7 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -49,6 +51,36 @@ public class DriveCommands {
   private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
 
   private DriveCommands() {}
+
+  public static Command resetPoseKBShot() {
+    Drive drive = Drive.getInstance();
+
+    return Commands.runOnce(() -> drive.resetOdometry(Field.KB_POSE), drive)
+      .withName("Swerve Reset Pose KB Shot");
+  }
+  
+  public static Command buzzController(CommandXboxController driver) {
+    return Commands.run(() -> {
+      driver.getHID().setRumble(RumbleType.kBothRumble, Driver.BUZZ_INTENSITY);
+    }).withName("Buzz Controller");
+  }
+
+  public static Command resetHeading() {
+    Drive drive = Drive.getInstance();
+
+    return Commands.runOnce(() -> {
+      drive.resetHeading(Rotation2d.kZero);
+    }, 
+    drive).withName("Reset Heading");
+  }
+
+  public static Command xMode() {
+    Drive drive = Drive.getInstance();
+
+    return Commands.run(() -> {
+      drive.stopWithX();
+    }).withName("Swerve X Mode");
+  }
 
   /**
    * Field relative drive command using two joysticks (controlling linear and angular velocities).

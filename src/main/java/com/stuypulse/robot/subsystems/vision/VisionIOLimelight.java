@@ -37,6 +37,7 @@ public class VisionIOLimelight implements VisionIO {
   private final Supplier<Rotation2d> rotationSupplier;
   private final DoubleArrayPublisher orientationPublisher;
   private final IntegerPublisher pipelinePublisher;
+  private final IntegerPublisher imuModePublisher;
   private final DoubleArrayPublisher aprilTagWhitelistPublisher;
 
   private final DoubleSubscriber latencySubscriber;
@@ -59,6 +60,7 @@ public class VisionIOLimelight implements VisionIO {
     var table = NetworkTableInstance.getDefault().getTable(name);
     this.rotationSupplier = rotationSupplier;
     pipelinePublisher = table.getIntegerTopic("pipeline").publish();
+    imuModePublisher = table.getIntegerTopic("imumode_set").publish();
     orientationPublisher = table.getDoubleArrayTopic("robot_orientation_set").publish();
     aprilTagWhitelistPublisher = table.getDoubleArrayTopic("fiducial_id_filters_set").publish();
     latencySubscriber = table.getDoubleTopic("tl").subscribe(0.0);
@@ -167,6 +169,8 @@ public class VisionIOLimelight implements VisionIO {
     pipelinePublisher.accept(outputs.pipeline);
 
     aprilTagWhitelistPublisher.accept(outputs.aprilTagIDWhitelist);
+
+    imuModePublisher.accept(outputs.imuMode);
   }
 
   /** Parses the 3D pose from a Limelight botpose array. */

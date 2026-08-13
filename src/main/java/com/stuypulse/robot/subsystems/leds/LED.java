@@ -9,6 +9,9 @@ import com.stuypulse.robot.subsystems.leds.LEDIO.LEDPattern;
 import com.stuypulse.robot.subsystems.vision.Vision;
 import com.stuypulse.robot.subsystems.vision.VisionConstants.Camera;
 import com.stuypulse.robot.util.FullSubsystem;
+
+import edu.wpi.first.wpilibj2.command.Command;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -122,5 +125,9 @@ public class LED extends FullSubsystem {
         applyState();
 
         io.applyOutputs(outputs);
+    }
+
+    public Command setState(LEDState state) {
+        return run(() -> changeState(state));
     }
 }

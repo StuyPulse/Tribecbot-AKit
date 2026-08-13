@@ -21,6 +21,8 @@ import edu.wpi.first.math.util.Units;
 
 public interface VisionConstants {
     public interface VisionSettings {
+        final int RESET_IMU_INDEX = 1;
+
         // AprilTag layout
         final AprilTagFieldLayout APRIL_TAG_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
@@ -36,6 +38,8 @@ public interface VisionConstants {
         // Multipliers to apply for MegaTag 2 observations
         final double LINEAR_STD_DEV_MEGATAG_2_FACTOR = 0.5; // More stable than full 3D solve
         final double ANGULAR_STD_DEV_MEGATAG_2_FACTOR = Double.POSITIVE_INFINITY; // No rotation data available
+
+        final double BUZZ_DEBOUNCE = 0.25;
     }
 
     /**
