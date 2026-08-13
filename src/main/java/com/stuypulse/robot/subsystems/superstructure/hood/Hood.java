@@ -1,9 +1,7 @@
 package com.stuypulse.robot.subsystems.superstructure.hood;
 
 import static com.stuypulse.robot.subsystems.superstructure.hood.HoodConstants.*;
-
 import static edu.wpi.first.units.Units.*;
-import edu.wpi.first.units.measure.*;
 
 import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.superstructure.hood.HoodIO.HoodIOOutputMode;
@@ -13,6 +11,7 @@ import com.stuypulse.robot.util.superstructure.InterpolationCalculator;
 import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -56,7 +55,8 @@ public class Hood extends FullSubsystem {
 
     setState(HoodState.STOW);
 
-    hoodStallingDebouncer = new Debouncer(HoodSettings.STALL_DEBOUNCE.in(Seconds), DebounceType.kBoth);
+    hoodStallingDebouncer =
+        new Debouncer(HoodSettings.STALL_DEBOUNCE.in(Seconds), DebounceType.kBoth);
     hoodAtToleranceDebouncer = new Debouncer(0.05, DebounceType.kBoth);
 
     this.atTolerance = false;

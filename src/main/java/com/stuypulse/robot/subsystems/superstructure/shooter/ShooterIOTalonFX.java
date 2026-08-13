@@ -1,16 +1,14 @@
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
-
-import edu.wpi.first.units.measure.*;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
+import edu.wpi.first.units.measure.*;
 
 public class ShooterIOTalonFX implements ShooterIO {
   private final TalonFX shooterLeader;

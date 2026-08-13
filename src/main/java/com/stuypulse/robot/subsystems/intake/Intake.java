@@ -1,10 +1,9 @@
 package com.stuypulse.robot.subsystems.intake;
 
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
-
 import static edu.wpi.first.units.Units.*;
 
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
 import com.stuypulse.robot.subsystems.intake.IntakeIO.IntakeIOOutputs;
 import com.stuypulse.robot.util.DualDebouncer;
 import com.stuypulse.robot.util.FullSubsystem;

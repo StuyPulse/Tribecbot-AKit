@@ -1,16 +1,14 @@
 package com.stuypulse.robot.subsystems.handoff;
 
-import edu.wpi.first.units.measure.*;
-
-import com.stuypulse.robot.constants.GlobalSettings;
-import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
-
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
+import edu.wpi.first.units.measure.*;
 
 public class HandoffIOTalonFX implements HandoffIO {
   private final TalonFX motorLead;

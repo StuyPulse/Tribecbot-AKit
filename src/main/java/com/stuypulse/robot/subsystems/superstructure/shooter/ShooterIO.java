@@ -1,8 +1,8 @@
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
 import static edu.wpi.first.units.Units.*;
-import edu.wpi.first.units.measure.*;
 
+import edu.wpi.first.units.measure.*;
 import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 
