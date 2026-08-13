@@ -14,6 +14,7 @@ import com.stuypulse.robot.util.FullSubsystem;
 import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -30,6 +31,8 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  */
 public class Robot extends LoggedRobot {
   private final RobotContainer robotContainer;
+
+  private Command auton;
 
   private static Alliance alliance;
 
@@ -133,6 +136,12 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousInit() {
     mode = OperationMode.AUTON;
+
+    auton = robotContainer.getAutonomousCommand();
+
+    if (auton != null) {
+      CommandScheduler.getInstance().schedule(auton);
+    }
   }
 
   /** This function is called periodically during autonomous. */

@@ -26,6 +26,7 @@ import com.stuypulse.robot.util.DualDebouncer;
 import com.stuypulse.robot.util.swerve.DriveInputProcessor;
 import com.stuypulse.robot.util.swerve.DriveTurnInputProcessor;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -76,6 +77,15 @@ public class DriveCommands {
             },
             drive)
         .withName("Reset Heading");
+  }
+
+  public static Command resetPose(Pose2d pose) {
+    Drive drive = Drive.getInstance();
+
+    return Commands.runOnce(() -> {
+      drive.resetOdometry(pose);
+    }, 
+    drive);
   }
 
   public static Command xMode() {
