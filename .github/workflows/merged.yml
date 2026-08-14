@@ -32,7 +32,7 @@ jobs:
 
           const formatCommitsAsBulletPoints = (() => {
               if (commits.length === 0) {
-                  return ["*No commits found*"];
+                  return ["*Failed to fetch commits*"];
               }
 
               return commits.map((commit) => {
