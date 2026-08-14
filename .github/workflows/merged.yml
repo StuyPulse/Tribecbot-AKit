@@ -1,0 +1,72 @@
+name: merge pull requests
+on:
+  pull_request:
+    branches: [ main, staging ]
+    types:
+      - closed
+jobs:
+  if-merged:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build paylaod for slack
+      id: slack-payload-builder
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const pr = context.payload.pull_request;
+          const commits = await github.paginate(github.rest.pulls.listCommits, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number
+          })
+
+          // what is mrkdwn??? why is it not just markdown?
+          const escapeForSlack = (text) => {
+              return text
+                  .replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;");
+          }
+
+          const formatCommitsAsBulletPoints = (() => {
+              if (commits.length === 0) {
+                  return ["*No commits found*"];
+              }
+
+              return commits.map((commit) => {
+                  const commitMessageLines = commit.commit.message.split("\n");
+                  let commitMessage = commitMessageLines[0];
+                  if (commitMessageLines.length > 1) {
+                      commitMessage += "...";
+                  }
+                  return `- ${escapeForSlack(commitMessage)} (<${commit.html_url}|${commit.sha.substring(0, 7)}>)`;
+              })
+          })();
+
+          const text = [
+              `✅ Branch \`${pr.base.ref}\` <- \`${pr.head.ref}\` merged (<${pr.html_url}|#${pr.number}>).`,
+              `*${commits.length} commit${commits.length !== 1 ? "s" : ""} merged:*`,
+              ...formatCommitsAsBulletPoints
+          ].join("\n");
+
+          const payload = {
+              blocks: [
+                  {
+                      type: "section",
+                      text: {
+                          type: "mrkdwn",
+                          text
+                      }
+                  }
+              ]
+          }
+
+          core.setOutput("payload", JSON.stringify(payload));
+    - name: Notify slack
+      uses: slackapi/slack-github-action@v2.1.1
+      with:
+        webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+        webhook-type: incoming-webhook
+        payload: ${{ steps.slack-payload-builder.outputs.payload }}
