@@ -9,7 +9,7 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-    - name: Build paylaod for slack
+    - name: Build payload for slack
       id: slack-payload-builder
       uses: actions/github-script@v6
       with:
@@ -29,7 +29,7 @@ jobs:
                   .replace(/>/g, "&gt;");
           }
 
-          const formatCommitsAsBulletPoints = (() => {
+          const commitsAsBulletPoints = (() => {
               if (commits.length === 0) {
                   return ["*Failed to fetch commits*"];
               }
@@ -47,7 +47,7 @@ jobs:
           const text = [
               `✅ Branch \`${pr.base.ref}\` <- \`${pr.head.ref}\` merged (<${pr.html_url}|#${pr.number}>).`,
               `*${commits.length} commit${commits.length !== 1 ? "s" : ""} merged:*`,
-              ...formatCommitsAsBulletPoints
+              ...commitsAsBulletPoints
           ].join("\n");
 
           const payload = {
