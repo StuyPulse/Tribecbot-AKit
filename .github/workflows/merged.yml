@@ -22,7 +22,6 @@ jobs:
               pull_number: pr.number
           })
 
-          // what is mrkdwn??? why is it not just markdown?
           const escapeForSlack = (text) => {
               return text
                   .replace(/&/g, "&amp;")
