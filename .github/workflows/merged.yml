@@ -20,7 +20,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: pr.number
-          })
+          });
 
           const escapeForSlack = (text) => {
               return text
@@ -28,13 +28,18 @@ jobs:
                   .replace(/</g, "&lt;")
                   .replace(/>/g, "&gt;");
           }
+          
+          const addPlural = (originalString, count) => {
+              return count !== 1 ? `${originalString}s` : originalString;
+          }
 
+          const MAX_COMMITS = 40;
           const commitsAsBulletPoints = (() => {
               if (commits.length === 0) {
                   return ["*Failed to fetch commits*"];
               }
 
-              return commits.map((commit) => {
+              return commits.slice(0, MAX_COMMITS).map((commit) => {
                   const commitMessageLines = commit.commit.message.split("\n");
                   let commitMessage = commitMessageLines[0];
                   if (commitMessageLines.length > 1) {
@@ -44,9 +49,15 @@ jobs:
               })
           })();
 
+          if (commits.length > MAX_COMMITS) {
+                commitsAsBulletPoints.push("...");
+                const remainingCommits = Math.max(0, commits.length - MAX_COMMITS);
+                commitsAsBulletPoints.push(`*+${remainingCommits} more ${addPlural("commit", remainingCommits)}* — <${pr.html_url}/commits|view all>`);
+          }
+
           const text = [
               `✅ Branch \`${pr.base.ref}\` <- \`${pr.head.ref}\` merged (<${pr.html_url}|#${pr.number}>).`,
-              `*${commits.length} commit${commits.length !== 1 ? "s" : ""} merged:*`,
+              `*${commits.length} ${addPlural("commit", commits.length)} merged:*`,
               ...commitsAsBulletPoints
           ].join("\n");
 
