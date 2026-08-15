@@ -45,7 +45,7 @@ jobs:
                   if (commitMessageLines.length > 1) {
                       commitMessage += "...";
                   }
-                  return `- ${escapeForSlack(commitMessage)} (<${commit.html_url}|${commit.sha.substring(0, 7)}>)`;
+                  return `- <${commit.html_url}|${escapeForSlack(commitMessage)}>`;
               })
           })();
 
