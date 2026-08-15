@@ -59,7 +59,7 @@ jobs:
           }
 
           const text = [
-              `✅ Branch \`${pr.base.ref}\` <- \`${pr.head.ref}\` merged for `${fullRepoName}` (<${pr.html_url}|#${pr.number}>).`,
+              `✅ Branch \`${pr.base.ref}\` <- \`${pr.head.ref}\` merged for \`${fullRepoName}\` (<${pr.html_url}|#${pr.number}>).`,
               `*${commits.length} ${addPlural("commit", commits.length)} merged:*`,
               ...commitsAsBulletPoints
           ].join("\n");
