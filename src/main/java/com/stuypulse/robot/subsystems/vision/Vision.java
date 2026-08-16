@@ -170,6 +170,10 @@ public class Vision extends FullSubsystem {
       Logger.processInputs("Vision/" + CamerasList.CAMERAS[i].name(), inputs[i]);
     }
 
+    if (!GlobalSettings.EnabledSubsystems.vision.get()) {
+        return;
+    }
+
     // Initialize logging values
     List<Pose3d> allTagPoses = new LinkedList<>();
     List<Pose3d> allRobotPoses = new LinkedList<>();
