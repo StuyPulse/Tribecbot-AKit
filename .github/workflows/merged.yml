@@ -125,7 +125,7 @@ jobs:
                             .map(buildCommitBullet)
                     );
                 }
-            });
+            })();
 
             const elements = [
                 header,
