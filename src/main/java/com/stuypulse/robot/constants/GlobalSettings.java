@@ -26,6 +26,8 @@ public interface GlobalSettings {
         new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Handoff", true);
     final LoggedNetworkBoolean LEDs =
         new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/LEDs", true);
+    final LoggedNetworkBoolean vision =
+        new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Vision", true);
   }
 
   final Time DT = Milliseconds.of(20);
