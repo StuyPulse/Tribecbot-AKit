@@ -135,6 +135,10 @@ public class LED extends FullSubsystem {
     applyState();
 
     io.applyOutputs(outputs);
+
+    for (LEDPattern pattern : outputs.patterns) {
+        Logger.recordOutput("LEDs/Pattern/" + pattern.start() + "-" + pattern.end(), pattern.color().toString());
+    }
   }
 
   public Command setState(LEDState state) {

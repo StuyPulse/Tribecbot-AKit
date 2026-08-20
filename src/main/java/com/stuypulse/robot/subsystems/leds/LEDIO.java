@@ -7,7 +7,6 @@ import edu.wpi.first.units.measure.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.littletonrobotics.junction.AutoLog;
-import org.littletonrobotics.junction.AutoLogOutput;
 
 public interface LEDIO {
   @AutoLog
@@ -24,7 +23,6 @@ public interface LEDIO {
   public record LEDPattern(int start, int end, RGBWColor color) {}
 
   public static class LEDIOOutputs {
-    @AutoLogOutput(key = "LEDs/Pattern")
     public final List<LEDPattern> patterns = new ArrayList<>();
   }
 
