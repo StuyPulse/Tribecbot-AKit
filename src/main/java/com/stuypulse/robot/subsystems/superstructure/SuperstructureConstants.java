@@ -9,7 +9,7 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public interface SuperstructureConstants {
     public interface InterpolationConstants {
-        final double[][] DISTANCE_ANGLE_INTERPOLATION_VALUES = {
+        double[][] DISTANCE_ANGLE_INTERPOLATION_VALUES = {
             {0.96, Math.toRadians(15.0)},
             {1.22, Math.toRadians(20.0)},
             {2.15, Math.toRadians(27.0)},
@@ -19,7 +19,7 @@ public interface SuperstructureConstants {
             {6.44, Math.toRadians(44.0)}
         };
 
-        final double[][] DISTANCE_RPM_INTERPOLATION_VALUES = {
+        double[][] DISTANCE_RPM_INTERPOLATION_VALUES = {
             {0.96, 2800.0},
             {1.22, 2600.0},
             {2.15, 2805.0},
@@ -30,7 +30,7 @@ public interface SuperstructureConstants {
             {8.23, 4500.0} // THIS POINT IS AN EXTRAPOLATION
         };
 
-        final double[][] DISTANCE_TOF_INTERPOLATION_VALUES = {
+        double[][] DISTANCE_TOF_INTERPOLATION_VALUES = {
             {0.96, 1.055},
             {1.22, 0.965},
             {2.15, 1.01},
@@ -42,7 +42,7 @@ public interface SuperstructureConstants {
             {8.23, 1.71} // THIS POINT IS AN EXTRAPOLATION
         };
 
-        final double[][] FERRY_DISTANCE_RPM_INTERPOLATION = {
+        double[][] FERRY_DISTANCE_RPM_INTERPOLATION = {
             {1.0, 2000.0},
             {5.16, 3300.0},
             {6.94, 3600.0},
@@ -52,7 +52,7 @@ public interface SuperstructureConstants {
             {11.516, 4900.0}
         };
 
-        final double[][] FERRY_TOF_INTERPOLATION = {
+        double[][] FERRY_TOF_INTERPOLATION = {
             {5.16, 1.16},
             {6.94, 1.37},
             {7.87, 1.57},
@@ -68,10 +68,10 @@ public interface SuperstructureConstants {
     }
 
     public interface SOTM {
-        final int MAX_ITERATIONS = 10;
-        final double TIME_TOLERANCE = 1e-3;
+        int MAX_ITERATIONS = 10;
+        double TIME_TOLERANCE = 1e-3;
 
-        final LoggedNetworkNumber UPDATE_DELAY =
+        LoggedNetworkNumber UPDATE_DELAY =
                 new LoggedNetworkNumber("/Tuning/Superstructure/SOTM/update delay", 0.05);
     }
 }

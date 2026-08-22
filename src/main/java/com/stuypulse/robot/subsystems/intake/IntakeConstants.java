@@ -20,71 +20,66 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public interface IntakeConstants {
     public interface IntakeSettings {
-        final Angle PIVOT_STOW_ANGLE = Degrees.of(71.0);
-        final Angle PIVOT_DEPLOY_ANGLE = Degrees.of(-10.0);
-        final Angle PIVOT_DIGEST_ANGLE = Degrees.of(30);
+        Angle PIVOT_STOW_ANGLE = Degrees.of(71.0);
+        Angle PIVOT_DEPLOY_ANGLE = Degrees.of(-10.0);
+        Angle PIVOT_DIGEST_ANGLE = Degrees.of(30);
 
-        final Angle PIVOT_ANGLE_TOLERANCE = Degrees.of(5.0);
+        Angle PIVOT_ANGLE_TOLERANCE = Degrees.of(5.0);
 
-        final Angle PIVOT_MAX_ANGLE = Degrees.of(76.4);
-        final Angle PIVOT_MIN_ANGLE = Degrees.of(-10.0);
+        Angle PIVOT_MAX_ANGLE = Degrees.of(76.4);
+        Angle PIVOT_MIN_ANGLE = Degrees.of(-10.0);
 
-        final Angle THRESHOLD_TO_START_ROLLERS = Degrees.of(10.0);
+        Angle THRESHOLD_TO_START_ROLLERS = Degrees.of(10.0);
 
-        final Angle ANGLE_THRESHOLD_FOR_HOLDING_VOLTAGE = Degrees.of(15.0);
-        final Voltage HOMING_VOLTAGE = Volts.of(3.0);
+        Angle ANGLE_THRESHOLD_FOR_HOLDING_VOLTAGE = Degrees.of(15.0);
+        Voltage HOMING_VOLTAGE = Volts.of(3.0);
 
-        final Voltage PUSHDOWN_VOLTAGE = Volts.of(-3.0);
-        final Current PUSHDOWN_CURRENT_TELEOP =
+        Voltage PUSHDOWN_VOLTAGE = Volts.of(-3.0);
+        Current PUSHDOWN_CURRENT_TELEOP =
                 Amps.of(-75.0); // new LoggedNetworkNumber("Intake/Pushdown Current", -65.0);
         // //TODO: GET ACTUAL
         // TYTY
-        final Current PUSHDOWN_CURRENT_AUTON = Amps.of(-80.0);
-        final double PIVOT_GEAR_RATIO = 32.0 / 20.0 * 64.0 / 18.0 * 60.0 / 8.0;
+        Current PUSHDOWN_CURRENT_AUTON = Amps.of(-80.0);
+        double PIVOT_GEAR_RATIO = 32.0 / 20.0 * 64.0 / 18.0 * 60.0 / 8.0;
 
-        final Current PIVOT_STALL_CURRENT = Amps.of(0); // TODO: set value
-        final Time PIVOT_STALL_DEBOUNCE = Seconds.of(1.0); // TODO: VERIFY
+        Current PIVOT_STALL_CURRENT = Amps.of(0); // TODO: set value
+        Time PIVOT_STALL_DEBOUNCE = Seconds.of(1.0); // TODO: VERIFY
 
-        final Time ROLLER_STALL_DEBOUNCE = Seconds.of(0.05); // TODO: VERIFY
-        final Current ROLLER_STALL_CURRENT = Amps.of(50.0);
+        Time ROLLER_STALL_DEBOUNCE = Seconds.of(0.05); // TODO: VERIFY
+        Current ROLLER_STALL_CURRENT = Amps.of(50.0);
 
         // Sim
-        final Distance ARM_LENGTH = Meters.of(0.4);
-        final Mass ARM_MASS = Kilograms.of(2.0);
-        final MomentOfInertia PIVOT_MOI =
+        Distance ARM_LENGTH = Meters.of(0.4);
+        Mass ARM_MASS = Kilograms.of(2.0);
+        MomentOfInertia PIVOT_MOI =
                 KilogramSquareMeters.of(
                         SingleJointedArmSim.estimateMOI(
                                 ARM_MASS.in(Kilograms), ARM_LENGTH.in(Meters)));
     }
 
     public interface IntakeDeviceIds {
-        final int PIVOT = 20;
-        final int ROLLER_LEADER = 21;
-        final int ROLLER_FOLLOWER = 22;
+        int PIVOT = 20;
+        int ROLLER_LEADER = 21;
+        int ROLLER_FOLLOWER = 22;
     }
 
     public interface IntakeGains {
         public interface Pivot {
-            final LoggedNetworkNumber kP =
+            LoggedNetworkNumber kP =
                     new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kP", 125.0);
-            final LoggedNetworkNumber kI =
-                    new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kI", 0.0);
-            final LoggedNetworkNumber kD =
-                    new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kD", 10.0);
+            LoggedNetworkNumber kI = new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kI", 0.0);
+            LoggedNetworkNumber kD = new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kD", 10.0);
 
-            final LoggedNetworkNumber kS =
-                    new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kS", 0.0);
-            final LoggedNetworkNumber kV =
-                    new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kV", 0.12);
-            final LoggedNetworkNumber kA =
-                    new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kA", 0.0);
+            LoggedNetworkNumber kS = new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kS", 0.0);
+            LoggedNetworkNumber kV = new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kV", 0.12);
+            LoggedNetworkNumber kA = new LoggedNetworkNumber("/Tuning/Intake/Pivot/Gains/kA", 0.0);
 
-            final double kG = 0.5;
+            double kG = 0.5;
         }
     }
 
     public interface IntakeMotorConfigs {
-        final TalonFXConfig PIVOT_CONFIG =
+        TalonFXConfig PIVOT_CONFIG =
                 new TalonFXConfig()
                         .withInvertedValue(InvertedValue.Clockwise_Positive)
                         .withNeutralMode(NeutralModeValue.Brake)
@@ -106,7 +101,7 @@ public interface IntakeConstants {
                         .withGravityType(GravityTypeValue.Arm_Cosine)
                         .withSensorToMechanismRatio(IntakeSettings.PIVOT_GEAR_RATIO);
 
-        final TalonFXConfig ROLLER_CONFIG =
+        TalonFXConfig ROLLER_CONFIG =
                 new TalonFXConfig()
                         .withInvertedValue(InvertedValue.Clockwise_Positive)
                         .withNeutralMode(NeutralModeValue.Coast)

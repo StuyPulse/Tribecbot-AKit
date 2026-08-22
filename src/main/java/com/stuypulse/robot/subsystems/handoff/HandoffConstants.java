@@ -17,32 +17,32 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 
 public interface HandoffConstants {
     public interface HandoffSettings {
-        final double GEAR_RATIO = 3.0 / 1.0;
+        double GEAR_RATIO = 3.0 / 1.0;
 
-        final double HANDOFF_STOP = 0.0;
-        final double HANDOFF_MAX = 4800.0;
-        final double HANDOFF_REVERSE = -500.0;
-        final double RPM_TOLERANCE = 2200.0;
-        final double REVERSE_TIME = 2.0;
-        final double RPM_SOTM_TOLERANCE = 700.0;
-        final LoggedNetworkNumber HANDOFF_RPM =
+        double HANDOFF_STOP = 0.0;
+        double HANDOFF_MAX = 4800.0;
+        double HANDOFF_REVERSE = -500.0;
+        double RPM_TOLERANCE = 2200.0;
+        double REVERSE_TIME = 2.0;
+        double RPM_SOTM_TOLERANCE = 700.0;
+        LoggedNetworkNumber HANDOFF_RPM =
                 new LoggedNetworkNumber("/Tuning/Handoff/Target RPM", HANDOFF_MAX);
 
-        final double FORWARD_DUTY_CYCLE = 1.0;
-        final double REVERSE_DUTY_CYCLE = -1.0;
+        double FORWARD_DUTY_CYCLE = 1.0;
+        double REVERSE_DUTY_CYCLE = -1.0;
 
-        final LoggedNetworkNumber HANDOFF_STALL_CURRENT_AMPS =
+        LoggedNetworkNumber HANDOFF_STALL_CURRENT_AMPS =
                 new LoggedNetworkNumber("/Tuning/Handoff/Stall Current Limit for Reverse", 30.0);
-        final Time HANDOFF_STALL_DEBOUNCE = Seconds.of(0.5);
+        Time HANDOFF_STALL_DEBOUNCE = Seconds.of(0.5);
     }
 
     public interface HandoffDeviceIds {
-        final int MOTOR_LEAD = 43;
-        final int MOTOR_FOLLOW = 48;
+        int MOTOR_LEAD = 43;
+        int MOTOR_FOLLOW = 48;
     }
 
     public interface HandoffMotorConfigs {
-        final TalonFXConfig HANDOFF_CONFIG =
+        TalonFXConfig HANDOFF_CONFIG =
                 new TalonFXConfig()
                         .withInvertedValue(InvertedValue.Clockwise_Positive)
                         .withNeutralMode(NeutralModeValue.Brake)
