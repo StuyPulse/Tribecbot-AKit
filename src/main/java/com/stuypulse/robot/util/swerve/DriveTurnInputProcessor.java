@@ -1,4 +1,4 @@
-/************************* PROJECT RON *************************/
+/************************ PROJECT TRIBECBOT *************************/
 /* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
 /* Use of this source code is governed by an MIT-style license */
 /* that can be found in the repository LICENSE file.           */
@@ -8,6 +8,7 @@ package com.stuypulse.robot.util.swerve;
 import static edu.wpi.first.units.Units.*;
 
 import com.stuypulse.robot.constants.GlobalSettings;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -37,121 +38,123 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  * <p>To get the processed speed, call the {@link #get()} method.
  */
 public class DriveTurnInputProcessor {
-  private final CommandXboxController controller;
-  private final double deadband;
-  private final double power;
-  /** The max angular velocity in radians per second */
-  private final AngularVelocity maxAngularVelocity;
+    private final CommandXboxController controller;
+    private final double deadband;
+    private final double power;
 
-  private final LinearFilter lowPassFilter;
+    /** The max angular velocity in radians per second */
+    private final AngularVelocity maxAngularVelocity;
 
-  /** The processed angular velocity after the full processing and filtering. */
-  private double processedAngularVelocity;
+    private final LinearFilter lowPassFilter;
 
-  /**
-   *
-   *
-   * <h4>Constructor for the DriveInputProcessor</h4>
-   *
-   * <p>Creates a new DriveInputProcessor with the specified parameters processes the input
-   * periodically.
-   *
-   * @param controller The CommandXboxController to get driver input from
-   * @param deadband The deadband to apply to the input (0-1)
-   * @param power The power to apply to the input
-   * @param maxAngularVelocity The maximum angular velocity to scale the input to (radians/s)
-   * @param rc The time constant for the low pass filter (seconds)
-   */
-  public DriveTurnInputProcessor(
-      CommandXboxController controller,
-      double deadband,
-      double power,
-      AngularVelocity maxAngularVelocity,
-      double rc) {
-    this.controller = controller;
-    this.deadband = deadband;
-    this.power = power;
-    this.maxAngularVelocity = maxAngularVelocity;
+    /** The processed angular velocity after the full processing and filtering. */
+    private double processedAngularVelocity;
 
-    this.lowPassFilter = LinearFilter.singlePoleIIR(rc, GlobalSettings.DT.in(Seconds));
+    /**
+     *
+     *
+     * <h4>Constructor for the DriveInputProcessor</h4>
+     *
+     * <p>Creates a new DriveInputProcessor with the specified parameters processes the input
+     * periodically.
+     *
+     * @param controller The CommandXboxController to get driver input from
+     * @param deadband The deadband to apply to the input (0-1)
+     * @param power The power to apply to the input
+     * @param maxAngularVelocity The maximum angular velocity to scale the input to (radians/s)
+     * @param rc The time constant for the low pass filter (seconds)
+     */
+    public DriveTurnInputProcessor(
+            CommandXboxController controller,
+            double deadband,
+            double power,
+            AngularVelocity maxAngularVelocity,
+            double rc) {
+        this.controller = controller;
+        this.deadband = deadband;
+        this.power = power;
+        this.maxAngularVelocity = maxAngularVelocity;
 
-    this.processedAngularVelocity = 0;
-  }
+        this.lowPassFilter = LinearFilter.singlePoleIIR(rc, GlobalSettings.DT.in(Seconds));
 
-  /**
-   * Read the raw joystick axis value for the right X axis and store it in {@link
-   * #processedAngularVelocity}
-   *
-   * @return This instance of the class
-   */
-  private DriveTurnInputProcessor getRightX() {
-    this.processedAngularVelocity = controller.getRightX();
-    return this;
-  }
+        this.processedAngularVelocity = 0;
+    }
 
-  /**
-   * Applies a deadband to the current {@link #processedAngularVelocity} value.
-   *
-   * @return This instance of the class
-   */
-  private DriveTurnInputProcessor applyDeadband() {
-    this.processedAngularVelocity = MathUtil.applyDeadband(this.processedAngularVelocity, deadband);
-    return this;
-  }
+    /**
+     * Read the raw joystick axis value for the right X axis and store it in {@link
+     * #processedAngularVelocity}
+     *
+     * @return This instance of the class
+     */
+    private DriveTurnInputProcessor getRightX() {
+        this.processedAngularVelocity = controller.getRightX();
+        return this;
+    }
 
-  /**
-   * Apply a power curve to the current {@link #processedAngularVelocity} value.
-   *
-   * @return This instance of the class
-   */
-  private DriveTurnInputProcessor applyPowerCurve() {
-    this.processedAngularVelocity =
-        Math.pow(Math.abs(this.processedAngularVelocity), power)
-            * Math.signum(this.processedAngularVelocity);
-    return this;
-  }
+    /**
+     * Applies a deadband to the current {@link #processedAngularVelocity} value.
+     *
+     * @return This instance of the class
+     */
+    private DriveTurnInputProcessor applyDeadband() {
+        this.processedAngularVelocity =
+                MathUtil.applyDeadband(this.processedAngularVelocity, deadband);
+        return this;
+    }
 
-  /**
-   * Scale the {@link #processedAngularVelocity} value to the robot's maximum velocity.
-   *
-   * @return This instance of the class
-   */
-  private DriveTurnInputProcessor applyScalingToMaxAngularVelocity() {
-    this.processedAngularVelocity =
-        this.processedAngularVelocity * maxAngularVelocity.in(RadiansPerSecond);
-    return this;
-  }
+    /**
+     * Apply a power curve to the current {@link #processedAngularVelocity} value.
+     *
+     * @return This instance of the class
+     */
+    private DriveTurnInputProcessor applyPowerCurve() {
+        this.processedAngularVelocity =
+                Math.pow(Math.abs(this.processedAngularVelocity), power)
+                        * Math.signum(this.processedAngularVelocity);
+        return this;
+    }
 
-  /**
-   * Applies a low pass filter to {@link #processedAngularVelocity} using a {@link
-   * edu.wpi.first.math.filter.LinearFilter}. This smooths out the input and reduces noise.
-   *
-   * @return This instance of the class
-   */
-  private DriveTurnInputProcessor applyLowPassFilter() {
-    this.processedAngularVelocity = lowPassFilter.calculate(this.processedAngularVelocity);
-    return this;
-  }
+    /**
+     * Scale the {@link #processedAngularVelocity} value to the robot's maximum velocity.
+     *
+     * @return This instance of the class
+     */
+    private DriveTurnInputProcessor applyScalingToMaxAngularVelocity() {
+        this.processedAngularVelocity =
+                this.processedAngularVelocity * maxAngularVelocity.in(RadiansPerSecond);
+        return this;
+    }
 
-  /**
-   * Update method that processes all filters and updates the filtered angular velocity. This should
-   * be called within the {@link edu.wpi.first.wpilibj2.command.Command#execute()} method of the
-   * command using this DriveTurnInputProcessor.
-   */
-  public void update() {
-    getRightX()
-        .applyDeadband()
-        .applyPowerCurve()
-        .applyScalingToMaxAngularVelocity()
-        .applyLowPassFilter();
-  }
+    /**
+     * Applies a low pass filter to {@link #processedAngularVelocity} using a {@link
+     * edu.wpi.first.math.filter.LinearFilter}. This smooths out the input and reduces noise.
+     *
+     * @return This instance of the class
+     */
+    private DriveTurnInputProcessor applyLowPassFilter() {
+        this.processedAngularVelocity = lowPassFilter.calculate(this.processedAngularVelocity);
+        return this;
+    }
 
-  /**
-   * Get the processed angular velocity
-   *
-   * @return The processed angular velocity
-   */
-  public AngularVelocity get() {
-    return RadiansPerSecond.of(processedAngularVelocity);
-  }
+    /**
+     * Update method that processes all filters and updates the filtered angular velocity. This
+     * should be called within the {@link edu.wpi.first.wpilibj2.command.Command#execute()} method
+     * of the command using this DriveTurnInputProcessor.
+     */
+    public void update() {
+        getRightX()
+                .applyDeadband()
+                .applyPowerCurve()
+                .applyScalingToMaxAngularVelocity()
+                .applyLowPassFilter();
+    }
+
+    /**
+     * Get the processed angular velocity
+     *
+     * @return The processed angular velocity
+     */
+    public AngularVelocity get() {
+        return RadiansPerSecond.of(processedAngularVelocity);
+    }
 }

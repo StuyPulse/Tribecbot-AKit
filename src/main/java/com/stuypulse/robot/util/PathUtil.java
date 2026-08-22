@@ -5,11 +5,10 @@
 /***************************************************************/
 package com.stuypulse.robot.util;
 
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
-
-import com.pathplanner.lib.path.PathPlannerPath;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -21,19 +20,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class PathUtil {
     public static class AutonConfig {
-    
+
         private final String name;
         private final Function<PathPlannerPath[], Command> auton;
         private final String[] paths;
         private final Optional<Double> waitTimeOne;
         private final Optional<Double> waitTimeTwo;
 
-        public AutonConfig(String name, Function<PathPlannerPath[], Command> auton, double waitTimeOne, double waitTimeTwo, String... paths) {
+        public AutonConfig(
+                String name,
+                Function<PathPlannerPath[], Command> auton,
+                double waitTimeOne,
+                double waitTimeTwo,
+                String... paths) {
             this.name = name;
             this.auton = auton;
             this.paths = paths;
@@ -44,12 +47,19 @@ public class PathUtil {
                 try {
                     PathPlannerPath.fromPathFile(path);
                 } catch (Exception e) {
-                    DriverStation.reportError("Path \"" + path + "\" not found. Did you mean \"" + PathUtil.findClosestMatch(PathUtil.getPathFileNames(), path) + "\"?", false);
+                    DriverStation.reportError(
+                            "Path \""
+                                    + path
+                                    + "\" not found. Did you mean \""
+                                    + PathUtil.findClosestMatch(PathUtil.getPathFileNames(), path)
+                                    + "\"?",
+                            false);
                 }
             }
         }
 
-        public AutonConfig(String name, Function<PathPlannerPath[], Command> auton, String... paths) {
+        public AutonConfig(
+                String name, Function<PathPlannerPath[], Command> auton, String... paths) {
             this(name, auton, 0.0, 0.0, paths);
         }
 
@@ -60,18 +70,18 @@ public class PathUtil {
             // }
             return autonCommand;
         }
-        
+
         public AutonConfig register(LoggedDashboardChooser<Command> chooser) {
             chooser.addOption(name, buildCommand());
             return this;
         }
-                
+
         public AutonConfig registerDefault(SendableChooser<Command> chooser) {
             chooser.setDefaultOption(name, auton.apply(loadPaths(paths)));
             return this;
         }
     }
-    
+
     /*** PATH LOADING ***/
 
     public static PathPlannerPath[] loadPaths(String... names) {
@@ -84,7 +94,7 @@ public class PathUtil {
 
     public static PathPlannerPath load(String name) {
         try {
-        return PathPlannerPath.fromPathFile(name);
+            return PathPlannerPath.fromPathFile(name);
 
         } catch (Exception e) {
 
@@ -102,7 +112,7 @@ public class PathUtil {
         ArrayList<String> fileList = new ArrayList<String>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*.path")) {
             for (Path file : stream) {
-                fileList.add(file.getFileName().toString().replaceFirst(".path",""));
+                fileList.add(file.getFileName().toString().replaceFirst(".path", ""));
             }
         } catch (IOException error) {
             DriverStation.reportError(error.getMessage(), false);
@@ -115,7 +125,7 @@ public class PathUtil {
         double closestValue = 10.0;
         String matching = "";
 
-        for (String fileName : paths){
+        for (String fileName : paths) {
             HashMap<Character, Integer> fileChars = countChars(fileName.toCharArray());
             HashMap<Character, Integer> inputChars = countChars(input.toCharArray());
 
@@ -129,7 +139,7 @@ public class PathUtil {
 
         return matching;
     }
-    
+
     public static HashMap<Character, Integer> countChars(char[] chars) {
         HashMap<Character, Integer> letterMap = new HashMap<>();
         for (char i = 'a'; i <= 'z'; i++) letterMap.put(i, 0);
@@ -147,7 +157,8 @@ public class PathUtil {
         return letterMap;
     }
 
-    public static double compareNameProximity(HashMap<Character, Integer> list1, HashMap<Character, Integer> list2) {
+    public static double compareNameProximity(
+            HashMap<Character, Integer> list1, HashMap<Character, Integer> list2) {
         double proximity = 0.0;
         int list1sum = 0, list2sum = 0;
         for (char key : list1.keySet()) {

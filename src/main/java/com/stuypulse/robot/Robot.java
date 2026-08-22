@@ -1,10 +1,8 @@
-// Copyright (c) 2021-2026 Littleton Robotics
-// http://github.com/Mechanical-Advantage
-//
-// Use of this source code is governed by a BSD
-// license that can be found in the LICENSE file
-// at the root directory of this project.
-
+/************************ PROJECT TRIBECBOT *************************/
+/* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
+/* Use of this source code is governed by an MIT-style license */
+/* that can be found in the repository LICENSE file.           */
+/***************************************************************/
 package com.stuypulse.robot;
 
 import com.stuypulse.robot.constants.GlobalSettings;
@@ -12,6 +10,7 @@ import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import com.stuypulse.robot.util.FullSubsystem;
 import com.stuypulse.robot.util.superstructure.SOTMCalculator;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,149 +29,152 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
-  private final RobotContainer robotContainer;
+    private final RobotContainer robotContainer;
 
-  private Command auton;
+    private Command auton;
 
-  private static Alliance alliance;
+    private static Alliance alliance;
 
-  public enum OperationMode {
-    DISABLED,
-    AUTON,
-    TELEOP,
-    TEST
-  }
-
-  private static OperationMode mode = OperationMode.DISABLED;
-
-  public static boolean isBlue() {
-    return alliance == Alliance.Blue;
-  }
-
-  public static OperationMode getOperationMode() {
-    return mode;
-  }
-
-  public Robot() {
-    robotContainer = new RobotContainer();
-    // Record metadata
-    // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-    // Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-    // Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    // Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-    // Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    // Logger.recordMetadata(
-    //     "GitDirty",
-    //     switch (BuildConstants.DIRTY) {
-    //       case 0 -> "All changes committed";
-    //       case 1 -> "Uncommitted changes";
-    //       default -> "Unknown";
-    //     });
-
-    // Set up data receivers & replay source
-    switch (GlobalSettings.currentMode) {
-      case REAL:
-        // Running on a real robot, log to a USB stick ("/U/logs")
-        Logger.addDataReceiver(new WPILOGWriter());
-        Logger.addDataReceiver(new NT4Publisher());
-        break;
-
-      case SIM:
-        // Running a physics simulator, log to NT
-        Logger.addDataReceiver(new NT4Publisher());
-        break;
-
-      case REPLAY:
-        // Replaying a log, set up replay source
-        setUseTiming(false); // Run as fast as possible
-        String logPath = LogFileUtil.findReplayLog();
-        Logger.setReplaySource(new WPILOGReader(logPath));
-        Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
-        break;
+    public enum OperationMode {
+        DISABLED,
+        AUTON,
+        TELEOP,
+        TEST
     }
 
-    // Start AdvantageKit logger
-    Logger.start();
-  }
+    private static OperationMode mode = OperationMode.DISABLED;
 
-  @Override
-  public void robotInit() {
-    mode = OperationMode.DISABLED;
-  }
-
-  /** This function is called periodically during all modes. */
-  @Override
-  public void robotPeriodic() {
-    CommandScheduler.getInstance().run();
-
-    SuperstructureState superstructureState = Superstructure.getInstance().getState();
-
-    if (superstructureState == SuperstructureState.SOTM) {
-      SOTMCalculator.updateSOTMSolution();
-    } else if (superstructureState == SuperstructureState.FOTM) {
-      SOTMCalculator.updateFOTMSolution();
+    public static boolean isBlue() {
+        return alliance == Alliance.Blue;
     }
 
-    FullSubsystem.runAllPeriodicAfterScheduler();
-
-    robotContainer.clearMemoized();
-  }
-
-  /** This function is called once when the robot is disabled. */
-  @Override
-  public void disabledInit() {
-    mode = OperationMode.DISABLED;
-  }
-
-  /** This function is called periodically when disabled. */
-  @Override
-  public void disabledPeriodic() {
-    if (DriverStation.getAlliance().isPresent()) {
-      alliance = DriverStation.getAlliance().get();
+    public static OperationMode getOperationMode() {
+        return mode;
     }
-  }
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
-  @Override
-  public void autonomousInit() {
-    mode = OperationMode.AUTON;
+    public Robot() {
+        robotContainer = new RobotContainer();
+        // Record metadata
+        // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+        // Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+        // Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+        // Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
+        // Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+        // Logger.recordMetadata(
+        //     "GitDirty",
+        //     switch (BuildConstants.DIRTY) {
+        //       case 0 -> "All changes committed";
+        //       case 1 -> "Uncommitted changes";
+        //       default -> "Unknown";
+        //     });
 
-    auton = robotContainer.getAutonomousCommand();
+        // Set up data receivers & replay source
+        switch (GlobalSettings.CURRENT_MODE) {
+            case REAL:
+                // Running on a real robot, log to a USB stick ("/U/logs")
+                Logger.addDataReceiver(new WPILOGWriter());
+                Logger.addDataReceiver(new NT4Publisher());
+                break;
 
-    if (auton != null) {
-      CommandScheduler.getInstance().schedule(auton);
+            case SIM:
+                // Running a physics simulator, log to NT
+                Logger.addDataReceiver(new NT4Publisher());
+                break;
+
+            case REPLAY:
+                // Replaying a log, set up replay source
+                setUseTiming(false); // Run as fast as possible
+                String logPath = LogFileUtil.findReplayLog();
+                Logger.setReplaySource(new WPILOGReader(logPath));
+                Logger.addDataReceiver(
+                        new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
+                break;
+        }
+
+        // Start AdvantageKit logger
+        Logger.start();
     }
-  }
 
-  /** This function is called periodically during autonomous. */
-  @Override
-  public void autonomousPeriodic() {}
+    @Override
+    public void robotInit() {
+        mode = OperationMode.DISABLED;
+    }
 
-  /** This function is called once when teleop is enabled. */
-  @Override
-  public void teleopInit() {
-    mode = OperationMode.TELEOP;
-  }
+    /** This function is called periodically during all modes. */
+    @Override
+    public void robotPeriodic() {
+        CommandScheduler.getInstance().run();
 
-  /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {}
+        SuperstructureState superstructureState = Superstructure.getInstance().getState();
 
-  /** This function is called once when test mode is enabled. */
-  @Override
-  public void testInit() {
-    mode = OperationMode.TEST;
-  }
+        if (superstructureState == SuperstructureState.SOTM) {
+            SOTMCalculator.updateSOTMSolution();
+        } else if (superstructureState == SuperstructureState.FOTM) {
+            SOTMCalculator.updateFOTMSolution();
+        }
 
-  /** This function is called periodically during test mode. */
-  @Override
-  public void testPeriodic() {}
+        FullSubsystem.runAllPeriodicAfterScheduler();
 
-  /** This function is called once when the robot is first started up. */
-  @Override
-  public void simulationInit() {}
+        robotContainer.clearMemoized();
+    }
 
-  /** This function is called periodically whilst in simulation. */
-  @Override
-  public void simulationPeriodic() {}
+    /** This function is called once when the robot is disabled. */
+    @Override
+    public void disabledInit() {
+        mode = OperationMode.DISABLED;
+    }
+
+    /** This function is called periodically when disabled. */
+    @Override
+    public void disabledPeriodic() {
+        if (DriverStation.getAlliance().isPresent()) {
+            alliance = DriverStation.getAlliance().get();
+        }
+    }
+
+    /**
+     * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
+     */
+    @Override
+    public void autonomousInit() {
+        mode = OperationMode.AUTON;
+
+        auton = robotContainer.getAutonomousCommand();
+
+        if (auton != null) {
+            CommandScheduler.getInstance().schedule(auton);
+        }
+    }
+
+    /** This function is called periodically during autonomous. */
+    @Override
+    public void autonomousPeriodic() {}
+
+    /** This function is called once when teleop is enabled. */
+    @Override
+    public void teleopInit() {
+        mode = OperationMode.TELEOP;
+    }
+
+    /** This function is called periodically during operator control. */
+    @Override
+    public void teleopPeriodic() {}
+
+    /** This function is called once when test mode is enabled. */
+    @Override
+    public void testInit() {
+        mode = OperationMode.TEST;
+    }
+
+    /** This function is called periodically during test mode. */
+    @Override
+    public void testPeriodic() {}
+
+    /** This function is called once when the robot is first started up. */
+    @Override
+    public void simulationInit() {}
+
+    /** This function is called periodically whilst in simulation. */
+    @Override
+    public void simulationPeriodic() {}
 }

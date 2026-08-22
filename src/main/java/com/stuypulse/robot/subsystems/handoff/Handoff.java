@@ -1,3 +1,8 @@
+/************************ PROJECT TRIBECBOT *************************/
+/* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
+/* Use of this source code is governed by an MIT-style license */
+/* that can be found in the repository LICENSE file.           */
+/***************************************************************/
 package com.stuypulse.robot.subsystems.handoff;
 
 import static edu.wpi.first.units.Units.*;
@@ -8,6 +13,7 @@ import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputMode;
 import com.stuypulse.robot.subsystems.handoff.HandoffIO.HandoffIOOutputs;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.util.FullSubsystem;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -15,108 +21,110 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Handoff extends FullSubsystem {
-  private static final Handoff instance;
+    private static final Handoff instance;
 
-  static {
-    switch (GlobalSettings.currentMode) {
-      case REAL -> instance = new Handoff(new HandoffIOReal());
+    static {
+        switch (GlobalSettings.CURRENT_MODE) {
+            case REAL -> instance = new Handoff(new HandoffIOReal());
 
-      case SIM -> instance = new Handoff(new HandoffIOSim());
+            case SIM -> instance = new Handoff(new HandoffIOSim());
 
-      default -> instance = new Handoff(new HandoffIO() {});
-    }
-  }
-
-  public static Handoff getInstance() {
-    return instance;
-  }
-
-  private final HandoffIO io;
-  private final HandoffIOInputsAutoLogged inputs;
-  private final HandoffIOOutputs outputs;
-
-  @AutoLogOutput(key = "States/Handoff")
-  private HandoffState state;
-
-  private final Debouncer handoffStallingDebouncer;
-
-  private Handoff(HandoffIO io) {
-    this.io = io;
-    this.inputs = new HandoffIOInputsAutoLogged();
-    this.outputs = new HandoffIOOutputs();
-
-    setState(HandoffState.STOP);
-
-    this.handoffStallingDebouncer =
-        new Debouncer(HandoffSettings.HANDOFF_STALL_DEBOUNCE.in(Seconds), DebounceType.kBoth);
-  }
-
-  public enum HandoffState {
-    FORWARD,
-    REVERSE,
-    STOP
-  }
-
-  @Override
-  public void periodic() {
-    io.updateInputs(inputs);
-    Logger.processInputs("Handoff", inputs);
-
-    if (!GlobalSettings.EnabledSubsystems.HANDOFF.get()) {
-      stopHandoff();
-
-      return;
+            default -> instance = new Handoff(new HandoffIO() {});
+        }
     }
 
-    if (Superstructure.getInstance().shouldStop()) {
-      stopHandoff();
-
-      return;
+    public static Handoff getInstance() {
+        return instance;
     }
 
-    switch (state) {
-      case FORWARD -> runHandoffDutyCycle(HandoffSettings.FORWARD_DUTY_CYCLE);
-      case REVERSE -> runHandoffDutyCycle(HandoffSettings.REVERSE_DUTY_CYCLE);
-      case STOP -> stopHandoff();
+    private final HandoffIO io;
+    private final HandoffIOInputsAutoLogged inputs;
+    private final HandoffIOOutputs outputs;
+
+    @AutoLogOutput(key = "States/Handoff")
+    private HandoffState state;
+
+    private final Debouncer handoffStallingDebouncer;
+
+    private Handoff(HandoffIO io) {
+        this.io = io;
+        this.inputs = new HandoffIOInputsAutoLogged();
+        this.outputs = new HandoffIOOutputs();
+
+        setState(HandoffState.STOP);
+
+        this.handoffStallingDebouncer =
+                new Debouncer(
+                        HandoffSettings.HANDOFF_STALL_DEBOUNCE.in(Seconds), DebounceType.kBoth);
     }
-  }
 
-  @Override
-  public void periodicAfterScheduler() {
-    io.applyOutputs(outputs);
-  }
+    public enum HandoffState {
+        FORWARD,
+        REVERSE,
+        STOP
+    }
 
-  private void runHandoffDutyCycle(double dutyCycle) {
-    outputs.handoffMode = HandoffIOOutputMode.DUTY_CYCLE;
-    outputs.handoffDutyCycle = dutyCycle;
-  }
+    @Override
+    public void periodic() {
+        io.updateInputs(inputs);
+        Logger.processInputs("Handoff", inputs);
 
-  private void stopHandoff() {
-    outputs.handoffMode = HandoffIOOutputMode.STOP;
-  }
+        if (!GlobalSettings.EnabledSubsystems.HANDOFF.get()) {
+            stopHandoff();
 
-  public boolean isHandoffStalling() {
-    return handoffStallingDebouncer.calculate(
-        inputs.motorLeadSupplyCurrent.abs(Amps) > HandoffSettings.HANDOFF_STALL_CURRENT_AMPS.get());
-  }
+            return;
+        }
 
-  public void setState(HandoffState state) {
-    this.state = state;
-  }
+        if (Superstructure.getInstance().shouldStop()) {
+            stopHandoff();
 
-  public HandoffState getState() {
-    return state;
-  }
+            return;
+        }
 
-  public Command runHandoffForward() {
-    return runOnce(() -> setState(HandoffState.FORWARD)).withName("Handoff Forward");
-  }
+        switch (state) {
+            case FORWARD -> runHandoffDutyCycle(HandoffSettings.FORWARD_DUTY_CYCLE);
+            case REVERSE -> runHandoffDutyCycle(HandoffSettings.REVERSE_DUTY_CYCLE);
+            case STOP -> stopHandoff();
+        }
+    }
 
-  public Command runHandoffReverse() {
-    return runOnce(() -> setState(HandoffState.REVERSE)).withName("Handoff Reverse");
-  }
+    @Override
+    public void periodicAfterScheduler() {
+        io.applyOutputs(outputs);
+    }
 
-  public Command stopHandoffCommand() {
-    return runOnce(() -> setState(HandoffState.STOP)).withName("Handoff Stop");
-  }
+    private void runHandoffDutyCycle(double dutyCycle) {
+        outputs.handoffMode = HandoffIOOutputMode.DUTY_CYCLE;
+        outputs.handoffDutyCycle = dutyCycle;
+    }
+
+    private void stopHandoff() {
+        outputs.handoffMode = HandoffIOOutputMode.STOP;
+    }
+
+    public boolean isHandoffStalling() {
+        return handoffStallingDebouncer.calculate(
+                inputs.motorLeadSupplyCurrent.abs(Amps)
+                        > HandoffSettings.HANDOFF_STALL_CURRENT_AMPS.get());
+    }
+
+    public void setState(HandoffState state) {
+        this.state = state;
+    }
+
+    public HandoffState getState() {
+        return state;
+    }
+
+    public Command runHandoffForward() {
+        return runOnce(() -> setState(HandoffState.FORWARD)).withName("Handoff Forward");
+    }
+
+    public Command runHandoffReverse() {
+        return runOnce(() -> setState(HandoffState.REVERSE)).withName("Handoff Reverse");
+    }
+
+    public Command stopHandoffCommand() {
+        return runOnce(() -> setState(HandoffState.STOP)).withName("Handoff Stop");
+    }
 }
