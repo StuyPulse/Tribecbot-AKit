@@ -5,10 +5,14 @@
 /***************************************************************/
 package com.stuypulse.robot.subsystems.spindexer;
 
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import com.stuypulse.robot.util.config.TalonFXConfig;
+
+import edu.wpi.first.units.measure.MomentOfInertia;
 
 public interface SpindexerConstants {
     public interface SpindexerSettings {
@@ -25,6 +29,9 @@ public interface SpindexerConstants {
         double STALL_CURRENT_LIMIT = 40.0; // random number as of 3/9
 
         double GEAR_RATIO = 11.04 / 1.0;
+
+        // sim
+        MomentOfInertia SPINDEXER_MOI = KilogramSquareMeters.of(0.01);
     }
 
     public interface SpindexerDeviceIds {
