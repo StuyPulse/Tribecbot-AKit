@@ -1,55 +1,56 @@
-/************************ PROJECT PHIL ************************/
-/* Copyright (c) 2024 StuyPulse Robotics. All rights reserved.*/
-/* This work is licensed under the terms of the MIT license.  */
-/**************************************************************/
-
+/************************ PROJECT TRIBECBOT *************************/
+/* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
+/* Use of this source code is governed by an MIT-style license */
+/* that can be found in the repository LICENSE file.           */
+/***************************************************************/
 package com.stuypulse.robot;
 
 import com.stuypulse.robot.constants.Ports;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
 public class RobotContainer {
 
-  // Gamepads
-  public final CommandXboxController driver = new CommandXboxController(Ports.Gamepad.DRIVER);
+    // Gamepads
+    public final CommandXboxController driver = new CommandXboxController(Ports.Gamepad.DRIVER);
 
-  // Subsystem
+    // Subsystem
 
-  // Autons
-  private static LoggedDashboardChooser<Command> autonChooser =
-      new LoggedDashboardChooser<>("Autonomous");
+    // Autons
+    private static LoggedDashboardChooser<Command> autonChooser =
+            new LoggedDashboardChooser<>("Autonomous");
 
-  // Robot container
+    // Robot container
 
-  public RobotContainer() {
-    configureDefaultCommands();
-    configureButtonBindings();
-    configureAutons();
-  }
+    public RobotContainer() {
+        configureDefaultCommands();
+        configureButtonBindings();
+        configureAutons();
+    }
 
-  /****************/
-  /*** DEFAULTS ***/
-  /****************/
+    /****************/
+    /*** DEFAULTS ***/
+    /****************/
 
-  private void configureDefaultCommands() {}
+    private void configureDefaultCommands() {}
 
-  /***************/
-  /*** BUTTONS ***/
-  /***************/
+    /***************/
+    /*** BUTTONS ***/
+    /***************/
 
-  private void configureButtonBindings() {}
+    private void configureButtonBindings() {}
 
-  /**************/
-  /*** AUTONS ***/
-  /**************/
+    /**************/
+    /*** AUTONS ***/
+    /**************/
 
-  public void configureAutons() {
-    // autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
-  }
+    public void configureAutons() {
+        // autonChooser.setDefaultOption("Do Nothing", new DoNothingAuton());
+    }
 
-  public Command getAutonomousCommand() {
-    return autonChooser.get();
-  }
+    public Command getAutonomousCommand() {
+        return autonChooser.get();
+    }
 }
