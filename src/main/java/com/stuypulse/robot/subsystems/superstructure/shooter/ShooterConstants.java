@@ -41,23 +41,18 @@ public interface ShooterConstants {
 
     public interface ShooterGains {
         // VTC PID
-        LoggedNetworkNumber kP =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kP", 10.5);
+        LoggedNetworkNumber kP = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kP", 10.5);
 
-        LoggedNetworkNumber kI =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kI", 0.0);
+        LoggedNetworkNumber kI = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kI", 0.0);
 
-        LoggedNetworkNumber kD =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kD", 0.0);
+        LoggedNetworkNumber kD = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kD", 0.0);
 
-        LoggedNetworkNumber kS =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kS", 2.47);
+        LoggedNetworkNumber kS = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kS", 2.47);
 
         LoggedNetworkNumber kV =
                 new LoggedNetworkNumber("Superstructure/Shooter/Gains/kV", 0.01775);
 
-        LoggedNetworkNumber kA =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kA", 0.0);
+        LoggedNetworkNumber kA = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kA", 0.0);
     }
 
     public interface ShooterRPMValues {

@@ -8,12 +8,11 @@ package com.stuypulse.robot.commands;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 import com.stuypulse.robot.constants.DriverConstants.*;
-import com.stuypulse.robot.subsystems.swerve.SwerveConstants.*;
-
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
 import com.stuypulse.robot.subsystems.swerve.Drive;
+import com.stuypulse.robot.subsystems.swerve.SwerveConstants.*;
 import com.stuypulse.robot.util.DualDebouncer;
 import com.stuypulse.robot.util.swerve.DriveInputProcessor;
 import com.stuypulse.robot.util.swerve.DriveTurnInputProcessor;
@@ -52,7 +51,8 @@ public class DriveCommands {
         return Commands.run(
                         () -> {
                             driver.getHID()
-                                    .setRumble(RumbleType.kBothRumble, DriverSettings.BUZZ_INTENSITY);
+                                    .setRumble(
+                                            RumbleType.kBothRumble, DriverSettings.BUZZ_INTENSITY);
                         })
                 .withName("Buzz Controller");
     }
@@ -301,7 +301,8 @@ public class DriveCommands {
                 // Accelerate and gather data
                 Commands.run(
                                 () -> {
-                                    double voltage = timer.get() * SwerveCharacterization.FF_RAMP_RATE;
+                                    double voltage =
+                                            timer.get() * SwerveCharacterization.FF_RAMP_RATE;
                                     drive.runCharacterization(voltage);
                                     velocitySamples.add(drive.getFFCharacterizationVelocity());
                                     voltageSamples.add(voltage);
@@ -338,7 +339,8 @@ public class DriveCommands {
 
     /** Measures the robot's wheel radius by spinning in a circle. */
     public static Command wheelRadiusCharacterization(Drive drive) {
-        SlewRateLimiter limiter = new SlewRateLimiter(SwerveCharacterization.WHEEL_RADIUS_RAMP_RATE);
+        SlewRateLimiter limiter =
+                new SlewRateLimiter(SwerveCharacterization.WHEEL_RADIUS_RAMP_RATE);
         WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
         return Commands.parallel(
@@ -353,7 +355,10 @@ public class DriveCommands {
                         // Turn in place, accelerating up to full speed
                         Commands.run(
                                 () -> {
-                                    double speed = limiter.calculate(SwerveCharacterization.WHEEL_RADIUS_MAX_VELOCITY);
+                                    double speed =
+                                            limiter.calculate(
+                                                    SwerveCharacterization
+                                                            .WHEEL_RADIUS_MAX_VELOCITY);
                                     drive.runVelocity(new ChassisSpeeds(0.0, 0.0, speed));
                                 },
                                 drive)),

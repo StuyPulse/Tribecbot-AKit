@@ -8,10 +8,10 @@ package com.stuypulse.robot;
 import com.stuypulse.robot.commands.autons.DoNothingAuton;
 import com.stuypulse.robot.commands.autons.regular.TwoCorner;
 import com.stuypulse.robot.commands.autons.regular.TwoCornerShallow;
-import com.stuypulse.robot.commands.DriveCommands;
-import com.stuypulse.robot.constants.DriverConstants.*;
 
+import com.stuypulse.robot.commands.DriveCommands;
 import com.stuypulse.robot.commands.leds.LEDDefaultCommand;
+import com.stuypulse.robot.constants.DriverConstants.*;
 import com.stuypulse.robot.subsystems.handoff.Handoff;
 import com.stuypulse.robot.subsystems.handoff.Handoff.HandoffState;
 import com.stuypulse.robot.subsystems.intake.Intake;

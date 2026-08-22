@@ -6,6 +6,7 @@
 package com.stuypulse.robot.constants;
 
 import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.units.measure.*;
 
 public interface DriverConstants {
@@ -14,7 +15,7 @@ public interface DriverConstants {
         Time BUZZ_TIME = Seconds.of(1.0);
         double BUZZ_INTENSITY = 1.0;
     }
-    
+
     public interface DriverDriveSettings {
         double DEADBAND = 0.05;
         double RC = 0.05;

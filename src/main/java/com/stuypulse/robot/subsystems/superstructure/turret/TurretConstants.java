@@ -87,16 +87,12 @@ public interface TurretConstants {
         public interface slot1 {
             LoggedNetworkNumber kP =
                     new LoggedNetworkNumber("Superstructure/Turret/Gains/kP", 150.0);
-            LoggedNetworkNumber kI =
-                    new LoggedNetworkNumber("Superstructure/Turret/Gains/kI", 0.0);
-            LoggedNetworkNumber kD =
-                    new LoggedNetworkNumber("Superstructure/Turret/Gains/kD", 3.0);
+            LoggedNetworkNumber kI = new LoggedNetworkNumber("Superstructure/Turret/Gains/kI", 0.0);
+            LoggedNetworkNumber kD = new LoggedNetworkNumber("Superstructure/Turret/Gains/kD", 3.0);
             LoggedNetworkNumber kS =
                     new LoggedNetworkNumber("Superstructure/Turret/Gains/kS", 0.4775);
-            LoggedNetworkNumber kV =
-                    new LoggedNetworkNumber("Superstructure/Turret/Gains/kV", 0.0);
-            LoggedNetworkNumber kA =
-                    new LoggedNetworkNumber("Superstructure/Turret/Gains/kA", 0.0);
+            LoggedNetworkNumber kV = new LoggedNetworkNumber("Superstructure/Turret/Gains/kV", 0.0);
+            LoggedNetworkNumber kA = new LoggedNetworkNumber("Superstructure/Turret/Gains/kA", 0.0);
         }
 
         LoggedNetworkNumber kOmega =

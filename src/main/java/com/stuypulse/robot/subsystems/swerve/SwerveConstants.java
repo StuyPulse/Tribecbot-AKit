@@ -1,6 +1,12 @@
+/************************ PROJECT TRIBECBOT *************************/
+/* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
+/* Use of this source code is governed by an MIT-style license */
+/* that can be found in the repository LICENSE file.           */
+/***************************************************************/
 package com.stuypulse.robot.subsystems.swerve;
 
 import static edu.wpi.first.units.Units.*;
+
 import edu.wpi.first.units.measure.*;
 
 public interface SwerveConstants {
@@ -16,7 +22,8 @@ public interface SwerveConstants {
         LinearAcceleration MAX_ACCEL = MetersPerSecondPerSecond.of(15.0);
         LinearAcceleration MAX_ACCEL_SOTM = MetersPerSecondPerSecond.of(4.0);
         LinearAcceleration MAX_ACCEL_FOTM = MetersPerSecondPerSecond.of(15.0);
-        AngularAcceleration MAX_ANGULAR_ACCEL_RAD_PER_S_SQUARED = DegreesPerSecondPerSecond.of(900.0);
+        AngularAcceleration MAX_ANGULAR_ACCEL_RAD_PER_S_SQUARED =
+                DegreesPerSecondPerSecond.of(900.0);
     }
 
     public interface SwerveCharacterization {
