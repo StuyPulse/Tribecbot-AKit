@@ -7,9 +7,9 @@ package com.stuypulse.robot.commands;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import com.stuypulse.robot.constants.DriverConstants.DriveConstraints;
-import com.stuypulse.robot.constants.DriverConstants.Driver;
-import com.stuypulse.robot.constants.DriverConstants.Driver.Turn;
+import com.stuypulse.robot.constants.DriverConstants.*;
+import com.stuypulse.robot.subsystems.swerve.SwerveConstants.*;
+
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure;
 import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
@@ -39,11 +39,6 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 
 public class DriveCommands {
-    private static final double FF_START_DELAY = 2.0; // Secs
-    private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
-    private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
-    private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-
     private DriveCommands() {}
 
     public static Command resetPoseKBShot() {
@@ -57,7 +52,7 @@ public class DriveCommands {
         return Commands.run(
                         () -> {
                             driver.getHID()
-                                    .setRumble(RumbleType.kBothRumble, Driver.BUZZ_INTENSITY);
+                                    .setRumble(RumbleType.kBothRumble, DriverSettings.BUZZ_INTENSITY);
                         })
                 .withName("Buzz Controller");
     }
@@ -102,18 +97,18 @@ public class DriveCommands {
         DriveInputProcessor driveInputProcessor =
                 new DriveInputProcessor(
                         driver,
-                        Driver.Drive.DEADBAND,
-                        Driver.Drive.POWER,
-                        DriveConstraints.MAX_VELOCITY,
-                        DriveConstraints.MAX_ACCEL,
-                        Driver.Drive.RC);
+                        DriverDriveSettings.DEADBAND,
+                        DriverDriveSettings.POWER,
+                        SwerveConstraints.MAX_VELOCITY,
+                        SwerveConstraints.MAX_ACCEL,
+                        DriverDriveSettings.RC);
         DriveTurnInputProcessor driveTurnInputProcessor =
                 new DriveTurnInputProcessor(
                         driver,
-                        Driver.Turn.DEADBAND,
-                        Driver.Turn.POWER,
-                        DriveConstraints.MAX_ANGULAR_VEL,
-                        Turn.RC);
+                        DriverTurnSettings.DEADBAND,
+                        DriverTurnSettings.POWER,
+                        SwerveConstraints.MAX_ANGULAR_VEL,
+                        DriverTurnSettings.RC);
 
         return Commands.run(
                         () -> {
@@ -152,18 +147,18 @@ public class DriveCommands {
         DriveInputProcessor driveInputProcessor =
                 new DriveInputProcessor(
                         driver,
-                        Driver.Drive.DEADBAND,
-                        Driver.Drive.POWER,
-                        DriveConstraints.MAX_VELOCITY_SOTM,
-                        DriveConstraints.MAX_ACCEL_SOTM,
-                        Driver.Drive.RC);
+                        DriverDriveSettings.DEADBAND,
+                        DriverDriveSettings.POWER,
+                        SwerveConstraints.MAX_VELOCITY_SOTM,
+                        SwerveConstraints.MAX_ACCEL_SOTM,
+                        DriverDriveSettings.RC);
         DriveTurnInputProcessor driveTurnInputProcessor =
                 new DriveTurnInputProcessor(
                         driver,
-                        Driver.Turn.DEADBAND,
-                        Driver.Turn.POWER,
-                        DriveConstraints.MAX_ANGULAR_VEL_SOTM,
-                        Turn.RC);
+                        DriverTurnSettings.DEADBAND,
+                        DriverTurnSettings.POWER,
+                        SwerveConstraints.MAX_ANGULAR_VEL_SOTM,
+                        DriverTurnSettings.RC);
 
         DualDebouncer driveInputDebouncer = new DualDebouncer(0.5, 0.1);
         BooleanSupplier isIdle =
@@ -171,8 +166,8 @@ public class DriveCommands {
                     double driverMagnitude =
                             new Translation2d(-driver.getLeftY(), -driver.getLeftX()).getNorm();
 
-                    return driverMagnitude <= Driver.Drive.DEADBAND
-                            && Math.abs(driver.getRightX()) <= Turn.DEADBAND;
+                    return driverMagnitude <= DriverDriveSettings.DEADBAND
+                            && Math.abs(driver.getRightX()) <= DriverTurnSettings.DEADBAND;
                 };
 
         return Commands.run(
@@ -218,18 +213,18 @@ public class DriveCommands {
         DriveInputProcessor driveInputProcessor =
                 new DriveInputProcessor(
                         driver,
-                        Driver.Drive.DEADBAND,
-                        Driver.Drive.POWER,
-                        DriveConstraints.MAX_VELOCITY_FOTM,
-                        DriveConstraints.MAX_ACCEL_FOTM,
-                        Driver.Drive.RC);
+                        DriverDriveSettings.DEADBAND,
+                        DriverDriveSettings.POWER,
+                        SwerveConstraints.MAX_VELOCITY_FOTM,
+                        SwerveConstraints.MAX_ACCEL_FOTM,
+                        DriverDriveSettings.RC);
         DriveTurnInputProcessor driveTurnInputProcessor =
                 new DriveTurnInputProcessor(
                         driver,
-                        Driver.Turn.DEADBAND,
-                        Driver.Turn.POWER,
-                        DriveConstraints.MAX_ANGULAR_VEL_FOTM,
-                        Turn.RC);
+                        DriverTurnSettings.DEADBAND,
+                        DriverTurnSettings.POWER,
+                        SwerveConstraints.MAX_ANGULAR_VEL_FOTM,
+                        DriverTurnSettings.RC);
 
         DualDebouncer driveInputDebouncer = new DualDebouncer(0.5, 0.1);
         BooleanSupplier isIdle =
@@ -237,8 +232,8 @@ public class DriveCommands {
                     double driverMagnitude =
                             new Translation2d(-driver.getLeftY(), -driver.getLeftX()).getNorm();
 
-                    return driverMagnitude <= Driver.Drive.DEADBAND
-                            && Math.abs(driver.getRightX()) <= Turn.DEADBAND;
+                    return driverMagnitude <= DriverDriveSettings.DEADBAND
+                            && Math.abs(driver.getRightX()) <= DriverTurnSettings.DEADBAND;
                 };
 
         return Commands.run(
@@ -298,7 +293,7 @@ public class DriveCommands {
 
                 // Allow modules to orient
                 Commands.run(() -> drive.runCharacterization(0.0), drive)
-                        .withTimeout(FF_START_DELAY),
+                        .withTimeout(SwerveCharacterization.FF_START_DELAY),
 
                 // Start timer
                 Commands.runOnce(timer::restart),
@@ -306,7 +301,7 @@ public class DriveCommands {
                 // Accelerate and gather data
                 Commands.run(
                                 () -> {
-                                    double voltage = timer.get() * FF_RAMP_RATE;
+                                    double voltage = timer.get() * SwerveCharacterization.FF_RAMP_RATE;
                                     drive.runCharacterization(voltage);
                                     velocitySamples.add(drive.getFFCharacterizationVelocity());
                                     voltageSamples.add(voltage);
@@ -343,7 +338,7 @@ public class DriveCommands {
 
     /** Measures the robot's wheel radius by spinning in a circle. */
     public static Command wheelRadiusCharacterization(Drive drive) {
-        SlewRateLimiter limiter = new SlewRateLimiter(WHEEL_RADIUS_RAMP_RATE);
+        SlewRateLimiter limiter = new SlewRateLimiter(SwerveCharacterization.WHEEL_RADIUS_RAMP_RATE);
         WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
         return Commands.parallel(
@@ -358,7 +353,7 @@ public class DriveCommands {
                         // Turn in place, accelerating up to full speed
                         Commands.run(
                                 () -> {
-                                    double speed = limiter.calculate(WHEEL_RADIUS_MAX_VELOCITY);
+                                    double speed = limiter.calculate(SwerveCharacterization.WHEEL_RADIUS_MAX_VELOCITY);
                                     drive.runVelocity(new ChassisSpeeds(0.0, 0.0, speed));
                                 },
                                 drive)),

@@ -6,12 +6,14 @@
 package com.stuypulse.robot.subsystems.superstructure.turret;
 
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
 
-import com.stuypulse.robot.RobotContainer;
-import com.stuypulse.robot.constants.DriverConstants;
-import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.*;
+import com.stuypulse.robot.constants.DriverConstants.*;
+
+import com.stuypulse.robot.RobotContainer;
+import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputs;
 import com.stuypulse.robot.subsystems.swerve.Drive;
@@ -25,7 +27,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -258,12 +259,12 @@ public class Turret extends FullSubsystem {
                 Math.abs(delta) >= TurretSettings.SETPOINT_FILTER_THRESHOLD_DEG;
 
         boolean driverIsMoving =
-                Math.abs(RobotContainer.driver.getLeftX()) > DriverConstants.Driver.Drive.DEADBAND
+                Math.abs(RobotContainer.driver.getLeftX()) > DriverDriveSettings.DEADBAND
                         || Math.abs(RobotContainer.driver.getLeftY())
-                                > DriverConstants.Driver.Drive.DEADBAND
+                                > DriverDriveSettings.DEADBAND
                         || Math.abs(RobotContainer.driver.getRightX())
-                                > DriverConstants.Driver.Drive.DEADBAND;
-
+                                > DriverDriveSettings.DEADBAND;
+        
         if (deltaIsSignificant || driverIsMoving) {
             prevActualTargetAngle = actualTargetAngle;
         }

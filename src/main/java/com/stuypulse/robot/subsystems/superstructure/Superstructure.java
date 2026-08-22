@@ -5,8 +5,8 @@
 /***************************************************************/
 package com.stuypulse.robot.subsystems.superstructure;
 
-import com.stuypulse.robot.constants.DriverConstants.Driver;
-import com.stuypulse.robot.constants.DriverConstants.Driver.Turn;
+import com.stuypulse.robot.constants.DriverConstants.*;
+
 import com.stuypulse.robot.subsystems.handoff.Handoff;
 import com.stuypulse.robot.subsystems.handoff.Handoff.HandoffState;
 import com.stuypulse.robot.subsystems.spindexer.Spindexer;
@@ -286,8 +286,8 @@ public class Superstructure extends FullSubsystem {
                                             .getNorm();
 
                             return cachedStateIdleDebouncer.calculate(
-                                    driverInputMagnitude <= Driver.Drive.DEADBAND
-                                            && Math.abs(driver.getRightX()) <= Turn.DEADBAND);
+                                    driverInputMagnitude <= DriverDriveSettings.DEADBAND
+                                            && Math.abs(driver.getRightX()) <= DriverTurnSettings.DEADBAND);
                         })
                 .withName("Superstructure Cache State");
     }
