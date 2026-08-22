@@ -6,6 +6,7 @@
 package com.stuypulse.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
 
 import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
@@ -15,12 +16,12 @@ import com.stuypulse.robot.util.FullSubsystem;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Current;
-import edu.wpi.first.units.measure.Voltage;
+
 import edu.wpi.first.wpilibj.DriverStation;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -61,7 +62,7 @@ public class Intake extends FullSubsystem {
         this.pivotState = PivotState.STOW;
         this.rollerState = RollerState.STOP;
 
-        this.pivotPositionDebouncer = new DualDebouncer(0.5, 0.1);
+        this.pivotPositionDebouncer = new DualDebouncer(IntakeSettings.PIVOT_POSITION_DEBOUNCE_RISE, IntakeSettings.PIVOT_POSITION_DEBOUNCE_FALL);
         this.pivotStallingDebouncer =
                 new Debouncer(IntakeSettings.PIVOT_STALL_DEBOUNCE.in(Seconds), DebounceType.kBoth);
     }
@@ -128,8 +129,8 @@ public class Intake extends FullSubsystem {
         if (pivotState == PivotState.DEPLOY
                 && inputs.pivotMotorPosition.lte(IntakeSettings.THRESHOLD_TO_START_ROLLERS)) {
             switch (rollerState) {
-                case INTAKE -> runRollersDutyCycle(1.0);
-                case OUTTAKE -> runRollersDutyCycle(-1.0);
+                case INTAKE -> runRollersDutyCycle(IntakeSettings.ROLLER_INTAKE_DUTY_CYCLE);
+                case OUTTAKE -> runRollersDutyCycle(IntakeSettings.ROLLER_OUTTAKE_DUTY_CYCLE);
                 case STOP -> stopRollers();
             }
         } else {

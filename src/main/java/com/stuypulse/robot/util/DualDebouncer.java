@@ -5,6 +5,9 @@
 /***************************************************************/
 package com.stuypulse.robot.util;
 
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
+
 import edu.wpi.first.wpilibj.Timer;
 
 public class DualDebouncer {
@@ -17,6 +20,10 @@ public class DualDebouncer {
         riseTime = riseSeconds;
         fallTime = fallSeconds;
         timer.start();
+    }
+
+    public DualDebouncer(Time riseTime, Time fallTime) {
+        this(riseTime.in(Seconds), fallTime.in(Seconds));
     }
 
     public boolean calculate(boolean input) {
