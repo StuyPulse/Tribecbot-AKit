@@ -9,17 +9,21 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.CANBus;
 
-import com.stuypulse.robot.constants.Settings;
-import com.stuypulse.robot.constants.Settings.Mode;
-import com.stuypulse.robot.generated.TunerConstants;
+import com.stuypulse.robot.constants.Field;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.constants.GlobalSettings.Mode;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
+import com.stuypulse.robot.subsystems.superstructure.turret.Turret;
 import com.stuypulse.robot.subsystems.vision.Vision;
+import com.stuypulse.robot.util.FullSubsystem;
 import com.stuypulse.robot.util.LocalADStarAK;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.ModuleConfig;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.PathPlannerLogging;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
@@ -43,8 +47,8 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
@@ -56,20 +60,27 @@ import org.ironmaple.simulation.drivesims.configs.SwerveModuleSimulationConfig;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
-public class Drive extends SubsystemBase implements Vision.VisionConsumer {
+public class Drive extends FullSubsystem implements Vision.VisionConsumer {
     private static final Drive instance;
     private static SwerveDriveSimulation driveSimulation = null;
 
+    private Optional<Boolean> isBehindHub = Optional.empty();
+    private Optional<Boolean> isOutsideAllianceZone = Optional.empty();
+    private Optional<Boolean> isInOpponentZone = Optional.empty();
+    private Optional<Boolean> isUnderTrench = Optional.empty();
+    private Optional<Boolean> isBehindTower = Optional.empty();
+    private Optional<Boolean> isBtwnOppHubAndWall = Optional.empty();
+
     static {
-        switch (Settings.currentMode) {
+        switch (GlobalSettings.CURRENT_MODE) {
             case REAL -> {
                 instance =
                         new Drive(
-                                new GyroIOPigeon2(),
-                                new ModuleIOTalonFX(TunerConstants.FrontLeft),
-                                new ModuleIOTalonFX(TunerConstants.FrontRight),
-                                new ModuleIOTalonFX(TunerConstants.BackLeft),
-                                new ModuleIOTalonFX(TunerConstants.BackRight),
+                                new GyroIOReal(),
+                                new ModuleIOReal(TunerConstants.FrontLeft),
+                                new ModuleIOReal(TunerConstants.FrontRight),
+                                new ModuleIOReal(TunerConstants.BackLeft),
+                                new ModuleIOReal(TunerConstants.BackRight),
                                 (robotPose) -> {});
             }
 
@@ -110,6 +121,224 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         return driveSimulation;
     }
 
+    public boolean canShootIntoHub() {
+        Superstructure superstructure = Superstructure.getInstance();
+        SuperstructureState state = superstructure.getState();
+        return !isOutsideAllianceZone()
+                || (state == SuperstructureState.KB
+                        || state == SuperstructureState.LEFT_CORNER
+                        || state == SuperstructureState.RIGHT_CORNER);
+    }
+
+    public boolean isUnderTrench() {
+        if (isUnderTrench.isEmpty()) {
+            Translation2d turretTranslation = Turret.getInstance().getTurretPose().getTranslation();
+
+            boolean isBetweenRightTrenchesY =
+                    Field.AllianceRightTrench.rightEdge.getY() < turretTranslation.getY()
+                            && Field.AllianceRightTrench.leftEdge.getY() > turretTranslation.getY();
+
+            boolean isBetweenLeftTrenchesY =
+                    Field.AllianceLeftTrench.rightEdge.getY() < turretTranslation.getY()
+                            && Field.AllianceLeftTrench.leftEdge.getY() > turretTranslation.getY();
+
+            boolean isUnderAllianceTrenchX =
+                    Math.abs(turretTranslation.getX() - Field.AllianceRightTrench.rightEdge.getX())
+                            < Field.TRENCH_HOOD_TOLERANCE.in(Meters);
+
+            boolean isUnderOpponentTrenchX =
+                    Math.abs(turretTranslation.getX() - Field.OpponentRightTrench.rightEdge.getX())
+                            < Field.TRENCH_HOOD_TOLERANCE.in(Meters);
+
+            boolean isUnderTrench =
+                    (isBetweenRightTrenchesY || isBetweenLeftTrenchesY)
+                            && (isUnderAllianceTrenchX || isUnderOpponentTrenchX);
+
+            this.isUnderTrench = Optional.of(isUnderTrench);
+        }
+
+        return isUnderTrench.get();
+    }
+
+    public boolean isInOpponentZone() {
+        if (isInOpponentZone.isEmpty()) {
+            Translation2d turretTranslation = Turret.getInstance().getTurretPose().getTranslation();
+            isInOpponentZone =
+                    Optional.of(turretTranslation.getMeasureX().gt(Field.OPPONENT_ZONE_X));
+        }
+        return isInOpponentZone.get();
+    }
+
+    public boolean isBehindTower() {
+        if (isBehindTower.isEmpty()) {
+            boolean withinTowerX =
+                    getPose().getTranslation().getX() < Field.TOWER_FAR_CENTER.getX();
+            boolean withinTowerY =
+                    Field.TOWER_FAR_RIGHT.getY()
+                                    < Turret.getInstance().getTurretPose().getTranslation().getY()
+                            && Turret.getInstance().getTurretPose().getTranslation().getY()
+                                    < Field.TOWER_FAR_LEFT.getY();
+            isBehindTower = Optional.of(withinTowerX && withinTowerY);
+        }
+
+        return isBehindTower.get();
+    }
+
+    /**
+     * Checks whether the robot turret pose is behind the hub or not in the neutral zone. For
+     * stopping ferrying to prevent fuel hitting the hub.
+     *
+     * @return true if robot turret pose is behind the hub.
+     */
+    public boolean isBehindHub() {
+        if (isBehindHub.isEmpty()) {
+            // === TRIANGLE === (CUSTOM VERTEX)
+            Translation2d turretTranslation = Turret.getInstance().getTurretPose().getTranslation();
+
+            boolean behindHubX = Field.HUB_FAR_LEFT_CORNER.getX() < turretTranslation.getX();
+            // && turretTranslation.getX() < Field.hubFarLeftCorner.getX() + Field.hubToleranceX; //
+            // With
+            // this line the triangle will be cut to more like a trapezoid.
+
+            Pose2d hubFarLeftCornerWithTolerance =
+                    new Pose2d(
+                            Field.HUB_FAR_LEFT_CORNER.getMeasureX(),
+                            Field.HUB_FAR_LEFT_CORNER
+                                    .getMeasureY()
+                                    .plus(Field.BEHIND_HUB_TOLERANCE_Y),
+                            new Rotation2d());
+            Pose2d hubFarRightCornerWithTolerance =
+                    new Pose2d(
+                            Field.HUB_FAR_RIGHT_CORNER.getMeasureX(),
+                            Field.HUB_FAR_RIGHT_CORNER
+                                    .getMeasureY()
+                                    .minus(Field.BEHIND_HUB_TOLERANCE_Y),
+                            new Rotation2d());
+
+            // Find point on triangle using the point-slope formula (of the line constructed by the
+            // hub
+            // corner pose and ferry pose)
+            // y = (slope)(robotX - hubCornerX) + (hubCornerY)
+            // where the slope = (hubCornerY - vertexY)/(hubCornerX - vertexX)
+            double leftY =
+                    ((hubFarLeftCornerWithTolerance.getY()
+                                                    - Field.BEHIND_HUB_TRIANGLE_VERTEX.getY())
+                                            / (hubFarLeftCornerWithTolerance.getX()
+                                                    - Field.BEHIND_HUB_TRIANGLE_VERTEX
+                                                            .getX())) // (Slope)
+                                    * (turretTranslation.getX()
+                                            - hubFarLeftCornerWithTolerance.getX())
+                            + hubFarLeftCornerWithTolerance
+                                    .getY(); // *(robotX - hubCornerX) + (hubCornerY)
+            double rightY =
+                    ((hubFarRightCornerWithTolerance.getY()
+                                                    - Field.BEHIND_HUB_TRIANGLE_VERTEX.getY())
+                                            / (hubFarRightCornerWithTolerance.getX()
+                                                    - Field.BEHIND_HUB_TRIANGLE_VERTEX
+                                                            .getX())) // (Slope)
+                                    * (turretTranslation.getX()
+                                            - hubFarRightCornerWithTolerance.getX())
+                            + hubFarRightCornerWithTolerance
+                                    .getY(); // *(robotX - hubCornerX) + (hubCornerY)
+
+            // Debug:
+            // leftBehindHubYPlublisher.set(new Pose2d(getTurretPose().getX(), leftY, new
+            // Rotation2d()));
+            // rightBehindHubYPlublisher.set(new Pose2d(getTurretPose().getX(), rightY, new
+            // Rotation2d()));
+            // vertexBehindHubPublisher.set(Field.BEHIND_HUB_TRIANGLE_VERTEX);
+
+            boolean withinHubY =
+                    rightY < Turret.getInstance().getTurretPose().getY()
+                            && Turret.getInstance().getTurretPose().getY() < leftY;
+
+            isBehindHub = Optional.of(behindHubX && withinHubY);
+
+            // === TRIANGLE === (FROM FERRY ZONES):
+            // Translation2d turretTranslation = getTurretPose().getTranslation();
+            // boolean behindHubX = Field.hubFarLeftCorner.getX() < turretTranslation.getX();
+            // 		// && turretTranslation.getX() < Field.hubFarLeftCorner.getX() +
+            // Field.hubToleranceX; //
+            // With this line the triangle will be cut to more like a trapezoid.
+            // // Find point on triangle using the point-slope formula (of the line constructed by
+            // the hub
+            // corner pose and ferry pose)
+            // // y = (slope)(robotX - hubCornerX) + (hubCornerY)
+            // // where the slope = (hubCornerY - ferryY)/(hubCornerX - ferryX)
+            // double leftY = ((Field.hubFarLeftCorner.getY() -
+            // Field.leftFerryZone.getY())/(Field.hubFarLeftCorner.getX() -
+            // Field.leftFerryZone.getX()))
+            // // (Slope)
+            // 				* (turretTranslation.getX() - Field.hubFarLeftCorner.getX()) +
+            // Field.hubFarLeftCorner.getY(); // *(robotX - hubCornerX) + (hubCornerY)
+            // double rightY = ((Field.hubFarRightCorner.getY() -
+            // Field.rightFerryZone.getY())/(Field.hubFarRightCorner.getX() -
+            // Field.rightFerryZone.getX())) // (Slope)
+            // 				* (turretTranslation.getX() - Field.hubFarRightCorner.getX()) +
+            // Field.hubFarRightCorner.getY(); // *(robotX - hubCornerX) + (hubCornerY)
+            // leftBehindHubYPlublisher.set(new Pose2d(getTurretPose().getX(), leftY -
+            // Field.hubToleranceY, new Rotation2d()));
+            // rightBehindHubYPlublisher.set(new Pose2d(getTurretPose().getX(), rightY +
+            // Field.hubToleranceY, new Rotation2d()));
+            // boolean withinHubY = rightY + Field.hubToleranceY < getTurretPose().getY()
+            // 					&& getTurretPose().getY() < leftY - Field.hubToleranceY;
+            // return behindHubX && withinHubY;
+            // === RECTANGLE ===:
+            // Translation2d turretTranslation = getTurretPose().getTranslation();
+            // boolean behindHubX = Field.hubFarLeftCorner.getX() < turretTranslation.getX()
+            // 		&& turretTranslation.getX() < Field.hubFarLeftCorner.getX() + Field.hubToleranceX;
+            // boolean withinHubY = Field.hubFarRightCorner.getY() + Field.hubToleranceY <
+            // getTurretPose().getY()
+            // 		&& getTurretPose().getY() < Field.hubFarLeftCorner.getY() - Field.hubToleranceY;
+            // return behindHubX && withinHubY;
+        }
+
+        return isBehindHub.get();
+    }
+
+    public boolean isOutsideAllianceZone() {
+        if (isOutsideAllianceZone.isEmpty()) {
+            isOutsideAllianceZone =
+                    Optional.of(
+                            getPose()
+                                    .getMeasureX()
+                                    .lt(
+                                            Field.AllianceRightTrench.rightEdge
+                                                    .getMeasureX()
+                                                    .plus(Field.TRENCH_HOOD_TOLERANCE)));
+        }
+
+        return isOutsideAllianceZone.get();
+    }
+
+    public boolean isBtwnOppHubAndWall() {
+        if (!isBtwnOppHubAndWall.isEmpty()) {
+            return isBtwnOppHubAndWall.get();
+        }
+
+        Translation2d turretTranslation = Turret.getInstance().getTurretPose().getTranslation();
+
+        boolean btwnOppHubAndWallX =
+                turretTranslation.getMeasureX().lt(Field.LENGTH)
+                        && turretTranslation.getMeasureX().gt(Field.OPPONENT_HUB_DS_X);
+        boolean btwnOppHubAndWallY =
+                turretTranslation.getY() < Field.HUB_FAR_LEFT_CORNER.getY()
+                        && turretTranslation.getY() > Field.HUB_FAR_RIGHT_CORNER.getY();
+
+        isBtwnOppHubAndWall = Optional.of(btwnOppHubAndWallX && btwnOppHubAndWallY);
+
+        return isBtwnOppHubAndWall.get();
+    }
+
+    public void clearMemoized() {
+        isBehindHub = Optional.empty();
+        isOutsideAllianceZone = Optional.empty();
+        isInOpponentZone = Optional.empty();
+        isUnderTrench = Optional.empty();
+        isBehindTower = Optional.empty();
+        isBtwnOppHubAndWall = Optional.empty();
+    }
+
     // TunerConstants doesn't include these constants, so they are declared locally
     static final double ODOMETRY_FREQUENCY =
             new CANBus(TunerConstants.DrivetrainConstants.CANBusName).isNetworkFD() ? 250.0 : 100.0;
@@ -134,19 +363,6 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     private static final double ROBOT_MASS_KG = 74.088;
     private static final double ROBOT_MOI = 6.883;
     private static final double WHEEL_COF = 1.2;
-    private static final RobotConfig PP_CONFIG =
-            new RobotConfig(
-                    ROBOT_MASS_KG,
-                    ROBOT_MOI,
-                    new ModuleConfig(
-                            TunerConstants.FrontLeft.WheelRadius,
-                            TunerConstants.kSpeedAt12Volts.in(MetersPerSecond),
-                            WHEEL_COF,
-                            DCMotor.getKrakenX60Foc(1)
-                                    .withReduction(TunerConstants.FrontLeft.DriveMotorGearRatio),
-                            TunerConstants.FrontLeft.SlipCurrent,
-                            1),
-                    getModuleTranslations());
 
     private static DriveTrainSimulationConfig mapleSimConfig = null;
 
@@ -217,16 +433,20 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         PhoenixOdometryThread.getInstance().start();
 
         // Configure AutoBuilder for PathPlanner
-        AutoBuilder.configure(
-                this::getPose,
-                this::resetOdometry,
-                this::getChassisSpeeds,
-                this::runVelocity,
-                new PPHolonomicDriveController(
-                        new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
-                PP_CONFIG,
-                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-                this);
+        try {
+            AutoBuilder.configure(
+                    this::getPose,
+                    this::resetOdometry,
+                    this::getChassisSpeeds,
+                    this::runVelocity,
+                    new PPHolonomicDriveController(
+                            new PIDConstants(5.0, 0.0, 0.0), new PIDConstants(5.0, 0.0, 0.0)),
+                    RobotConfig.fromGUISettings(),
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                    this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Pathfinding.setPathfinder(new LocalADStarAK());
         PathPlannerLogging.setLogActivePathCallback(
                 (activePath) -> {
@@ -308,7 +528,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
         }
 
         // Update gyro alert
-        gyroDisconnectedAlert.set(!gyroInputs.connected && Settings.currentMode != Mode.SIM);
+        gyroDisconnectedAlert.set(!gyroInputs.connected && GlobalSettings.CURRENT_MODE != Mode.SIM);
     }
 
     /**
@@ -374,6 +594,10 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
                 .andThen(sysId.dynamic(direction));
     }
 
+    public Command followPathCommand(PathPlannerPath path) {
+        return AutoBuilder.followPath(path);
+    }
+
     /** Returns the module states (turn angles and drive velocities) for all of the modules. */
     @AutoLogOutput(key = "SwerveStates/Measured")
     private SwerveModuleState[] getModuleStates() {
@@ -395,7 +619,7 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
 
     /** Returns the measured chassis speeds of the robot. */
     @AutoLogOutput(key = "SwerveChassisSpeeds/Measured")
-    private ChassisSpeeds getChassisSpeeds() {
+    public ChassisSpeeds getChassisSpeeds() {
         return kinematics.toChassisSpeeds(getModuleStates());
     }
 
@@ -432,6 +656,11 @@ public class Drive extends SubsystemBase implements Vision.VisionConsumer {
     public void resetOdometry(Pose2d pose) {
         resetSimulationPoseCallBack.accept(pose);
         poseEstimator.resetPosition(rawGyroRotation, getModulePositions(), pose);
+    }
+
+    public void resetHeading(Rotation2d heading) {
+        resetSimulationPoseCallBack.accept(new Pose2d(getPose().getTranslation(), heading));
+        poseEstimator.resetRotation(heading);
     }
 
     /** Adds a new timestamped vision measurement. */

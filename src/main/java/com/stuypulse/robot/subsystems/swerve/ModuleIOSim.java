@@ -7,7 +7,6 @@ package com.stuypulse.robot.subsystems.swerve;
 
 import static edu.wpi.first.units.Units.*;
 
-import com.stuypulse.robot.generated.TunerConstants;
 import com.stuypulse.robot.util.PhoenixUtil;
 
 import edu.wpi.first.math.controller.PIDController;
