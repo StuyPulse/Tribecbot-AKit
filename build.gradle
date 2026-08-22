@@ -2,7 +2,7 @@ plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2026.2.1"
     id "com.peterabeles.gversion" version "1.10"
-    id "com.diffplug.spotless" version "6.12.0"
+    id "com.diffplug.spotless" version "6.25.0"
 }
 
 java {
@@ -176,43 +176,64 @@ task(eventDeploy) {
 createVersionFile.dependsOn(eventDeploy)
 
 // Spotless formatting
-project.compileJava.dependsOn(spotlessApply)
+tasks.compileJava.dependsOn(tasks.spotlessApply)
 spotless {
     java {
         target fileTree(".") {
             include "**/*.java"
-            exclude "**/build/**", "**/build-*/**"
+            exclude "**/build/**", "**/build-*/**",
+                    "src/main/java/com/stuypulse/robot/commands/autons/*.java"
         }
+
+        licenseHeader("""/************************ PROJECT TRIBECBOT *************************/
+/* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
+/* Use of this source code is governed by an MIT-style license */
+/* that can be found in the repository LICENSE file.           */
+/***************************************************************/
+""").updateYearWithLatest(false)
+
         toggleOffOn()
-        googleJavaFormat()
+
+        googleJavaFormat().aosp()
+
+        trimTrailingWhitespace()
+        endWithNewline()
+
+        importOrder(
+            "com.stuypulse.constants",
+            "com.stuypulse.subsystems",
+
+            "org.wpilib.units.Units",
+            "org.wpilib.units.measure",
+            "org.wpilib",
+
+            "com.stuypulse.robot.commands.autons",
+            "com.stuypulse.utils",
+            "com.ctre",
+            "com.stuypulse"
+        )
+
         removeUnusedImports()
-        trimTrailingWhitespace()
-        endWithNewline()
     }
-    groovyGradle {
-        target fileTree(".") {
-            include "**/*.gradle"
-            exclude "**/build/**", "**/build-*/**"
-        }
-        greclipse()
-        indentWithSpaces(4)
-        trimTrailingWhitespace()
-        endWithNewline()
-    }
+
     json {
         target fileTree(".") {
             include "**/*.json"
-            exclude "**/build/**", "**/build-*/**", ".wpilib/**"
+            exclude "**/build/**", "**/build-*/**",
+                    ".wpilib/**", ".vscode/**", "vendordeps/**"
         }
-        gson().indentWithSpaces(2)
+
+        gson().indentWithSpaces(4)
     }
+
     format "misc", {
         target fileTree(".") {
-            include "**/*.md", "**/.gitignore"
-            exclude "**/build/**", "**/build-*/**"
+            include "**/.gitignore"
+            exclude "**/build/**", "**/build-*/**", "**/*.md"
         }
+
         trimTrailingWhitespace()
-        indentWithSpaces(2)
+        indentWithSpaces(4)
         endWithNewline()
     }
 }
