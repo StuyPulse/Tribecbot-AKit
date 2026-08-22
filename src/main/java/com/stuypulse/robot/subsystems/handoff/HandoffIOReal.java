@@ -1,3 +1,8 @@
+/************************ PROJECT TRIBECBOT *************************/
+/* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
+/* Use of this source code is governed by an MIT-style license */
+/* that can be found in the repository LICENSE file.           */
+/***************************************************************/
 package com.stuypulse.robot.subsystems.handoff;
 
 import com.ctre.phoenix6.BaseStatusSignal;
@@ -6,91 +11,94 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
 import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.handoff.HandoffConstants.*;
+
 import edu.wpi.first.units.measure.*;
 
 public class HandoffIOReal implements HandoffIO {
-  private final TalonFX motorLead;
-  private final TalonFX motorFollow;
+    private final TalonFX motorLead;
+    private final TalonFX motorFollow;
 
-  private final DutyCycleOut controller;
-  private final Follower follower;
+    private final DutyCycleOut controller;
+    private final Follower follower;
 
-  private final StatusSignal<Current> motorLeadSupplyCurrent;
-  private final StatusSignal<Current> motorLeadStatorCurrent;
-  private final StatusSignal<Temperature> motorLeadTemperature;
-  private final StatusSignal<AngularVelocity> motorLeadVelocity;
-  private final StatusSignal<Voltage> motorLeadAppliedVoltage;
+    private final StatusSignal<Current> motorLeadSupplyCurrent;
+    private final StatusSignal<Current> motorLeadStatorCurrent;
+    private final StatusSignal<Temperature> motorLeadTemperature;
+    private final StatusSignal<AngularVelocity> motorLeadVelocity;
+    private final StatusSignal<Voltage> motorLeadAppliedVoltage;
 
-  private final StatusSignal<Current> motorFollowSupplyCurrent;
-  private final StatusSignal<Current> motorFollowStatorCurrent;
-  private final StatusSignal<Temperature> motorFollowTemperature;
-  private final StatusSignal<AngularVelocity> motorFollowVelocity;
-  private final StatusSignal<Voltage> motorFollowAppliedVoltage;
+    private final StatusSignal<Current> motorFollowSupplyCurrent;
+    private final StatusSignal<Current> motorFollowStatorCurrent;
+    private final StatusSignal<Temperature> motorFollowTemperature;
+    private final StatusSignal<AngularVelocity> motorFollowVelocity;
+    private final StatusSignal<Voltage> motorFollowAppliedVoltage;
 
-  public HandoffIOReal() {
-    motorLead = new TalonFX(HandoffDeviceIds.MOTOR_LEAD, GlobalSettings.RIO);
-    motorFollow = new TalonFX(HandoffDeviceIds.MOTOR_FOLLOW, GlobalSettings.RIO);
+    public HandoffIOReal() {
+        motorLead = new TalonFX(HandoffDeviceIds.MOTOR_LEAD, GlobalSettings.RIO);
+        motorFollow = new TalonFX(HandoffDeviceIds.MOTOR_FOLLOW, GlobalSettings.RIO);
 
-    HandoffMotorConfigs.HANDOFF_CONFIG.configure(motorLead);
-    HandoffMotorConfigs.HANDOFF_CONFIG.configure(motorFollow);
+        HandoffMotorConfigs.HANDOFF_CONFIG.configure(motorLead);
+        HandoffMotorConfigs.HANDOFF_CONFIG.configure(motorFollow);
 
-    controller = new DutyCycleOut(0).withEnableFOC(true);
-    follower = new Follower(motorLead.getDeviceID(), MotorAlignmentValue.Opposed);
-
-    motorFollow.setControl(follower);
-
-    motorLeadSupplyCurrent = motorLead.getSupplyCurrent();
-    motorLeadStatorCurrent = motorLead.getStatorCurrent();
-    motorLeadTemperature = motorLead.getDeviceTemp();
-    motorLeadVelocity = motorLead.getVelocity();
-    motorLeadAppliedVoltage = motorLead.getMotorVoltage();
-
-    motorFollowSupplyCurrent = motorLead.getSupplyCurrent();
-    motorFollowStatorCurrent = motorLead.getStatorCurrent();
-    motorFollowTemperature = motorLead.getDeviceTemp();
-    motorFollowVelocity = motorLead.getVelocity();
-    motorFollowAppliedVoltage = motorLead.getMotorVoltage();
-  }
-
-  @Override
-  public void updateInputs(HandoffIOInputs inputs) {
-    BaseStatusSignal.refreshAll(
-        motorLeadSupplyCurrent,
-        motorLeadStatorCurrent,
-        motorLeadTemperature,
-        motorLeadVelocity,
-        motorLeadAppliedVoltage,
-        motorFollowSupplyCurrent,
-        motorFollowStatorCurrent,
-        motorFollowTemperature,
-        motorFollowVelocity,
-        motorFollowAppliedVoltage);
-
-    inputs.motorLeadSupplyCurrent = motorLeadSupplyCurrent.getValue();
-    inputs.motorLeadStatorCurrent = motorLeadStatorCurrent.getValue();
-    inputs.motorLeadTemperature = motorLeadTemperature.getValue();
-    inputs.motorLeadVelocity = motorLeadVelocity.getValue();
-    inputs.motorLeadAppliedVoltage = motorLeadAppliedVoltage.getValue();
-
-    inputs.motorFollowSupplyCurrent = motorFollowSupplyCurrent.getValue();
-    inputs.motorFollowStatorCurrent = motorFollowStatorCurrent.getValue();
-    inputs.motorFollowTemperature = motorFollowTemperature.getValue();
-    inputs.motorFollowVelocity = motorFollowVelocity.getValue();
-    inputs.motorFollowAppliedVoltage = motorFollowAppliedVoltage.getValue();
-  }
-
-  @Override
-  public void applyOutputs(HandoffIOOutputs outputs) {
-    switch (outputs.handoffMode) {
-      case DUTY_CYCLE -> motorLead.setControl(controller.withOutput(outputs.handoffDutyCycle));
-      case STOP -> {
-        motorLead.stopMotor();
-        motorFollow.stopMotor();
+        controller = new DutyCycleOut(0).withEnableFOC(true);
+        follower = new Follower(motorLead.getDeviceID(), MotorAlignmentValue.Opposed);
 
         motorFollow.setControl(follower);
-      }
+
+        motorLeadSupplyCurrent = motorLead.getSupplyCurrent();
+        motorLeadStatorCurrent = motorLead.getStatorCurrent();
+        motorLeadTemperature = motorLead.getDeviceTemp();
+        motorLeadVelocity = motorLead.getVelocity();
+        motorLeadAppliedVoltage = motorLead.getMotorVoltage();
+
+        motorFollowSupplyCurrent = motorLead.getSupplyCurrent();
+        motorFollowStatorCurrent = motorLead.getStatorCurrent();
+        motorFollowTemperature = motorLead.getDeviceTemp();
+        motorFollowVelocity = motorLead.getVelocity();
+        motorFollowAppliedVoltage = motorLead.getMotorVoltage();
     }
-  }
+
+    @Override
+    public void updateInputs(HandoffIOInputs inputs) {
+        BaseStatusSignal.refreshAll(
+                motorLeadSupplyCurrent,
+                motorLeadStatorCurrent,
+                motorLeadTemperature,
+                motorLeadVelocity,
+                motorLeadAppliedVoltage,
+                motorFollowSupplyCurrent,
+                motorFollowStatorCurrent,
+                motorFollowTemperature,
+                motorFollowVelocity,
+                motorFollowAppliedVoltage);
+
+        inputs.motorLeadSupplyCurrent = motorLeadSupplyCurrent.getValue();
+        inputs.motorLeadStatorCurrent = motorLeadStatorCurrent.getValue();
+        inputs.motorLeadTemperature = motorLeadTemperature.getValue();
+        inputs.motorLeadVelocity = motorLeadVelocity.getValue();
+        inputs.motorLeadAppliedVoltage = motorLeadAppliedVoltage.getValue();
+
+        inputs.motorFollowSupplyCurrent = motorFollowSupplyCurrent.getValue();
+        inputs.motorFollowStatorCurrent = motorFollowStatorCurrent.getValue();
+        inputs.motorFollowTemperature = motorFollowTemperature.getValue();
+        inputs.motorFollowVelocity = motorFollowVelocity.getValue();
+        inputs.motorFollowAppliedVoltage = motorFollowAppliedVoltage.getValue();
+    }
+
+    @Override
+    public void applyOutputs(HandoffIOOutputs outputs) {
+        switch (outputs.handoffMode) {
+            case DUTY_CYCLE ->
+                    motorLead.setControl(controller.withOutput(outputs.handoffDutyCycle));
+            case STOP -> {
+                motorLead.stopMotor();
+                motorFollow.stopMotor();
+
+                motorFollow.setControl(follower);
+            }
+        }
+    }
 }

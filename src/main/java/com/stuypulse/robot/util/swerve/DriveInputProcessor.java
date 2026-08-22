@@ -1,4 +1,4 @@
-/************************* PROJECT RON *************************/
+/************************ PROJECT TRIBECBOT *************************/
 /* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
 /* Use of this source code is governed by an MIT-style license */
 /* that can be found in the repository LICENSE file.           */
@@ -8,6 +8,7 @@ package com.stuypulse.robot.util.swerve;
 import static edu.wpi.first.units.Units.*;
 
 import com.stuypulse.robot.constants.GlobalSettings;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -42,166 +43,167 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
  * <p>To get the processed speed, call the {@link #get()} method.
  */
 public class DriveInputProcessor {
-  private final CommandXboxController controller;
-  private final double deadband;
-  private final double power;
-  /** The max velocity in meters per second/ */
-  private final LinearVelocity maxVelocity;
+    private final CommandXboxController controller;
+    private final double deadband;
+    private final double power;
 
-  private final SlewRateLimiter xRateLimiter;
-  private final SlewRateLimiter yRateLimiter;
+    /** The max velocity in meters per second/ */
+    private final LinearVelocity maxVelocity;
 
-  private final LinearFilter xLowPassFilter;
-  private final LinearFilter yLowPassFilter;
+    private final SlewRateLimiter xRateLimiter;
+    private final SlewRateLimiter yRateLimiter;
 
-  /** The speed vector after the full processing and filtering. */
-  private Translation2d processedSpeed;
+    private final LinearFilter xLowPassFilter;
+    private final LinearFilter yLowPassFilter;
 
-  /**
-   *
-   *
-   * <h4>Constructor for the DriveInputProcessor</h4>
-   *
-   * <p>Creates a new DriveInputProcessor with the specified parameters and processes the input
-   * periodically.
-   *
-   * @param controller The CommandXboxController to get driver input from
-   * @param deadband The deadband to apply to the input (0-1)
-   * @param power The power to apply to the input
-   * @param maxVelocity The maximum velocity to scale the input to (m/s)
-   * @param maxAcceleration The maximum acceleration to apply to the input (m/s^2)
-   * @param rc The time constant for the low pass filter (seconds)
-   */
-  public DriveInputProcessor(
-      CommandXboxController controller,
-      double deadband,
-      double power,
-      LinearVelocity maxVelocity,
-      LinearAcceleration maxAcceleration,
-      double rc) {
-    this.controller = controller;
-    this.deadband = deadband;
-    this.power = power;
-    this.maxVelocity = maxVelocity;
+    /** The speed vector after the full processing and filtering. */
+    private Translation2d processedSpeed;
 
-    this.xRateLimiter = new SlewRateLimiter(maxAcceleration.in(MetersPerSecondPerSecond));
-    this.yRateLimiter = new SlewRateLimiter(maxAcceleration.in(MetersPerSecondPerSecond));
-    this.xLowPassFilter = LinearFilter.singlePoleIIR(rc, GlobalSettings.DT.in(Seconds));
-    this.yLowPassFilter = LinearFilter.singlePoleIIR(rc, GlobalSettings.DT.in(Seconds));
+    /**
+     *
+     *
+     * <h4>Constructor for the DriveInputProcessor</h4>
+     *
+     * <p>Creates a new DriveInputProcessor with the specified parameters and processes the input
+     * periodically.
+     *
+     * @param controller The CommandXboxController to get driver input from
+     * @param deadband The deadband to apply to the input (0-1)
+     * @param power The power to apply to the input
+     * @param maxVelocity The maximum velocity to scale the input to (m/s)
+     * @param maxAcceleration The maximum acceleration to apply to the input (m/s^2)
+     * @param rc The time constant for the low pass filter (seconds)
+     */
+    public DriveInputProcessor(
+            CommandXboxController controller,
+            double deadband,
+            double power,
+            LinearVelocity maxVelocity,
+            LinearAcceleration maxAcceleration,
+            double rc) {
+        this.controller = controller;
+        this.deadband = deadband;
+        this.power = power;
+        this.maxVelocity = maxVelocity;
 
-    this.processedSpeed = Translation2d.kZero;
-  }
+        this.xRateLimiter = new SlewRateLimiter(maxAcceleration.in(MetersPerSecondPerSecond));
+        this.yRateLimiter = new SlewRateLimiter(maxAcceleration.in(MetersPerSecondPerSecond));
+        this.xLowPassFilter = LinearFilter.singlePoleIIR(rc, GlobalSettings.DT.in(Seconds));
+        this.yLowPassFilter = LinearFilter.singlePoleIIR(rc, GlobalSettings.DT.in(Seconds));
 
-  /**
-   * Read the raw joystick axes and store them as a velocity vector in {@link #processedSpeed}
-   *
-   * @return This instance of the class
-   */
-  private DriveInputProcessor getDriverInputAsVelocity() {
-    this.processedSpeed = new Translation2d(-controller.getLeftY(), -controller.getLeftX());
-    return this;
-  }
-
-  /**
-   * Apply a deadband on the X and Y axes to the current {@link #processedSpeed} vector using {@link
-   * MathUtil#applyDeadband}
-   *
-   * @return This instance of the class
-   */
-  private DriveInputProcessor applyDeadband() {
-    double deadbandX = MathUtil.applyDeadband(this.processedSpeed.getX(), deadband);
-    double deadbandY = MathUtil.applyDeadband(this.processedSpeed.getY(), deadband);
-    this.processedSpeed = new Translation2d(deadbandX, deadbandY);
-    return this;
-  }
-
-  /**
-   * Limits the magnitude of the current {@link #processedSpeed} vector to 1
-   *
-   * @return This instance of the class
-   */
-  private DriveInputProcessor applyLimitMagnitudeToOne() {
-    double magnitude = this.processedSpeed.getNorm();
-
-    if (magnitude > 1.0) {
-      this.processedSpeed = this.processedSpeed.div(magnitude);
+        this.processedSpeed = Translation2d.kZero;
     }
 
-    return this;
-  }
+    /**
+     * Read the raw joystick axes and store them as a velocity vector in {@link #processedSpeed}
+     *
+     * @return This instance of the class
+     */
+    private DriveInputProcessor getDriverInputAsVelocity() {
+        this.processedSpeed = new Translation2d(-controller.getLeftY(), -controller.getLeftX());
+        return this;
+    }
 
-  /**
-   * Apply a power curve to the current {@link #processedSpeed} vector. The vector's magnitude is
-   * raised according to the configured power while preserving direction.
-   *
-   * @return This instance of the class
-   */
-  private DriveInputProcessor applyPowerCurve() {
-    this.processedSpeed =
-        this.processedSpeed.times(Math.pow(this.processedSpeed.getNorm(), power - 1));
-    return this;
-  }
+    /**
+     * Apply a deadband on the X and Y axes to the current {@link #processedSpeed} vector using
+     * {@link MathUtil#applyDeadband}
+     *
+     * @return This instance of the class
+     */
+    private DriveInputProcessor applyDeadband() {
+        double deadbandX = MathUtil.applyDeadband(this.processedSpeed.getX(), deadband);
+        double deadbandY = MathUtil.applyDeadband(this.processedSpeed.getY(), deadband);
+        this.processedSpeed = new Translation2d(deadbandX, deadbandY);
+        return this;
+    }
 
-  /**
-   * Scale the {@link #processedSpeed} vector to the robot's maximum velocity. Multiplies the
-   * current vector by maxVelocity (m/s).
-   *
-   * @return This instance of the class
-   */
-  private DriveInputProcessor applyScalingToMaxVelocity() {
-    this.processedSpeed = this.processedSpeed.times(maxVelocity.in(MetersPerSecond));
-    return this;
-  }
+    /**
+     * Limits the magnitude of the current {@link #processedSpeed} vector to 1
+     *
+     * @return This instance of the class
+     */
+    private DriveInputProcessor applyLimitMagnitudeToOne() {
+        double magnitude = this.processedSpeed.getNorm();
 
-  /**
-   * Applies a rate limit to {@link #processedSpeed} using a {@link
-   * edu.wpi.first.math.filter.SlewRateLimiter} for each axis. This limits the rate of change of the
-   * velocity vector to the max acceleration (m/s^2).
-   *
-   * @return This instance of the class
-   */
-  private DriveInputProcessor applyRateLimit() {
-    double limitedX = xRateLimiter.calculate(this.processedSpeed.getX());
-    double limitedY = yRateLimiter.calculate(this.processedSpeed.getY());
-    this.processedSpeed = new Translation2d(limitedX, limitedY);
-    return this;
-  }
+        if (magnitude > 1.0) {
+            this.processedSpeed = this.processedSpeed.div(magnitude);
+        }
 
-  /**
-   * Applies a low pass filter to {@link #processedSpeed} using a {@link
-   * edu.wpi.first.math.filter.LinearFilter} for each axis. This smooths out the velocity vector and
-   * reduces noise.
-   *
-   * @return This instance of the class
-   */
-  private DriveInputProcessor applyLowPassFilter() {
-    double filteredX = xLowPassFilter.calculate(this.processedSpeed.getX());
-    double filteredY = yLowPassFilter.calculate(this.processedSpeed.getY());
-    this.processedSpeed = new Translation2d(filteredX, filteredY);
-    return this;
-  }
+        return this;
+    }
 
-  /**
-   * Update method that processes all filters and updates the filtered speed. This should be called
-   * within the start of the {@link edu.wpi.first.wpilibj2.command.Command#execute()} method of the
-   * command using DriveInputProcessor.
-   */
-  public void update() {
-    getDriverInputAsVelocity()
-        .applyDeadband()
-        .applyPowerCurve()
-        .applyLimitMagnitudeToOne()
-        .applyScalingToMaxVelocity()
-        .applyRateLimit()
-        .applyLowPassFilter();
-  }
+    /**
+     * Apply a power curve to the current {@link #processedSpeed} vector. The vector's magnitude is
+     * raised according to the configured power while preserving direction.
+     *
+     * @return This instance of the class
+     */
+    private DriveInputProcessor applyPowerCurve() {
+        this.processedSpeed =
+                this.processedSpeed.times(Math.pow(this.processedSpeed.getNorm(), power - 1));
+        return this;
+    }
 
-  /**
-   * Get the processed speed.
-   *
-   * @return A Translation2d representing the processed speed
-   */
-  public Translation2d get() {
-    return processedSpeed;
-  }
+    /**
+     * Scale the {@link #processedSpeed} vector to the robot's maximum velocity. Multiplies the
+     * current vector by maxVelocity (m/s).
+     *
+     * @return This instance of the class
+     */
+    private DriveInputProcessor applyScalingToMaxVelocity() {
+        this.processedSpeed = this.processedSpeed.times(maxVelocity.in(MetersPerSecond));
+        return this;
+    }
+
+    /**
+     * Applies a rate limit to {@link #processedSpeed} using a {@link
+     * edu.wpi.first.math.filter.SlewRateLimiter} for each axis. This limits the rate of change of
+     * the velocity vector to the max acceleration (m/s^2).
+     *
+     * @return This instance of the class
+     */
+    private DriveInputProcessor applyRateLimit() {
+        double limitedX = xRateLimiter.calculate(this.processedSpeed.getX());
+        double limitedY = yRateLimiter.calculate(this.processedSpeed.getY());
+        this.processedSpeed = new Translation2d(limitedX, limitedY);
+        return this;
+    }
+
+    /**
+     * Applies a low pass filter to {@link #processedSpeed} using a {@link
+     * edu.wpi.first.math.filter.LinearFilter} for each axis. This smooths out the velocity vector
+     * and reduces noise.
+     *
+     * @return This instance of the class
+     */
+    private DriveInputProcessor applyLowPassFilter() {
+        double filteredX = xLowPassFilter.calculate(this.processedSpeed.getX());
+        double filteredY = yLowPassFilter.calculate(this.processedSpeed.getY());
+        this.processedSpeed = new Translation2d(filteredX, filteredY);
+        return this;
+    }
+
+    /**
+     * Update method that processes all filters and updates the filtered speed. This should be
+     * called within the start of the {@link edu.wpi.first.wpilibj2.command.Command#execute()}
+     * method of the command using DriveInputProcessor.
+     */
+    public void update() {
+        getDriverInputAsVelocity()
+                .applyDeadband()
+                .applyPowerCurve()
+                .applyLimitMagnitudeToOne()
+                .applyScalingToMaxVelocity()
+                .applyRateLimit()
+                .applyLowPassFilter();
+    }
+
+    /**
+     * Get the processed speed.
+     *
+     * @return A Translation2d representing the processed speed
+     */
+    public Translation2d get() {
+        return processedSpeed;
+    }
 }

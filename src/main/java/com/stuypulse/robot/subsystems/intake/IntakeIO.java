@@ -1,3 +1,8 @@
+/************************ PROJECT TRIBECBOT *************************/
+/* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
+/* Use of this source code is governed by an MIT-style license */
+/* that can be found in the repository LICENSE file.           */
+/***************************************************************/
 package com.stuypulse.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
@@ -7,65 +12,65 @@ import org.littletonrobotics.junction.AutoLog;
 import org.littletonrobotics.junction.AutoLogOutput;
 
 public interface IntakeIO {
-  @AutoLog
-  public static class IntakeIOInputs {
-    public Current pivotMotorSupplyCurrent = Amps.zero();
-    public Current pivotMotorStatorCurrent = Amps.zero();
-    public Temperature pivotMotorTemperature = Celsius.zero();
-    public Angle pivotMotorPosition = Degrees.zero();
-    public Voltage pivotMotorAppliedVoltage = Volts.zero();
-    public AngularVelocity pivotMotorVelocity = DegreesPerSecond.zero();
+    @AutoLog
+    public static class IntakeIOInputs {
+        public Current pivotMotorSupplyCurrent = Amps.zero();
+        public Current pivotMotorStatorCurrent = Amps.zero();
+        public Temperature pivotMotorTemperature = Celsius.zero();
+        public Angle pivotMotorPosition = Degrees.zero();
+        public Voltage pivotMotorAppliedVoltage = Volts.zero();
+        public AngularVelocity pivotMotorVelocity = DegreesPerSecond.zero();
 
-    public Current rollerLeaderMotorSupplyCurrent = Amps.zero();
-    public Current rollerLeaderMotorStatorCurrent = Amps.zero();
-    public Temperature rollerLeaderMotorTemperature = Celsius.zero();
-    public Angle rollerLeaderMotorPosition = Degrees.zero();
-    public Voltage rollerLeaderMotorAppliedVoltage = Volts.zero();
-    public AngularVelocity rollerLeaderMotorVelocity = DegreesPerSecond.zero();
+        public Current rollerLeaderMotorSupplyCurrent = Amps.zero();
+        public Current rollerLeaderMotorStatorCurrent = Amps.zero();
+        public Temperature rollerLeaderMotorTemperature = Celsius.zero();
+        public Angle rollerLeaderMotorPosition = Degrees.zero();
+        public Voltage rollerLeaderMotorAppliedVoltage = Volts.zero();
+        public AngularVelocity rollerLeaderMotorVelocity = DegreesPerSecond.zero();
 
-    public Current rollerFollowerMotorSupplyCurrent = Amps.zero();
-    public Current rollerFollowerMotorStatorCurrent = Amps.zero();
-    public Temperature rollerFollowerMotorTemperature = Celsius.zero();
-    public Angle rollerFollowerMotorPosition = Degrees.zero();
-    public Voltage rollerFollowerMotorAppliedVoltage = Volts.zero();
-    public AngularVelocity rollerFollowerMotorVelocity = DegreesPerSecond.zero();
-  }
+        public Current rollerFollowerMotorSupplyCurrent = Amps.zero();
+        public Current rollerFollowerMotorStatorCurrent = Amps.zero();
+        public Temperature rollerFollowerMotorTemperature = Celsius.zero();
+        public Angle rollerFollowerMotorPosition = Degrees.zero();
+        public Voltage rollerFollowerMotorAppliedVoltage = Volts.zero();
+        public AngularVelocity rollerFollowerMotorVelocity = DegreesPerSecond.zero();
+    }
 
-  public default void updateInputs(IntakeIOInputs inputs) {}
+    public default void updateInputs(IntakeIOInputs inputs) {}
 
-  public static enum PivotIOOutputMode {
-    POSITION,
-    TORQUE_CURRENT,
-    VOLTAGE,
-    STOP
-  }
+    public static enum PivotIOOutputMode {
+        POSITION,
+        TORQUE_CURRENT,
+        VOLTAGE,
+        STOP
+    }
 
-  public static enum RollerIOOutputMode {
-    DUTY_CYCLE,
-    STOP
-  }
+    public static enum RollerIOOutputMode {
+        DUTY_CYCLE,
+        STOP
+    }
 
-  public static class IntakeIOOutputs {
-    @AutoLogOutput(key = "Intake/Pivot/Output Mode")
-    public PivotIOOutputMode pivotMode = PivotIOOutputMode.POSITION;
+    public static class IntakeIOOutputs {
+        @AutoLogOutput(key = "Intake/Pivot/Output Mode")
+        public PivotIOOutputMode pivotMode = PivotIOOutputMode.POSITION;
 
-    @AutoLogOutput(key = "Intake/Pivot/Target Position")
-    public Angle pivotTargetPosition = Degrees.zero();
+        @AutoLogOutput(key = "Intake/Pivot/Target Position")
+        public Angle pivotTargetPosition = Degrees.zero();
 
-    @AutoLogOutput(key = "Intake/Pivot/Target Torque Current")
-    public Current pivotTargetTorqueCurrent = Amps.zero();
+        @AutoLogOutput(key = "Intake/Pivot/Target Torque Current")
+        public Current pivotTargetTorqueCurrent = Amps.zero();
 
-    @AutoLogOutput(key = "Intake/Pivot/Target Voltage")
-    public Voltage pivotTargetVoltage = Volts.zero();
+        @AutoLogOutput(key = "Intake/Pivot/Target Voltage")
+        public Voltage pivotTargetVoltage = Volts.zero();
 
-    @AutoLogOutput(key = "Intake/Rollers/Output Mode")
-    public RollerIOOutputMode rollerMode = RollerIOOutputMode.DUTY_CYCLE;
+        @AutoLogOutput(key = "Intake/Rollers/Output Mode")
+        public RollerIOOutputMode rollerMode = RollerIOOutputMode.DUTY_CYCLE;
 
-    @AutoLogOutput(key = "Intake/Rollers/Target Duty Cycle")
-    public double rollerTargetDutyCycle = 0.0;
-  }
+        @AutoLogOutput(key = "Intake/Rollers/Target Duty Cycle")
+        public double rollerTargetDutyCycle = 0.0;
+    }
 
-  public default void applyOutputs(IntakeIOOutputs outputs) {}
+    public default void applyOutputs(IntakeIOOutputs outputs) {}
 
-  public default void seedPivotPosition(Angle position) {}
+    public default void seedPivotPosition(Angle position) {}
 }

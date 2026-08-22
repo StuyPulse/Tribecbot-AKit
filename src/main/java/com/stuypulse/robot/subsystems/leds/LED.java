@@ -1,13 +1,20 @@
+/************************ PROJECT TRIBECBOT *************************/
+/* Copyright (c) 2026 StuyPulse Robotics. All rights reserved. */
+/* Use of this source code is governed by an MIT-style license */
+/* that can be found in the repository LICENSE file.           */
+/***************************************************************/
 package com.stuypulse.robot.subsystems.leds;
 
 import com.ctre.phoenix6.signals.RGBWColor;
+
 import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.leds.LEDConstants.*;
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDIOOutputs;
 import com.stuypulse.robot.subsystems.leds.LEDIO.LEDPattern;
 import com.stuypulse.robot.subsystems.vision.Vision;
-import com.stuypulse.robot.subsystems.vision.VisionConstants.Camera;
+import com.stuypulse.robot.subsystems.vision.VisionConstants.Cameras;
 import com.stuypulse.robot.util.FullSubsystem;
+
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -17,13 +24,12 @@ public class LED extends FullSubsystem {
     private static final LED instance; // LED instance
 
     static {
-        switch (GlobalSettings.currentMode) {
+        switch (GlobalSettings.CURRENT_MODE) {
             case REAL -> instance = new LED(new LEDIOReal());
 
             case SIM -> instance = new LED(new LEDIOSim());
 
-            default -> instance = new LED(new LEDIO() {
-            });
+            default -> instance = new LED(new LEDIO() {});
         }
     }
 
@@ -98,21 +104,21 @@ public class LED extends FullSubsystem {
                 new LEDPattern(LEDSettings.STRIP_START, LEDSettings.LED_LENGTH, state.getColor()));
 
         // add limelight dead strips
-        if (vision.isCameraDead(Camera.LEFT)) {
+        if (vision.isCameraDead(Cameras.LEFT)) {
             outputs.patterns.add(
                     new LEDPattern(
                             LEDSettings.LEFT_DEAD_START,
                             LEDSettings.LEFT_DEAD_END,
                             LEDSettings.StateColors.LLDEAD));
         }
-        if (vision.isCameraDead(Camera.RIGHT)) {
+        if (vision.isCameraDead(Cameras.RIGHT)) {
             outputs.patterns.add(
                     new LEDPattern(
                             LEDSettings.RIGHT_DEAD_START,
                             LEDSettings.RIGHT_DEAD_END,
                             LEDSettings.StateColors.LLDEAD));
         }
-        if (vision.isCameraDead(Camera.BACK)) {
+        if (vision.isCameraDead(Cameras.BACK)) {
             outputs.patterns.add(
                     new LEDPattern(
                             LEDSettings.BACK_DEAD_START,
@@ -141,9 +147,8 @@ public class LED extends FullSubsystem {
         for (LEDPattern pattern : outputs.patterns) {
             RGBWColor color = pattern.color();
             Logger.recordOutput(
-                "LEDs/Pattern/" + pattern.start() + "-" + pattern.end(),
-                new Color(color.Red, color.Green, color.Blue)
-            );
+                    "LEDs/Pattern/" + pattern.start() + "-" + pattern.end(),
+                    new Color(color.Red, color.Green, color.Blue));
         }
     }
 
