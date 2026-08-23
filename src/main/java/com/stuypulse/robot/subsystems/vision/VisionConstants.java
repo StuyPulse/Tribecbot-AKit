@@ -7,7 +7,8 @@ package com.stuypulse.robot.subsystems.vision;
 
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.util.Units;
+
+import static edu.wpi.first.units.Units.*;
 
 public interface VisionConstants {
     public interface VisionSettings {
@@ -36,35 +37,35 @@ public interface VisionConstants {
         RIGHT(
                 "limelight-right",
                 new Transform3d(
-                        Units.inchesToMeters(-9.149),
-                        Units.inchesToMeters(15.080),
-                        Units.inchesToMeters(8.088),
+                        Inches.of(-9.149),
+                        Inches.of(15.080),
+                        Inches.of(8.088),
                         new Rotation3d(
-                                Units.degreesToRadians(180),
-                                Units.degreesToRadians(28.0),
-                                Units.degreesToRadians(-80.203885))),
+                                Degrees.of(180),
+                                Degrees.of(28.0),
+                                Degrees.of(-80.203885))),
                 1.0),
         LEFT(
                 "limelight-left",
                 new Transform3d(
-                        Units.inchesToMeters(-2.490),
-                        Units.inchesToMeters(-14.8620),
-                        Units.inchesToMeters(5.676),
+                        Inches.of(-2.490),
+                        Inches.of(-14.8620),
+                        Inches.of(5.676),
                         new Rotation3d(
-                                Units.degreesToRadians(0),
-                                Units.degreesToRadians(14.955812),
-                                Units.degreesToRadians(71.5))),
+                                Degrees.of(0),
+                                Degrees.of(14.955812),
+                                Degrees.of(71.5))),
                 1.0),
         BACK(
                 "limelight-back",
                 new Transform3d(
-                        Units.inchesToMeters(-10.676),
-                        Units.inchesToMeters(-12.969),
-                        Units.inchesToMeters(8.753),
+                        Inches.of(-10.676),
+                        Inches.of(-12.969),
+                        Inches.of(8.753),
                         new Rotation3d(
-                                Units.degreesToRadians(0),
-                                Units.degreesToRadians(27.875),
-                                Units.degreesToRadians(185.155825))),
+                                Degrees.of(0),
+                                Degrees.of(27.875),
+                                Degrees.of(185.155825))),
                 1.0);
 
         private final CameraData data;
