@@ -37,8 +37,8 @@ public class TurretIOReal implements TurretIO {
     private final StatusSignal<Angle> encoder17tPosition;
     private final StatusSignal<Angle> encoder18tPosition;
 
-    private Angle encoder17tMagnetOffset;
-    private Angle encoder18tMagnetOffset;
+    private final MagnetSensorConfigs encoder17tMagnetConfig;
+    private final MagnetSensorConfigs encoder18tMagnetConfig;
 
     public TurretIOReal() {
         turretMotor = new TalonFX(TurretDeviceIds.MOTOR, GlobalSettings.RIO);
@@ -63,6 +63,9 @@ public class TurretIOReal implements TurretIO {
 
         encoder17tPosition = encoder17t.getAbsolutePosition();
         encoder18tPosition = encoder18t.getAbsolutePosition();
+
+        encoder17tMagnetConfig = new MagnetSensorConfigs();
+        encoder18tMagnetConfig = new MagnetSensorConfigs();
     }
 
     @Override
@@ -76,6 +79,10 @@ public class TurretIOReal implements TurretIO {
                 turretMotorVelocity,
                 encoder17tPosition,
                 encoder18tPosition);
+
+        encoder17t.getConfigurator().refresh(encoder17tMagnetConfig);
+        encoder18t.getConfigurator().refresh(encoder18tMagnetConfig);
+
         inputs.turretMotorPosition = turretMotorPosition.getValue();
         inputs.turretMotorSupplyCurrent = turretMotorSupplyCurrent.getValue();
         inputs.turretMotorStatorCurrent = turretMotorStatorCurrent.getValue();
@@ -86,8 +93,8 @@ public class TurretIOReal implements TurretIO {
         inputs.encoder17tPosition = encoder17tPosition.getValue();
         inputs.encoder18tPosition = encoder18tPosition.getValue();
 
-        inputs.encoder17tMagnetOffset = encoder17tMagnetOffset;
-        inputs.encoder18tMagnetOffset = encoder18tMagnetOffset;
+        inputs.encoder17tMagnetOffset = encoder17tMagnetConfig.getMagnetOffsetMeasure();
+        inputs.encoder18tMagnetOffset = encoder18tMagnetConfig.getMagnetOffsetMeasure();
     }
 
     @Override
@@ -111,22 +118,15 @@ public class TurretIOReal implements TurretIO {
 
     @Override
     public void zeroEncoders() {
-        MagnetSensorConfigs config17t = new MagnetSensorConfigs();
-        MagnetSensorConfigs config18t = new MagnetSensorConfigs();
+        encoder17t.getConfigurator().refresh(encoder17tMagnetConfig);
+        encoder18t.getConfigurator().refresh(encoder18tMagnetConfig);
 
-        encoder17t.getConfigurator().refresh(config17t);
-        encoder18t.getConfigurator().refresh(config18t);
+        Angle newOffset17t = encoder17tMagnetConfig.getMagnetOffsetMeasure().minus(encoder17t.getAbsolutePosition().getValue());
+        Angle newOffset18t = encoder18tMagnetConfig.getMagnetOffsetMeasure().minus(encoder18t.getAbsolutePosition().getValue());
+        encoder17tMagnetConfig.withMagnetOffset(newOffset17t);
+        encoder18tMagnetConfig.withMagnetOffset(newOffset18t);
 
-        Angle newOffset17t = config17t.getMagnetOffsetMeasure().minus(encoder17t.getAbsolutePosition().getValue());
-        Angle newOffset18t = config18t.getMagnetOffsetMeasure().minus(encoder18t.getAbsolutePosition().getValue());
-
-        config17t.withMagnetOffset(newOffset17t);
-        config18t.withMagnetOffset(newOffset18t);
-
-        encoder17t.getConfigurator().apply(config17t);
-        encoder18t.getConfigurator().apply(config18t);
-
-        encoder17tMagnetOffset = newOffset17t;
-        encoder18tMagnetOffset = newOffset18t;
+        encoder17t.getConfigurator().apply(encoder17tMagnetConfig);
+        encoder18t.getConfigurator().apply(encoder18tMagnetConfig);
     }
 }
