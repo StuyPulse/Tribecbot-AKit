@@ -54,8 +54,4 @@ public interface TurretIO {
     public default void seedTurretPosition(Angle position) {}
 
     public default void zeroEncoders() {}
-
-    public default void refreshEncoderMagnetSensorConfigurations() {}
-
-    public default void reconfigureEncoderMagnetOffsets(double offset17t, double offset18t) {}
 }
