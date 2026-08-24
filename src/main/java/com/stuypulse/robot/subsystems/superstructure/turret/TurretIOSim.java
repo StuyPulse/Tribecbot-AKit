@@ -5,6 +5,8 @@
 /***************************************************************/
 package com.stuypulse.robot.subsystems.superstructure.turret;
 
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -36,7 +38,7 @@ public class TurretIOSim implements TurretIO {
                 SystemSim.of(
                         new DCMotorSim(
                                 LinearSystemId.createDCMotorSystem(
-                                        DCMotor.getKrakenX60(1), 1.0, 2.8),
+                                        DCMotor.getKrakenX60(1), TurretSettings.TURRET_MOI.in(KilogramSquareMeters), TurretSettings.GEAR_RATIO_MOTOR_TO_MECH),
                                 DCMotor.getKrakenX60(1),
                                 1.0,
                                 2.8));
