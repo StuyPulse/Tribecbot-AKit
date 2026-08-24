@@ -32,6 +32,9 @@ public interface ShooterConstants {
 
         AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_HIGH = RPM.of(150.0);
         AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_LOW = RPM.of(250.0);
+
+        // sim
+        MomentOfInertia FLYWHEEL_MOI = KilogramSquareMeters.of(0.05);
     }
 
     public interface ShooterDeviceIds {

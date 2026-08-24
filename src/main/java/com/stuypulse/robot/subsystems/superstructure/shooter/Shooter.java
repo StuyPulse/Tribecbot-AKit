@@ -5,10 +5,12 @@
 /***************************************************************/
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
-import static com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
-import static edu.wpi.first.units.Units.*;
-
 import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
+
+import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
+
 import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterIO.ShooterIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.shooter.ShooterIO.ShooterIOOutputs;
 import com.stuypulse.robot.util.FullSubsystem;
@@ -17,7 +19,6 @@ import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.units.measure.*;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
