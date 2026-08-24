@@ -44,9 +44,9 @@ public class HoodIOSim implements HoodIO {
                         new ElevatorSim(
                                 LinearSystemId.createElevatorSystem(
                                         DCMotor.getKrakenX60(1),
-                                        1.0,
+                                        HoodSettings.HOOD_MASS.in(Kilograms),
                                         HoodSettings.DRUM_RADIUS.in(Meters),
-                                        1.0),
+                                        HoodSettings.GEAR_RATIO),
                                 DCMotor.getKrakenX60(1),
                                 HoodSettings.MIN_HEIGHT.in(Meters),
                                 HoodSettings.MAX_HEIGHT.in(Meters),
@@ -56,7 +56,7 @@ public class HoodIOSim implements HoodIO {
                                 0.001),
                         Meters.of(HoodSettings.DRUM_RADIUS.in(Meters)));
 
-        hoodMotor = new TalonFXSimulation(HoodDeviceIds.MOTOR, 1.0, hoodSim);
+        hoodMotor = new TalonFXSimulation(HoodDeviceIds.MOTOR, HoodSettings.GEAR_RATIO, hoodSim);
         positionController = new PositionVoltage(0).withEnableFOC(true);
         homingController = new VoltageOut(0).withIgnoreSoftwareLimits(true);
 
