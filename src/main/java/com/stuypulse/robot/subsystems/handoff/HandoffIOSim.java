@@ -54,7 +54,7 @@ public class HandoffIOSim implements HandoffIO {
                 SystemSim.of(
                         new FlywheelSim(
                                 LinearSystemId.createFlywheelSystem(
-                                        DCMotor.getKrakenX60Foc(2), 0.01, 1),
+                                        DCMotor.getKrakenX60Foc(2), HandoffSettings.J.in(KilogramSquareMeters), HandoffSettings.GEAR_RATIO),
                                 DCMotor.getKrakenX60Foc(2),
                                 1));
 

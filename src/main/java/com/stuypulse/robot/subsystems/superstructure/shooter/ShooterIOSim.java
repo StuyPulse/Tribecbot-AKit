@@ -6,6 +6,7 @@
 package com.stuypulse.robot.subsystems.superstructure.shooter;
 
 import static com.stuypulse.robot.subsystems.superstructure.shooter.ShooterConstants.*;
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -54,7 +55,7 @@ public class ShooterIOSim implements ShooterIO {
                 SystemSim.of(
                         new FlywheelSim(
                                 LinearSystemId.createFlywheelSystem(
-                                        DCMotor.getKrakenX44(2), 0.05, ShooterSettings.GEAR_RATIO),
+                                        DCMotor.getKrakenX44(2), ShooterSettings.FLYWHEEL_MOI.in(KilogramSquareMeters), ShooterSettings.GEAR_RATIO),
                                 DCMotor.getKrakenX44(2),
                                 ShooterSettings.GEAR_RATIO));
 

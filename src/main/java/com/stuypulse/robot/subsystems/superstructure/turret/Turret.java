@@ -6,29 +6,37 @@
 package com.stuypulse.robot.subsystems.superstructure.turret;
 
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
 
-import com.stuypulse.robot.RobotContainer;
-import com.stuypulse.robot.constants.DriverConstants.*;
-import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.*;
+import com.stuypulse.robot.constants.DriverConstants.*;
+import com.stuypulse.robot.constants.Field;
+
+import com.stuypulse.robot.RobotContainer;
+
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputMode;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretIO.TurretIOOutputs;
+
 import com.stuypulse.robot.subsystems.swerve.Drive;
+
 import com.stuypulse.robot.util.FullSubsystem;
+
 import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 import com.stuypulse.robot.util.superstructure.TurretAngleCalculator;
 
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.units.measure.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -78,7 +86,7 @@ public class Turret extends FullSubsystem {
 
         setState(TurretState.SCORE);
 
-        readyToShootDebouncer = new Debouncer(0.05, DebounceType.kBoth);
+        readyToShootDebouncer = new Debouncer(TurretSettings.SHOT_READY_DEBOUNCE.in(Seconds), DebounceType.kBoth);
         atTolerance = false;
 
         prevActualTargetAngle = getScoringAngle().in(Degrees);

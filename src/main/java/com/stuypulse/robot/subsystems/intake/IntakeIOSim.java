@@ -6,6 +6,7 @@
 package com.stuypulse.robot.subsystems.intake;
 
 import static edu.wpi.first.units.Units.*;
+import edu.wpi.first.units.measure.*;
 
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
@@ -18,12 +19,12 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.intake.IntakeConstants.*;
+
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.SystemSim;
 import com.stuypulse.robot.util.simulation.TalonFXSimulation.TalonFXSimulation;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.units.measure.*;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
@@ -83,17 +84,17 @@ public class IntakeIOSim implements IntakeIO {
                         new DCMotorSim(
                                 LinearSystemId.createDCMotorSystem(
                                         DCMotor.getKrakenX60Foc(2),
-                                        0.01, // arbitrary
-                                        1.0),
+                                        IntakeSettings.ROLLER_MOI.in(KilogramSquareMeters),
+                                        IntakeSettings.ROLLER_GEAR_RATIO),
                                 DCMotor.getKrakenX60Foc(2)));
 
         this.pivotMotor =
                 new TalonFXSimulation(
                         IntakeDeviceIds.PIVOT, IntakeSettings.PIVOT_GEAR_RATIO, pivotSim);
         this.rollerLeaderMotor =
-                new TalonFXSimulation(IntakeDeviceIds.ROLLER_LEADER, 1.0, rollerSim);
+                new TalonFXSimulation(IntakeDeviceIds.ROLLER_LEADER, IntakeSettings.ROLLER_GEAR_RATIO, rollerSim);
         this.rollerFollowerMotor =
-                new TalonFXSimulation(IntakeDeviceIds.ROLLER_FOLLOWER, 1.0, rollerSim);
+                new TalonFXSimulation(IntakeDeviceIds.ROLLER_FOLLOWER, IntakeSettings.ROLLER_GEAR_RATIO, rollerSim);
 
         pivotMotor.configure(IntakeMotorConfigs.PIVOT_CONFIG);
         rollerLeaderMotor.configure(IntakeMotorConfigs.ROLLER_CONFIG);

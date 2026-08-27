@@ -34,11 +34,24 @@ public interface HandoffConstants {
         LoggedNetworkNumber HANDOFF_STALL_CURRENT_AMPS =
                 new LoggedNetworkNumber("/Tuning/Handoff/Stall Current Limit for Reverse", 30.0);
         Time HANDOFF_STALL_DEBOUNCE = Seconds.of(0.5);
+
+        // sim
+        MomentOfInertia J = KilogramSquareMeters.of(0.01);
     }
 
     public interface HandoffDeviceIds {
         int MOTOR_LEAD = 43;
         int MOTOR_FOLLOW = 48;
+    }
+
+    public interface HandoffGains {
+        double kP = 0.00015508;
+        double kI = 0.0;
+        double kD = 0.0;
+
+        double kS = 0.1728;
+        double kV = 0.12;
+        double kA = 0.00284;
     }
 
     public interface HandoffMotorConfigs {
@@ -48,6 +61,9 @@ public interface HandoffConstants {
                         .withNeutralMode(NeutralModeValue.Brake)
                         .withSupplyCurrentLimitAmps(80.0)
                         .withStatorCurrentLimitEnabled(false)
-                        .withRampRate(0.25);
+                        .withRampRate(0.25)
+                        .withPIDConstants(HandoffGains.kP, HandoffGains.kI, HandoffGains.kD, 0)
+                        .withFFConstants(HandoffGains.kS, HandoffGains.kV, HandoffGains.kA, 0)
+                        .withSensorToMechanismRatio(HandoffSettings.GEAR_RATIO);
     }
 }

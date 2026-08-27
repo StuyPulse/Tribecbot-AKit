@@ -42,11 +42,17 @@ public interface IntakeConstants {
         Current PUSHDOWN_CURRENT_AUTON = Amps.of(-80.0);
         double PIVOT_GEAR_RATIO = 32.0 / 20.0 * 64.0 / 18.0 * 60.0 / 8.0;
 
+        Time PIVOT_POSITION_DEBOUNCE_RISE = Seconds.of(0.5);
+        Time PIVOT_POSITION_DEBOUNCE_FALL = Seconds.of(0.1);
+
         Current PIVOT_STALL_CURRENT = Amps.of(0); // TODO: set value
         Time PIVOT_STALL_DEBOUNCE = Seconds.of(1.0); // TODO: VERIFY
 
         Time ROLLER_STALL_DEBOUNCE = Seconds.of(0.05); // TODO: VERIFY
         Current ROLLER_STALL_CURRENT = Amps.of(50.0);
+
+        double ROLLER_INTAKE_DUTY_CYCLE = 1.0;
+        double ROLLER_OUTTAKE_DUTY_CYCLE = -1.0;
 
         // Sim
         Distance ARM_LENGTH = Meters.of(0.4);
@@ -55,6 +61,9 @@ public interface IntakeConstants {
                 KilogramSquareMeters.of(
                         SingleJointedArmSim.estimateMOI(
                                 ARM_MASS.in(Kilograms), ARM_LENGTH.in(Meters)));
+
+        MomentOfInertia ROLLER_MOI = KilogramSquareMeters.of(0.01); // arbitrary
+        double ROLLER_GEAR_RATIO = 1.0;
     }
 
     public interface IntakeDeviceIds {

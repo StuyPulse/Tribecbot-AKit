@@ -58,6 +58,11 @@ public interface TurretConstants {
         Distance TURRET_HEIGHT = Inches.of(0.0);
 
         double GEAR_RATIO_MOTOR_TO_MECH = (60.0 / 9.0) * (95.0 / 12.0);
+
+        Time SHOT_READY_DEBOUNCE = Seconds.of(0.05);
+
+        // sim
+        MomentOfInertia TURRET_MOI = KilogramSquareMeters.of(1.0);
     }
 
     public interface TurretDeviceIds {

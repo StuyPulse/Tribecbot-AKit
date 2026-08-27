@@ -56,11 +56,14 @@ public interface HoodConstants {
         Angle HOOD_TOLERANCE = Degrees.of(0.5);
         Angle HOOD_SOTM_TOLERANCE = Degrees.of(2.0);
 
+        Time HOOD_AT_TOLERANCE_DEBOUNCE = Seconds.of(0.05);
+
         // for sim
         Distance HOOD_ARM_LENGTH = Meters.of(0.3);
         Distance MIN_HEIGHT = HOOD_ARM_LENGTH.times(Math.sin(MIN_FROM_HORIZON.in(Radians)));
         Distance MAX_HEIGHT = HOOD_ARM_LENGTH.times(Math.sin(MAX_FROM_HORIZON.in(Radians)));
         Distance DRUM_RADIUS = Meters.of(0.01);
+        Mass HOOD_MASS = Kilograms.of(1.0);
     }
 
     public interface HoodDeviceIds {

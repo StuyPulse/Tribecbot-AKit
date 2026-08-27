@@ -5,6 +5,8 @@
 /***************************************************************/
 package com.stuypulse.robot.subsystems.spindexer;
 
+import static edu.wpi.first.units.Units.KilogramSquareMeters;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -53,12 +55,12 @@ public class SpindexerIOSim implements SpindexerIO {
                 SystemSim.of(
                         new FlywheelSim(
                                 LinearSystemId.createFlywheelSystem(
-                                        DCMotor.getKrakenX44Foc(2), 0.01, 1),
+                                        DCMotor.getKrakenX44Foc(2), SpindexerSettings.SPINDEXER_MOI.in(KilogramSquareMeters), SpindexerSettings.GEAR_RATIO),
                                 DCMotor.getKrakenX44Foc(2)));
 
-        spindexerLeaderMotor = new TalonFXSimulation(SpindexerDeviceIds.LEADER, 1, spindexerSystem);
+        spindexerLeaderMotor = new TalonFXSimulation(SpindexerDeviceIds.LEADER, SpindexerSettings.GEAR_RATIO, spindexerSystem);
         spindexerFollowerMotor =
-                new TalonFXSimulation(SpindexerDeviceIds.FOLLOWER, 1, spindexerSystem);
+                new TalonFXSimulation(SpindexerDeviceIds.FOLLOWER, SpindexerSettings.GEAR_RATIO, spindexerSystem);
 
         spindexerLeaderMotor.configure(SpindexerMotorConfigs.SPINDEXER_LEAD_CONFIG);
         spindexerFollowerMotor.configure(SpindexerMotorConfigs.SPINDEXER_FOLLOW_CONFIG);
