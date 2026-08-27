@@ -18,64 +18,59 @@ import org.littletonrobotics.junction.networktables.LoggedNetworkNumber;
 public interface ShooterConstants {
 
     public interface ShooterSettings {
-        final Current IS_SHOOTING_CURRENT = Amps.of(25.0);
+        Current IS_SHOOTING_CURRENT = Amps.of(25.0);
 
-        final double GEAR_RATIO = 1.0;
+        double GEAR_RATIO = 1.0;
 
-        final Distance FLYWHEEL_RADIUS = Inches.of(3.965 / 2.0);
+        Distance FLYWHEEL_RADIUS = Inches.of(3.965 / 2.0);
 
-        final AngularVelocity SHOOTER_TOLERANCE_RPM_HIGH = RPM.of(50.0);
-        final AngularVelocity SHOOTER_TOLERANCE_RPM_LOW = RPM.of(80.0);
+        AngularVelocity SHOOTER_TOLERANCE_RPM_HIGH = RPM.of(50.0);
+        AngularVelocity SHOOTER_TOLERANCE_RPM_LOW = RPM.of(80.0);
 
-        final AngularVelocity SHOOTER_SOTM_TOLERANCE_RPM_HIGH = RPM.of(100.0);
-        final AngularVelocity SHOOTER_SOTM_TOLERANCE_RPM_LOW = RPM.of(100.0);
+        AngularVelocity SHOOTER_SOTM_TOLERANCE_RPM_HIGH = RPM.of(100.0);
+        AngularVelocity SHOOTER_SOTM_TOLERANCE_RPM_LOW = RPM.of(100.0);
 
-        final AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_HIGH = RPM.of(150.0);
-        final AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_LOW = RPM.of(250.0);
+        AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_HIGH = RPM.of(150.0);
+        AngularVelocity SHOOTER_FOTM_TOLERANCE_RPM_LOW = RPM.of(250.0);
     }
 
     public interface ShooterDeviceIds {
-        final int MOTOR_LEAD = 47;
-        final int MOTOR_FOLLOW = 46;
+        int MOTOR_LEAD = 47;
+        int MOTOR_FOLLOW = 46;
     }
 
     public interface ShooterGains {
         // VTC PID
-        final LoggedNetworkNumber kP =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kP", 10.5);
+        LoggedNetworkNumber kP = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kP", 10.5);
 
-        final LoggedNetworkNumber kI =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kI", 0.0);
+        LoggedNetworkNumber kI = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kI", 0.0);
 
-        final LoggedNetworkNumber kD =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kD", 0.0);
+        LoggedNetworkNumber kD = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kD", 0.0);
 
-        final LoggedNetworkNumber kS =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kS", 2.47);
+        LoggedNetworkNumber kS = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kS", 2.47);
 
-        final LoggedNetworkNumber kV =
+        LoggedNetworkNumber kV =
                 new LoggedNetworkNumber("Superstructure/Shooter/Gains/kV", 0.01775);
 
-        final LoggedNetworkNumber kA =
-                new LoggedNetworkNumber("Superstructure/Shooter/Gains/kA", 0.0);
+        LoggedNetworkNumber kA = new LoggedNetworkNumber("Superstructure/Shooter/Gains/kA", 0.0);
     }
 
     public interface ShooterRPMValues {
-        final LoggedNetworkNumber MANUAL_OVERRIDE =
+        LoggedNetworkNumber MANUAL_OVERRIDE =
                 new LoggedNetworkNumber(
                         "/Tuning/InterpolationTesting/Shoot State Target RPM", 3863.0);
 
-        final AngularVelocity REVERSE = edu.wpi.first.units.Units.RPM.zero();
+        AngularVelocity REVERSE = edu.wpi.first.units.Units.RPM.zero();
 
-        final AngularVelocity KB = edu.wpi.first.units.Units.RPM.of(2675.0);
+        AngularVelocity KB = edu.wpi.first.units.Units.RPM.of(2675.0);
 
-        final AngularVelocity LEFT_CORNER = edu.wpi.first.units.Units.RPM.of(3650.0);
+        AngularVelocity LEFT_CORNER = edu.wpi.first.units.Units.RPM.of(3650.0);
 
-        final AngularVelocity RIGHT_CORNER = edu.wpi.first.units.Units.RPM.of(3650.0);
+        AngularVelocity RIGHT_CORNER = edu.wpi.first.units.Units.RPM.of(3650.0);
     }
 
     public interface ShooterMotorConfigs {
-        final TalonFXConfig SHOOTER_CONFIG =
+        TalonFXConfig SHOOTER_CONFIG =
                 new TalonFXConfig()
                         .withInvertedValue(InvertedValue.CounterClockwise_Positive)
                         .withNeutralMode(NeutralModeValue.Coast)

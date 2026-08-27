@@ -8,7 +8,7 @@ package com.stuypulse.robot.subsystems.superstructure.turret;
 import static edu.wpi.first.units.Units.*;
 
 import com.stuypulse.robot.RobotContainer;
-import com.stuypulse.robot.constants.DriverConstants;
+import com.stuypulse.robot.constants.DriverConstants.*;
 import com.stuypulse.robot.constants.Field;
 import com.stuypulse.robot.constants.GlobalSettings;
 import com.stuypulse.robot.subsystems.superstructure.turret.TurretConstants.*;
@@ -258,11 +258,10 @@ public class Turret extends FullSubsystem {
                 Math.abs(delta) >= TurretSettings.SETPOINT_FILTER_THRESHOLD_DEG;
 
         boolean driverIsMoving =
-                Math.abs(RobotContainer.driver.getLeftX()) > DriverConstants.Driver.Drive.DEADBAND
-                        || Math.abs(RobotContainer.driver.getLeftY())
-                                > DriverConstants.Driver.Drive.DEADBAND
+                Math.abs(RobotContainer.driver.getLeftX()) > DriverDriveSettings.DEADBAND
+                        || Math.abs(RobotContainer.driver.getLeftY()) > DriverDriveSettings.DEADBAND
                         || Math.abs(RobotContainer.driver.getRightX())
-                                > DriverConstants.Driver.Drive.DEADBAND;
+                                > DriverDriveSettings.DEADBAND;
 
         if (deltaIsSignificant || driverIsMoving) {
             prevActualTargetAngle = actualTargetAngle;

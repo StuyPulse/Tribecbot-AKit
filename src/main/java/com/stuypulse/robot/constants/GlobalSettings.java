@@ -14,33 +14,33 @@ import edu.wpi.first.wpilibj.RobotBase;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 
 public interface GlobalSettings {
-    final CANBus RIO = new CANBus("rio");
-    final CANBus CANIVORE = new CANBus("CANIVORE");
+    CANBus RIO = new CANBus("rio");
+    CANBus CANIVORE = new CANBus("CANIVORE");
 
     public interface EnabledSubsystems {
-        final LoggedNetworkBoolean INTAKE =
+        LoggedNetworkBoolean INTAKE =
                 new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Intake", true);
-        final LoggedNetworkBoolean HOOD =
+        LoggedNetworkBoolean HOOD =
                 new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Hood", true);
-        final LoggedNetworkBoolean SHOOTER =
+        LoggedNetworkBoolean SHOOTER =
                 new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Shooter", true);
-        final LoggedNetworkBoolean TURRET =
+        LoggedNetworkBoolean TURRET =
                 new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Turret", true);
-        final LoggedNetworkBoolean SPINDEXER =
+        LoggedNetworkBoolean SPINDEXER =
                 new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Spindexer", true);
-        final LoggedNetworkBoolean HANDOFF =
+        LoggedNetworkBoolean HANDOFF =
                 new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Handoff", true);
-        final LoggedNetworkBoolean LEDs =
+        LoggedNetworkBoolean LEDs =
                 new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/LEDs", true);
-        final LoggedNetworkBoolean VISION =
+        LoggedNetworkBoolean VISION =
                 new LoggedNetworkBoolean("/Tuning/Enabled Subsystems/Vision", true);
     }
 
-    final Time DT = Milliseconds.of(20);
+    Time DT = Milliseconds.of(20);
 
-    final Mode SIM_MODE = Mode.SIM;
-    final Mode CURRENT_MODE = RobotBase.isReal() ? Mode.REAL : SIM_MODE;
-    final VisionMode VISION_MODE = VisionMode.LIMELIGHT;
+    Mode SIM_MODE = Mode.SIM;
+    Mode CURRENT_MODE = RobotBase.isReal() ? Mode.REAL : SIM_MODE;
+    VisionMode VISION_MODE = VisionMode.LIMELIGHT;
 
     enum Mode {
         /** Running on a real robot. */
