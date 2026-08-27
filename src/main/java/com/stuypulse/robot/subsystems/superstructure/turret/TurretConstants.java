@@ -9,8 +9,9 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
-
+import com.stuypulse.robot.util.config.CANCoderConfig;
 import com.stuypulse.robot.util.config.TalonFXConfig;
 
 import edu.wpi.first.math.geometry.Translation2d;
@@ -159,5 +160,18 @@ public interface TurretConstants {
                                 false,
                                 TurretSoftwareLimits.FORWARD_MAX_ROTATIONS,
                                 TurretSoftwareLimits.BACKWARDS_MAX_ROTATIONS);
+    }
+
+    public interface TurretEncoderConfigs {
+            CANCoderConfig encoder17tConfig =
+                new CANCoderConfig()
+                        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                        .withMagnetOffset(TurretEncoder17t.OFFSET.in(Rotations))
+                        .withAbsoluteSensorDiscontinuityPoint(1.0);
+        CANCoderConfig encoder18tConfig =
+                new CANCoderConfig()
+                        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                        .withMagnetOffset(TurretEncoder18t.OFFSET.in(Rotations))
+                        .withAbsoluteSensorDiscontinuityPoint(1.0);
     }
 }

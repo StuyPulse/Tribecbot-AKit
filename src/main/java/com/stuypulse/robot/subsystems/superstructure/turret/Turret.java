@@ -34,7 +34,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -69,8 +68,6 @@ public class Turret extends FullSubsystem {
 
     private boolean hasUsedAbsoluteEncoder;
     private boolean hasInitializedFilter;
-    private boolean zeroingEncoders;
-    private boolean hasRefreshedEncoderMagnetOffsets;
 
     private double prevActualTargetAngle;
     private boolean isWrapping;
@@ -93,8 +90,6 @@ public class Turret extends FullSubsystem {
 
         hasUsedAbsoluteEncoder = false;
         hasInitializedFilter = false;
-        zeroingEncoders = false;
-        hasRefreshedEncoderMagnetOffsets = false;
     }
 
     public enum TurretState {
@@ -188,22 +183,6 @@ public class Turret extends FullSubsystem {
 
     @Override
     public void periodicAfterScheduler() {
-        if (zeroingEncoders && hasRefreshedEncoderMagnetOffsets) {
-            double currentOffset17T = inputs.encoder17tMagnetOffset;
-            double currentOffset18T = inputs.encoder18tMagnetOffset;
-
-            double newOffset17T = currentOffset17T - inputs.encoder17tPosition.in(Rotations);
-            double newOffset18T = currentOffset18T - inputs.encoder18tPosition.in(Rotations);
-
-            io.reconfigureEncoderMagnetOffsets(newOffset17T, newOffset18T);
-
-            zeroingEncoders = false;
-            hasRefreshedEncoderMagnetOffsets = false;
-        } else if (zeroingEncoders && !hasRefreshedEncoderMagnetOffsets) {
-            io.refreshEncoderMagnetSensorConfigurations();
-            hasRefreshedEncoderMagnetOffsets = true;
-        }
-
         io.applyOutputs(outputs);
     }
 
@@ -240,10 +219,6 @@ public class Turret extends FullSubsystem {
 
     private void stopTurret() {
         outputs.turretMode = TurretIOOutputMode.STOP;
-    }
-
-    private void zeroEncoders() {
-        zeroingEncoders = true;
     }
 
     private void runPosition(Angle position) {
@@ -363,10 +338,9 @@ public class Turret extends FullSubsystem {
     }
 
     public Command zeroTurret() {
-        return runOnce(this::zeroEncoders)
-                .andThen(Commands.waitUntil(() -> zeroingEncoders == false))
-                .andThen(runOnce(this::seedTurret))
-                .withName("Zero Turret")
-                .ignoringDisable(true);
+        return runOnce(io::zeroEncoders)
+            .andThen(runOnce(this::seedTurret))
+            .withName("Zero Turret")
+            .ignoringDisable(true);
     }
 }
