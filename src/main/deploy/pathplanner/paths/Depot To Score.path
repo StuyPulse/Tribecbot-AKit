@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 0.5456205420827387,
+        "y": 5.930513552068473
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.5835061183739199,
+        "y": 5.904645906462766
+      },
+      "isLocked": false,
+      "linkedName": "Depot"
+    },
+    {
+      "anchor": {
+        "x": 1.4642653352353778,
+        "y": 5.959713740458016
+      },
+      "prevControl": {
+        "x": 0.6133229987217922,
+        "y": 5.954351642472394
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Depot Out"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.19,
+    "maxAcceleration": 10.0,
+    "maxAngularVelocity": 300.0,
+    "maxAngularAcceleration": 900.0,
+    "nominalVoltage": 12.7,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "reversed": false,
+  "folder": "To Score",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
