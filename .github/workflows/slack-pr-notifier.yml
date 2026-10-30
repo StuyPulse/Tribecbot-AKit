@@ -1,0 +1,12 @@
+name: Call Slack Notifier
+
+on:
+  pull_request:
+    branches: [ main, staging ]
+    types: [ closed ]
+
+jobs:
+  call-slack-workflow:
+    uses: StuyPulse/.github/.github/workflows/slack-pr-notifier.yml@main
+    secrets:
+      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
