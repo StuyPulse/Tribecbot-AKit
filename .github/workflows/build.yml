@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main, staging ]
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   roborio:
     uses: StuyPulse/.github/.github/workflows/roborio-build.yml@main
