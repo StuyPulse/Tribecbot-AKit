@@ -5,8 +5,16 @@
 /***************************************************************/
 package com.stuypulse.robot;
 
-import com.stuypulse.robot.constants.Settings;
+import com.stuypulse.robot.constants.GlobalSettings;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
+import com.stuypulse.robot.util.FullSubsystem;
+import com.stuypulse.robot.util.superstructure.SOTMCalculator;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -21,7 +29,31 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
  * project.
  */
 public class Robot extends LoggedRobot {
+    private final RobotContainer robotContainer;
+
+    private Command auton;
+
+    private static Alliance alliance;
+
+    public enum OperationMode {
+        DISABLED,
+        AUTON,
+        TELEOP,
+        TEST
+    }
+
+    private static OperationMode mode = OperationMode.DISABLED;
+
+    public static boolean isBlue() {
+        return alliance == Alliance.Blue;
+    }
+
+    public static OperationMode getOperationMode() {
+        return mode;
+    }
+
     public Robot() {
+        robotContainer = new RobotContainer();
         // Record metadata
         // Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
         // Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
@@ -37,7 +69,7 @@ public class Robot extends LoggedRobot {
         //     });
 
         // Set up data receivers & replay source
-        switch (Settings.currentMode) {
+        switch (GlobalSettings.CURRENT_MODE) {
             case REAL:
                 // Running on a real robot, log to a USB stick ("/U/logs")
                 Logger.addDataReceiver(new WPILOGWriter());
@@ -63,23 +95,56 @@ public class Robot extends LoggedRobot {
         Logger.start();
     }
 
+    @Override
+    public void robotInit() {
+        mode = OperationMode.DISABLED;
+    }
+
     /** This function is called periodically during all modes. */
     @Override
-    public void robotPeriodic() {}
+    public void robotPeriodic() {
+        CommandScheduler.getInstance().run();
+
+        SuperstructureState superstructureState = Superstructure.getInstance().getState();
+
+        if (superstructureState == SuperstructureState.SOTM) {
+            SOTMCalculator.updateSOTMSolution();
+        } else if (superstructureState == SuperstructureState.FOTM) {
+            SOTMCalculator.updateFOTMSolution();
+        }
+
+        FullSubsystem.runAllPeriodicAfterScheduler();
+
+        robotContainer.clearMemoized();
+    }
 
     /** This function is called once when the robot is disabled. */
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        mode = OperationMode.DISABLED;
+    }
 
     /** This function is called periodically when disabled. */
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+        if (DriverStation.getAlliance().isPresent()) {
+            alliance = DriverStation.getAlliance().get();
+        }
+    }
 
     /**
      * This autonomous runs the autonomous command selected by your {@link RobotContainer} class.
      */
     @Override
-    public void autonomousInit() {}
+    public void autonomousInit() {
+        mode = OperationMode.AUTON;
+
+        auton = robotContainer.getAutonomousCommand();
+
+        if (auton != null) {
+            CommandScheduler.getInstance().schedule(auton);
+        }
+    }
 
     /** This function is called periodically during autonomous. */
     @Override
@@ -87,7 +152,9 @@ public class Robot extends LoggedRobot {
 
     /** This function is called once when teleop is enabled. */
     @Override
-    public void teleopInit() {}
+    public void teleopInit() {
+        mode = OperationMode.TELEOP;
+    }
 
     /** This function is called periodically during operator control. */
     @Override
@@ -95,7 +162,9 @@ public class Robot extends LoggedRobot {
 
     /** This function is called once when test mode is enabled. */
     @Override
-    public void testInit() {}
+    public void testInit() {
+        mode = OperationMode.TEST;
+    }
 
     /** This function is called periodically during test mode. */
     @Override

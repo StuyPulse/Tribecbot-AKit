@@ -5,140 +5,127 @@
 /***************************************************************/
 package com.stuypulse.robot.commands;
 
-import com.stuypulse.robot.subsystems.swerve.Drive;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ProfiledPIDController;
+import com.stuypulse.robot.constants.DriverConstants.*;
+import com.stuypulse.robot.constants.Field;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure;
+import com.stuypulse.robot.subsystems.superstructure.Superstructure.SuperstructureState;
+import com.stuypulse.robot.subsystems.swerve.Drive;
+import com.stuypulse.robot.subsystems.swerve.SwerveConstants.*;
+import com.stuypulse.robot.util.DualDebouncer;
+import com.stuypulse.robot.util.swerve.DriveInputProcessor;
+import com.stuypulse.robot.util.swerve.DriveTurnInputProcessor;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
+import java.util.function.BooleanSupplier;
 
 public class DriveCommands {
-    private static final double DEADBAND = 0.1;
-    private static final double ANGLE_KP = 5.0;
-    private static final double ANGLE_KD = 0.4;
-    private static final double ANGLE_MAX_VELOCITY = 8.0;
-    private static final double ANGLE_MAX_ACCELERATION = 20.0;
-    private static final double FF_START_DELAY = 2.0; // Secs
-    private static final double FF_RAMP_RATE = 0.1; // Volts/Sec
-    private static final double WHEEL_RADIUS_MAX_VELOCITY = 0.25; // Rad/Sec
-    private static final double WHEEL_RADIUS_RAMP_RATE = 0.05; // Rad/Sec^2
-
     private DriveCommands() {}
 
-    private static Translation2d getLinearVelocityFromJoysticks(double x, double y) {
-        // Apply deadband
-        double linearMagnitude = MathUtil.applyDeadband(Math.hypot(x, y), DEADBAND);
-        Rotation2d linearDirection = new Rotation2d(Math.atan2(y, x));
+    public static Command resetPoseKBShot() {
+        Drive drive = Drive.getInstance();
 
-        // Square magnitude for more precise control
-        linearMagnitude = linearMagnitude * linearMagnitude;
+        return Commands.runOnce(() -> drive.resetOdometry(Field.KB_POSE), drive)
+                .withName("Swerve Reset Pose KB Shot");
+    }
 
-        // Return new linear velocity
-        return new Pose2d(new Translation2d(), linearDirection)
-                .transformBy(new Transform2d(linearMagnitude, 0.0, new Rotation2d()))
-                .getTranslation();
+    public static Command buzzController(CommandXboxController driver) {
+        return Commands.run(
+                        () -> {
+                            driver.getHID()
+                                    .setRumble(
+                                            RumbleType.kBothRumble, DriverSettings.BUZZ_INTENSITY);
+                        })
+                .withName("Buzz Controller");
+    }
+
+    public static Command resetHeading() {
+        Drive drive = Drive.getInstance();
+
+        return Commands.runOnce(
+                        () -> {
+                            drive.resetHeading(Rotation2d.kZero);
+                        },
+                        drive)
+                .withName("Reset Heading");
+    }
+
+    public static Command resetPose(Pose2d pose) {
+        Drive drive = Drive.getInstance();
+
+        return Commands.runOnce(
+                () -> {
+                    drive.resetOdometry(pose);
+                },
+                drive);
+    }
+
+    public static Command xMode() {
+        Drive drive = Drive.getInstance();
+
+        return Commands.run(
+                        () -> {
+                            drive.stopWithX();
+                        })
+                .withName("Swerve X Mode");
     }
 
     /**
      * Field relative drive command using two joysticks (controlling linear and angular velocities).
      */
-    public static Command joystickDrive(
-            Drive drive,
-            DoubleSupplier xSupplier,
-            DoubleSupplier ySupplier,
-            DoubleSupplier omegaSupplier) {
-        return Commands.run(
-                () -> {
-                    // Get linear velocity
-                    Translation2d linearVelocity =
-                            getLinearVelocityFromJoysticks(
-                                    xSupplier.getAsDouble(), ySupplier.getAsDouble());
+    public static Command joystickDrive(CommandXboxController driver) {
+        Drive drive = Drive.getInstance();
 
-                    // Apply rotation deadband
-                    double omega = MathUtil.applyDeadband(omegaSupplier.getAsDouble(), DEADBAND);
+        DriveInputProcessor driveInputProcessor =
+                new DriveInputProcessor(
+                        driver,
+                        DriverDriveSettings.DEADBAND,
+                        DriverDriveSettings.POWER,
+                        SwerveConstraints.MAX_VELOCITY,
+                        SwerveConstraints.MAX_ACCEL,
+                        DriverDriveSettings.RC);
+        DriveTurnInputProcessor driveTurnInputProcessor =
+                new DriveTurnInputProcessor(
+                        driver,
+                        DriverTurnSettings.DEADBAND,
+                        DriverTurnSettings.POWER,
+                        SwerveConstraints.MAX_ANGULAR_VEL,
+                        DriverTurnSettings.RC);
 
-                    // Square rotation value for more precise control
-                    omega = Math.copySign(omega * omega, omega);
-
-                    // Convert to field relative speeds & send command
-                    ChassisSpeeds speeds =
-                            new ChassisSpeeds(
-                                    linearVelocity.getX() * drive.getMaxLinearSpeedMetersPerSec(),
-                                    linearVelocity.getY() * drive.getMaxLinearSpeedMetersPerSec(),
-                                    omega * drive.getMaxAngularSpeedRadPerSec());
-                    boolean isFlipped =
-                            DriverStation.getAlliance().isPresent()
-                                    && DriverStation.getAlliance().get() == Alliance.Red;
-                    drive.runVelocity(
-                            ChassisSpeeds.fromFieldRelativeSpeeds(
-                                    speeds,
-                                    isFlipped
-                                            ? drive.getRotation().plus(new Rotation2d(Math.PI))
-                                            : drive.getRotation()));
-                },
-                drive);
-    }
-
-    /**
-     * Field relative drive command using joystick for linear control and PID for angular control.
-     * Possible use cases include snapping to an angle, aiming at a vision target, or controlling
-     * absolute rotation with a joystick.
-     */
-    public static Command joystickDriveAtAngle(
-            Drive drive,
-            DoubleSupplier xSupplier,
-            DoubleSupplier ySupplier,
-            Supplier<Rotation2d> rotationSupplier) {
-
-        // Create PID controller
-        ProfiledPIDController angleController =
-                new ProfiledPIDController(
-                        ANGLE_KP,
-                        0.0,
-                        ANGLE_KD,
-                        new TrapezoidProfile.Constraints(
-                                ANGLE_MAX_VELOCITY, ANGLE_MAX_ACCELERATION));
-        angleController.enableContinuousInput(-Math.PI, Math.PI);
-
-        // Construct command
         return Commands.run(
                         () -> {
+                            driveInputProcessor.update();
+                            driveTurnInputProcessor.update();
                             // Get linear velocity
-                            Translation2d linearVelocity =
-                                    getLinearVelocityFromJoysticks(
-                                            xSupplier.getAsDouble(), ySupplier.getAsDouble());
+                            Translation2d linearVelocity = driveInputProcessor.get();
 
-                            // Calculate angular speed
-                            double omega =
-                                    angleController.calculate(
-                                            drive.getRotation().getRadians(),
-                                            rotationSupplier.get().getRadians());
+                            // Get angular velocity
+                            AngularVelocity angularVelocity = driveTurnInputProcessor.get();
 
                             // Convert to field relative speeds & send command
                             ChassisSpeeds speeds =
                                     new ChassisSpeeds(
-                                            linearVelocity.getX()
-                                                    * drive.getMaxLinearSpeedMetersPerSec(),
-                                            linearVelocity.getY()
-                                                    * drive.getMaxLinearSpeedMetersPerSec(),
-                                            omega);
+                                            linearVelocity.getX(),
+                                            linearVelocity.getY(),
+                                            angularVelocity.in(RadiansPerSecond));
                             boolean isFlipped =
                                     DriverStation.getAlliance().isPresent()
                                             && DriverStation.getAlliance().get() == Alliance.Red;
@@ -151,9 +138,139 @@ public class DriveCommands {
                                                     : drive.getRotation()));
                         },
                         drive)
+                .withName("Drive");
+    }
 
-                // Reset PID controller when command starts
-                .beforeStarting(() -> angleController.reset(drive.getRotation().getRadians()));
+    public static Command driveSOTM(CommandXboxController driver) {
+        Drive drive = Drive.getInstance();
+
+        DriveInputProcessor driveInputProcessor =
+                new DriveInputProcessor(
+                        driver,
+                        DriverDriveSettings.DEADBAND,
+                        DriverDriveSettings.POWER,
+                        SwerveConstraints.MAX_VELOCITY_SOTM,
+                        SwerveConstraints.MAX_ACCEL_SOTM,
+                        DriverDriveSettings.RC);
+        DriveTurnInputProcessor driveTurnInputProcessor =
+                new DriveTurnInputProcessor(
+                        driver,
+                        DriverTurnSettings.DEADBAND,
+                        DriverTurnSettings.POWER,
+                        SwerveConstraints.MAX_ANGULAR_VEL_SOTM,
+                        DriverTurnSettings.RC);
+
+        DualDebouncer driveInputDebouncer = new DualDebouncer(0.5, 0.1);
+        BooleanSupplier isIdle =
+                () -> {
+                    double driverMagnitude =
+                            new Translation2d(-driver.getLeftY(), -driver.getLeftX()).getNorm();
+
+                    return driverMagnitude <= DriverDriveSettings.DEADBAND
+                            && Math.abs(driver.getRightX()) <= DriverTurnSettings.DEADBAND;
+                };
+
+        return Commands.run(
+                        () -> {
+                            driveInputProcessor.update();
+                            driveTurnInputProcessor.update();
+
+                            if (driveInputDebouncer.calculate(isIdle.getAsBoolean())) {
+                                drive.stopWithX();
+                            } else {
+                                Translation2d linearVelocity = driveInputProcessor.get();
+
+                                // Get angular velocity
+                                AngularVelocity angularVelocity = driveTurnInputProcessor.get();
+
+                                // Convert to field relative speeds & send command
+                                ChassisSpeeds speeds =
+                                        new ChassisSpeeds(
+                                                linearVelocity.getX(),
+                                                linearVelocity.getY(),
+                                                angularVelocity.in(RadiansPerSecond));
+                                boolean isFlipped =
+                                        DriverStation.getAlliance().isPresent()
+                                                && DriverStation.getAlliance().get()
+                                                        == Alliance.Red;
+                                drive.runVelocity(
+                                        ChassisSpeeds.fromFieldRelativeSpeeds(
+                                                speeds,
+                                                isFlipped
+                                                        ? drive.getRotation()
+                                                                .plus(new Rotation2d(Math.PI))
+                                                        : drive.getRotation()));
+                            }
+                        },
+                        drive)
+                .until(() -> Superstructure.getInstance().getState() != SuperstructureState.SOTM)
+                .withName("Drive SOTM");
+    }
+
+    public static Command driveFOTM(CommandXboxController driver) {
+        Drive drive = Drive.getInstance();
+
+        DriveInputProcessor driveInputProcessor =
+                new DriveInputProcessor(
+                        driver,
+                        DriverDriveSettings.DEADBAND,
+                        DriverDriveSettings.POWER,
+                        SwerveConstraints.MAX_VELOCITY_FOTM,
+                        SwerveConstraints.MAX_ACCEL_FOTM,
+                        DriverDriveSettings.RC);
+        DriveTurnInputProcessor driveTurnInputProcessor =
+                new DriveTurnInputProcessor(
+                        driver,
+                        DriverTurnSettings.DEADBAND,
+                        DriverTurnSettings.POWER,
+                        SwerveConstraints.MAX_ANGULAR_VEL_FOTM,
+                        DriverTurnSettings.RC);
+
+        DualDebouncer driveInputDebouncer = new DualDebouncer(0.5, 0.1);
+        BooleanSupplier isIdle =
+                () -> {
+                    double driverMagnitude =
+                            new Translation2d(-driver.getLeftY(), -driver.getLeftX()).getNorm();
+
+                    return driverMagnitude <= DriverDriveSettings.DEADBAND
+                            && Math.abs(driver.getRightX()) <= DriverTurnSettings.DEADBAND;
+                };
+
+        return Commands.run(
+                        () -> {
+                            driveInputProcessor.update();
+                            driveTurnInputProcessor.update();
+
+                            if (driveInputDebouncer.calculate(isIdle.getAsBoolean())) {
+                                drive.stopWithX();
+                            } else {
+                                Translation2d linearVelocity = driveInputProcessor.get();
+
+                                // Get angular velocity
+                                AngularVelocity angularVelocity = driveTurnInputProcessor.get();
+
+                                // Convert to field relative speeds & send command
+                                ChassisSpeeds speeds =
+                                        new ChassisSpeeds(
+                                                linearVelocity.getX(),
+                                                linearVelocity.getY(),
+                                                angularVelocity.in(RadiansPerSecond));
+                                boolean isFlipped =
+                                        DriverStation.getAlliance().isPresent()
+                                                && DriverStation.getAlliance().get()
+                                                        == Alliance.Red;
+                                drive.runVelocity(
+                                        ChassisSpeeds.fromFieldRelativeSpeeds(
+                                                speeds,
+                                                isFlipped
+                                                        ? drive.getRotation()
+                                                                .plus(new Rotation2d(Math.PI))
+                                                        : drive.getRotation()));
+                            }
+                        },
+                        drive)
+                .until(() -> Superstructure.getInstance().getState() != SuperstructureState.FOTM)
+                .withName("Drive FOTM");
     }
 
     /**
@@ -176,7 +293,7 @@ public class DriveCommands {
 
                 // Allow modules to orient
                 Commands.run(() -> drive.runCharacterization(0.0), drive)
-                        .withTimeout(FF_START_DELAY),
+                        .withTimeout(SwerveCharacterization.FF_START_DELAY),
 
                 // Start timer
                 Commands.runOnce(timer::restart),
@@ -184,7 +301,8 @@ public class DriveCommands {
                 // Accelerate and gather data
                 Commands.run(
                                 () -> {
-                                    double voltage = timer.get() * FF_RAMP_RATE;
+                                    double voltage =
+                                            timer.get() * SwerveCharacterization.FF_RAMP_RATE;
                                     drive.runCharacterization(voltage);
                                     velocitySamples.add(drive.getFFCharacterizationVelocity());
                                     voltageSamples.add(voltage);
@@ -221,7 +339,8 @@ public class DriveCommands {
 
     /** Measures the robot's wheel radius by spinning in a circle. */
     public static Command wheelRadiusCharacterization(Drive drive) {
-        SlewRateLimiter limiter = new SlewRateLimiter(WHEEL_RADIUS_RAMP_RATE);
+        SlewRateLimiter limiter =
+                new SlewRateLimiter(SwerveCharacterization.WHEEL_RADIUS_RAMP_RATE);
         WheelRadiusCharacterizationState state = new WheelRadiusCharacterizationState();
 
         return Commands.parallel(
@@ -236,7 +355,10 @@ public class DriveCommands {
                         // Turn in place, accelerating up to full speed
                         Commands.run(
                                 () -> {
-                                    double speed = limiter.calculate(WHEEL_RADIUS_MAX_VELOCITY);
+                                    double speed =
+                                            limiter.calculate(
+                                                    SwerveCharacterization
+                                                            .WHEEL_RADIUS_MAX_VELOCITY);
                                     drive.runVelocity(new ChassisSpeeds(0.0, 0.0, speed));
                                 },
                                 drive)),
